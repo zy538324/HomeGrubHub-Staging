@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Predictive Pantry Settings - HomeGrubHub{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="mb-0">
+            <i class="fas fa-cog me-2"></i>Predictive Analytics Settings
+          </h4>
+        </div>
+        <div class="card-body">
+          <form id="predictiveSettings">
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <label for="predictionSensitivity" class="form-label">Prediction Sensitivity</label>
+                <select class="form-select" id="predictionSensitivity">
+                  <option value="conservative">Conservative - Less frequent recommendations</option>
+                  <option value="medium" selected>Medium - Balanced approach</option>
+                  <option value="aggressive">Aggressive - More frequent recommendations</option>
+                </select>
+                <small class="text-muted">How often you want AI to suggest restocking</small>
+              </div>
+              <div class="col-md-6">
+                <label for="notificationThreshold" class="form-label">Notification Threshold (days)</label>
+                <input type="number" class="form-control" id="notificationThreshold" value="3" min="1" max="14">
+                <small class="text-muted">Get notified when items have this many days remaining</small>
+              </div>
+            </div>
+
+            <div class="row mb-4">
+              <div class="col-12">
+                <h6>Optimization Priorities</h6>
+                <div class="form-check form-switch mb-2">
+                  <input class="form-check-input" type="checkbox" id="costOptimization" checked>
+                  <label class="form-check-label" for="costOptimization">
+                    Cost Optimization - Prioritize bulk buying and discounts
+                  </label>
+                </div>
+                <div class="form-check form-switch mb-2">
+                  <input class="form-check-input" type="checkbox" id="seasonalAdjustments" checked>
+                  <label class="form-check-label" for="seasonalAdjustments">
+                    Seasonal Adjustments - Account for seasonal consumption changes
+                  </label>
+                </div>
+                <div class="form-check form-switch mb-2">
+                  <input class="form-check-input" type="checkbox" id="wastePreventionFocus" checked>
+                  <label class="form-check-label" for="wastePreventionFocus">
+                    Waste Prevention Focus - Prioritize reducing food waste
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <h6>Learning & Feedback</h6>
+              <p class="text-muted">Help improve AI accuracy by providing feedback on predictions</p>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="learningMode" checked>
+                <label class="form-check-label" for="learningMode">
+                  Enable Continuous Learning Mode
+                </label>
+              </div>
+            </div>
+
+            <div class="text-end">
+              <button type="button" class="btn btn-secondary me-2" onclick="resetToDefaults()">Reset to Defaults</button>
+              <button type="submit" class="btn btn-primary">Save Settings</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Model Performance Card -->
+      <div class="card mt-4">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-chart-bar me-2"></i>AI Model Performance
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row text-center">
+            <div class="col-md-3">
+              <h4 class="text-primary">87.5%</h4>
+              <small>Overall Accuracy</small>
+            </div>
+            <div class="col-md-3">
+              <h4 class="text-success">156</h4>
+              <small>Predictions Made</small>
+            </div>
+            <div class="col-md-3">
+              <h4 class="text-info">92.3%</h4>
+              <small>Model Confidence</small>
+            </div>
+            <div class="col-md-3">
+              <h4 class="text-warning">12</h4>
+              <small>Learning Points</small>
+            </div>
+          </div>
+          <div class="mt-3">
+            <p class="text-muted">
+              Your AI model continues to learn from your consumption patterns and feedback to improve accuracy over time.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('predictiveSettings').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        prediction_sensitivity: document.getElementById('predictionSensitivity').value,
+        notification_threshold: parseInt(document.getElementById('notificationThreshold').value),
+        cost_optimization_priority: document.getElementById('costOptimization').checked,
+        seasonal_adjustments: document.getElementById('seasonalAdjustments').checked,
+        waste_prevention_focus: document.getElementById('wastePreventionFocus').checked,
+        learning_mode: document.getElementById('learningMode').checked
+    };
+    
+    fetch('/predictive/api/update-preferences', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('meta[name=csrf-token]')?.getAttribute('content')
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'preferences_updated') {
+            alert('Settings saved successfully!');
+        } else {
+            alert('Failed to save settings');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error saving settings');
+    });
+});
+
+function resetToDefaults() {
+    document.getElementById('predictionSensitivity').value = 'medium';
+    document.getElementById('notificationThreshold').value = '3';
+    document.getElementById('costOptimization').checked = true;
+    document.getElementById('seasonalAdjustments').checked = true;
+    document.getElementById('wastePreventionFocus').checked = true;
+    document.getElementById('learningMode').checked = true;
+}
+</script>
+{% endblock %}

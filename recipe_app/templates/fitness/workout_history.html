@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% block title %}Workout History{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fitness.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">
+                    <i class="fas fa-dumbbell text-orange me-2"></i>
+                    Workout History
+                </h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <a href="{{ url_for('fitness.log_workout_page') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Log New Workout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if workouts %}
+    <!-- Statistics Row -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-dumbbell fa-2x mb-2"></i>
+                    <h4>{{ workouts|length }}</h4>
+                    <small>Total Workouts</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-clock fa-2x mb-2"></i>
+                    {% set total_minutes = workouts | selectattr('duration_minutes', 'defined') | map(attribute='duration_minutes') | sum %}
+                    <h4>{{ (total_minutes / 60) | round(1) }}</h4>
+                    <small>Hours Trained</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-week fa-2x mb-2"></i>
+                    {% set this_week = workouts | selectattr('workout_date', 'ge', seven_days_ago) | list %}
+                    <h4>{{ this_week|length }}</h4>
+                    <small>This Week</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-fire fa-2x mb-2"></i>
+                    {% set total_calories = 0 %}
+                    {% for workout in workouts %}
+                        {% for exercise in workout.exercises %}
+                            {% if exercise.calories_burned %}
+                                {% set total_calories = total_calories + exercise.calories_burned %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                    <h4>{{ total_calories | int }}</h4>
+                    <small>Calories Burned</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Workout List -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>Recent Workouts
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if workouts %}
+                        {% for workout in workouts %}
+                        <div class="card mb-3 workout-card">
+                            <div class="card-header bg-light">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <h6 class="mb-0">
+                                            <i class="fas fa-{{ workout_type_icons.get(workout.workout_type, 'dumbbell') }} me-2"></i>
+                                            {{ workout.workout_type }}
+                                        </h6>
+                                        <small class="text-muted">{{ workout.workout_date.strftime('%A, %B %d, %Y') }}</small>
+                                    </div>
+                                    <div class="col-md-6 text-md-end">
+                                        {% if workout.duration_minutes %}
+                                        <span class="badge bg-primary me-2">
+                                            <i class="fas fa-clock me-1"></i>{{ workout.duration_minutes }} min
+                                        </span>
+                                        {% endif %}
+                                        {% if workout.exercises %}
+                                        <span class="badge bg-success me-2">
+                                            <i class="fas fa-list me-1"></i>{{ workout.exercises|length }} exercises
+                                        </span>
+                                        {% endif %}
+                                        <button class="btn btn-sm btn-outline-danger" onclick="deleteWorkout({{ workout.id }})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {% if workout.exercises %}
+                            <div class="card-body">
+                                <h6>Exercises:</h6>
+                                <div class="row">
+                                    {% for exercise in workout.exercises %}
+                                    <div class="col-md-6 mb-2">
+                                        <div class="exercise-item p-2 border rounded">
+                                            <strong>{{ exercise.exercise_name }}</strong>
+                                            <span class="badge bg-secondary ms-2">{{ exercise.exercise_type }}</span>
+                                            
+                                            {% if exercise.exercise_type == 'strength' %}
+                                                <br><small class="text-muted">
+                                                    {% if exercise.sets %}{{ exercise.sets }} sets{% endif %}
+                                                    {% if exercise.reps %}{% if exercise.sets %}, {% endif %}{{ exercise.reps }} reps{% endif %}
+                                                    {% if exercise.weight_kg %}{% if exercise.sets or exercise.reps %}, {% endif %}{{ exercise.weight_kg }}kg{% endif %}
+                                                </small>
+                                            {% elif exercise.exercise_type == 'cardio' %}
+                                                <br><small class="text-muted">
+                                                    {% if exercise.distance_km %}{{ exercise.distance_km }}km{% endif %}
+                                                    {% if exercise.duration_minutes %}{% if exercise.distance_km %}, {% endif %}{{ exercise.duration_minutes }} min{% endif %}
+                                                </small>
+                                            {% endif %}
+                                            
+                                            {% if exercise.calories_burned %}
+                                                <br><small class="text-success">{{ exercise.calories_burned }} calories</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if workout.notes %}
+                            <div class="card-footer bg-light">
+                                <small><strong>Notes:</strong> {{ workout.notes }}</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-dumbbell fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No workouts logged yet</h5>
+                            <p class="text-muted">Start tracking your fitness journey!</p>
+                            <a href="{{ url_for('fitness.log_workout_page') }}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Log Your First Workout
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/fitness-csrf.js') }}"></script>
+<script>
+function deleteWorkout(workoutId) {
+    if (confirm('Are you sure you want to delete this workout and all its exercises?')) {
+        csrfFetch(`/fitness/workout-logs/${workoutId}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                location.reload();
+            } else {
+                alert('Error deleting workout: ' + result.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error deleting workout. Please try again.');
+        });
+    }
+}
+</script>
+{% endblock %}

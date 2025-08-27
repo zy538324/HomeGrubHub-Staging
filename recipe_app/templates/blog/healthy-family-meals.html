@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Healthy Family Meals - HomeGrubHub{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <article class="blog-post">
+                <header class="text-center mb-5">
+                    <h1 class="display-4 mb-3">Healthy Family Meals: Nutrition That Everyone Will Love</h1>
+                    <p class="lead text-muted">Creating nutritious meals that satisfy the whole family</p>
+                    <small class="text-muted">Published on <time>August 6, 2025</time></small>
+                </header>
+
+                <div class="blog-content">
+                    <p class="lead">Getting the whole family to eat healthy can be challenging, but with the right approach, you can create nutritious meals that everyone will enjoy.</p>
+
+                    <h2>Making Healthy Food Appealing</h2>
+                    <p>The key to successful family nutrition is making healthy ingredients taste great and look appealing. Here are some strategies:</p>
+
+                    <ul>
+                        <li><strong>Colorful Plates:</strong> Include a variety of colorful vegetables</li>
+                        <li><strong>Hidden Vegetables:</strong> Blend vegetables into sauces and smoothies</li>
+                        <li><strong>Family Involvement:</strong> Let kids help with meal preparation</li>
+                        <li><strong>Gradual Changes:</strong> Slowly introduce new healthy ingredients</li>
+                    </ul>
+
+                    <h2>Quick Healthy Meal Ideas</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Breakfast</h4>
+                            <ul>
+                                <li>Overnight oats with berries</li>
+                                <li>Whole grain pancakes</li>
+                                <li>Vegetable scrambled eggs</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Dinner</h4>
+                            <ul>
+                                <li>Sheet pan chicken and vegetables</li>
+                                <li>Whole grain pasta with hidden veggie sauce</li>
+                                <li>Fish tacos with cabbage slaw</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-light p-4 rounded my-4">
+                        <h3>Pro Tip</h3>
+                        <p class="mb-0">Meal prep on weekends to make healthy eating easier during busy weekdays. Prepare vegetables, cook grains in bulk, and have healthy snacks ready to go.</p>
+                    </div>
+                </div>
+
+                <footer class="border-top pt-4 mt-5">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="{{ url_for('main.blog') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Blog
+                            </a>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <small class="text-muted">Share this article with your family!</small>
+                        </div>
+                    </div>
+                </footer>
+            </article>
+        </div>
+    </div>
+</div>
+{% endblock %}

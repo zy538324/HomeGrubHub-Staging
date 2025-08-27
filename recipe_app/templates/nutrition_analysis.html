@@ -1,0 +1,606 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="h2 mb-1">
+            <i class="fas fa-heartbeat me-2 text-danger"></i>Nutrition Analysis
+          </h1>
+          <p class="text-muted mb-0">
+            Get detailed nutritional insights for your recipes
+            <span class="badge bg-success ms-2">HOME+ FEATURE</span>
+          </p>
+        </div>
+        
+        {% if current_user.current_plan in ['Free'] %}
+        <div>
+          <a href="{{ url_for('billing.pricing') }}" class="btn btn-primary">
+            <i class="fas fa-crown me-2"></i>Upgrade for Full Access
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  
+  <!-- Recipe Selection Form -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-search me-2"></i>Select Recipe for Analysis
+          </h5>
+        </div>
+        <div class="card-body">
+          <form method="post" action="{{ url_for('main.analyze_nutrition') }}">
+            {{ form.hidden_tag() }}
+            
+            <div class="row g-3 align-items-end">
+              <div class="col-md-8">
+                <label for="{{ form.recipe_id.id }}" class="form-label">
+                  {{ form.recipe_id.label }}
+                </label>
+                {{ form.recipe_id(class="form-select form-select-lg") }}
+                {% if form.recipe_id.errors %}
+                  <div class="text-danger small mt-1">
+                    {% for error in form.recipe_id.errors %}{{ error }}{% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              
+              <div class="col-md-2">
+                <label for="{{ form.servings.id }}" class="form-label">
+                  {{ form.servings.label }}
+                </label>
+                {{ form.servings(class="form-control form-control-lg") }}
+              </div>
+              
+              <div class="col-md-2">
+                {{ form.submit(class="btn btn-primary btn-lg w-100") }}
+              </div>
+            </div>
+            
+            {% if current_user.current_plan in ['Free'] %}
+            <div class="alert alert-warning mt-3 mb-0">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              <strong>Limited Access:</strong> Upgrade to Home plan for full nutrition analysis features.
+            </div>
+            {% endif %}
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Nutrition Results -->
+  {% if nutrition_data %}
+  <div class="row">
+    <!-- Main Nutrition Panel -->
+    <div class="col-lg-8">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-chart-pie me-2"></i>{{ recipe.title }} - Nutritional Breakdown
+          </h5>
+          <small>Per serving ({{ servings }} total servings)</small>
+        </div>
+        <div class="card-body">
+          <!-- Macronutrients Overview -->
+          <div class="row g-4 mb-4">
+            <div class="col-md-3 text-center">
+              <div class="nutrition-circle calories">
+                <div class="nutrition-value">{{ nutrition_data.calories|round|int }}</div>
+                <div class="nutrition-label">Calories</div>
+              </div>
+            </div>
+            <div class="col-md-3 text-center">
+              <div class="nutrition-circle protein">
+                <div class="nutrition-value">{{ nutrition_data.protein_g|round(1) }}g</div>
+                <div class="nutrition-label">Protein</div>
+              </div>
+            </div>
+            <div class="col-md-3 text-center">
+              <div class="nutrition-circle carbs">
+                <div class="nutrition-value">{{ nutrition_data.carbs_g|round(1) }}g</div>
+                <div class="nutrition-label">Carbs</div>
+              </div>
+            </div>
+            <div class="col-md-3 text-center">
+              <div class="nutrition-circle fat">
+                <div class="nutrition-value">{{ nutrition_data.fat_g|round(1) }}g</div>
+                <div class="nutrition-label">Fat</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Macronutrient Distribution Chart -->
+          <div class="mb-4">
+            <h6 class="text-primary mb-3">Macronutrient Distribution</h6>
+            <canvas id="macroChart" width="400" height="200"></canvas>
+          </div>
+          
+          <!-- Detailed Nutrition Table -->
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead class="table-dark">
+                <tr>
+                  <th>Nutrient</th>
+                  <th>Amount</th>
+                  <th>% Daily Value*</th>
+                  <th>Quality</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Calories</strong></td>
+                  <td>{{ nutrition_data.calories|round|int }}</td>
+                  <td>{{ ((nutrition_data.calories / 2000) * 100)|round|int }}%</td>
+                  <td>
+                    {% if nutrition_data.calories < 200 %}
+                      <span class="badge bg-success">Low</span>
+                    {% elif nutrition_data.calories < 400 %}
+                      <span class="badge bg-warning">Moderate</span>
+                    {% else %}
+                      <span class="badge bg-danger">High</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Total Fat</td>
+                  <td>{{ nutrition_data.fat_g|round(1) }}g</td>
+                  <td>{{ ((nutrition_data.fat_g / 65) * 100)|round|int }}%</td>
+                  <td>
+                    {% if nutrition_data.fat_g < 5 %}
+                      <span class="badge bg-success">Low</span>
+                    {% elif nutrition_data.fat_g < 15 %}
+                      <span class="badge bg-warning">Moderate</span>
+                    {% else %}
+                      <span class="badge bg-danger">High</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% if nutrition_data.saturated_fat_g %}
+                <tr>
+                  <td>&nbsp;&nbsp;Saturated Fat</td>
+                  <td>{{ nutrition_data.saturated_fat_g|round(1) }}g</td>
+                  <td>{{ ((nutrition_data.saturated_fat_g / 20) * 100)|round|int }}%</td>
+                  <td>
+                    {% if nutrition_data.saturated_fat_g < 3 %}
+                      <span class="badge bg-success">Low</span>
+                    {% elif nutrition_data.saturated_fat_g < 7 %}
+                      <span class="badge bg-warning">Moderate</span>
+                    {% else %}
+                      <span class="badge bg-danger">High</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endif %}
+                {% if nutrition_data.cholesterol_mg %}
+                <tr>
+                  <td>Cholesterol</td>
+                  <td>{{ nutrition_data.cholesterol_mg|round|int }}mg</td>
+                  <td>{{ ((nutrition_data.cholesterol_mg / 300) * 100)|round|int }}%</td>
+                  <td>
+                    {% if nutrition_data.cholesterol_mg < 50 %}
+                      <span class="badge bg-success">Low</span>
+                    {% elif nutrition_data.cholesterol_mg < 150 %}
+                      <span class="badge bg-warning">Moderate</span>
+                    {% else %}
+                      <span class="badge bg-danger">High</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endif %}
+                <tr>
+                  <td>Sodium</td>
+                  <td>{{ nutrition_data.sodium_mg|round|int }}mg</td>
+                  <td>{{ ((nutrition_data.sodium_mg / 2300) * 100)|round|int }}%</td>
+                  <td>
+                    {% if nutrition_data.sodium_mg < 300 %}
+                      <span class="badge bg-success">Low</span>
+                    {% elif nutrition_data.sodium_mg < 700 %}
+                      <span class="badge bg-warning">Moderate</span>
+                    {% else %}
+                      <span class="badge bg-danger">High</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Total Carbohydrate</td>
+                  <td>{{ nutrition_data.carbs_g|round(1) }}g</td>
+                  <td>{{ ((nutrition_data.carbs_g / 300) * 100)|round|int }}%</td>
+                  <td>
+                    {% if nutrition_data.carbs_g < 15 %}
+                      <span class="badge bg-success">Low</span>
+                    {% elif nutrition_data.carbs_g < 45 %}
+                      <span class="badge bg-warning">Moderate</span>
+                    {% else %}
+                      <span class="badge bg-info">High</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% if nutrition_data.fiber_g %}
+                <tr>
+                  <td>&nbsp;&nbsp;Dietary Fiber</td>
+                  <td>{{ nutrition_data.fiber_g|round(1) }}g</td>
+                  <td>{{ ((nutrition_data.fiber_g / 25) * 100)|round|int }}%</td>
+                  <td>
+                    {% if nutrition_data.fiber_g > 5 %}
+                      <span class="badge bg-success">Excellent</span>
+                    {% elif nutrition_data.fiber_g > 2 %}
+                      <span class="badge bg-info">Good</span>
+                    {% else %}
+                      <span class="badge bg-warning">Low</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endif %}
+                {% if nutrition_data.sugar_g %}
+                <tr>
+                  <td>&nbsp;&nbsp;Total Sugars</td>
+                  <td>{{ nutrition_data.sugar_g|round(1) }}g</td>
+                  <td>-</td>
+                  <td>
+                    {% if nutrition_data.sugar_g < 6 %}
+                      <span class="badge bg-success">Low</span>
+                    {% elif nutrition_data.sugar_g < 15 %}
+                      <span class="badge bg-warning">Moderate</span>
+                    {% else %}
+                      <span class="badge bg-danger">High</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endif %}
+                <tr>
+                  <td><strong>Protein</strong></td>
+                  <td>{{ nutrition_data.protein_g|round(1) }}g</td>
+                  <td>{{ ((nutrition_data.protein_g / 50) * 100)|round|int }}%</td>
+                  <td>
+                    {% if nutrition_data.protein_g > 20 %}
+                      <span class="badge bg-success">High</span>
+                    {% elif nutrition_data.protein_g > 10 %}
+                      <span class="badge bg-info">Good</span>
+                    {% else %}
+                      <span class="badge bg-warning">Low</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <small class="text-muted">
+              * Percent Daily Values are based on a 2,000 calorie diet.
+            </small>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Ingredient Breakdown -->
+      <div class="card shadow-sm">
+        <div class="card-header bg-info text-white">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-list me-2"></i>Ingredient Nutrition Breakdown
+          </h5>
+        </div>
+        <div class="card-body">
+          {% if ingredient_nutrition %}
+          <div class="table-responsive">
+            <table class="table table-sm">
+              <thead class="table-light">
+                <tr>
+                  <th>Ingredient</th>
+                  <th>Amount</th>
+                  <th>Calories</th>
+                  <th>Protein</th>
+                  <th>Carbs</th>
+                  <th>Fat</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for ingredient in ingredient_nutrition %}
+                <tr>
+                  <td>{{ ingredient.name }}</td>
+                  <td>{{ ingredient.amount }}</td>
+                  <td>{{ ingredient.calories|round|int }}</td>
+                  <td>{{ ingredient.protein_g|round(1) }}g</td>
+                  <td>{{ ingredient.carbs_g|round(1) }}g</td>
+                  <td>{{ ingredient.fat_g|round(1) }}g</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="text-center py-3">
+            <i class="fas fa-info-circle fa-2x text-muted mb-2"></i>
+            <p class="text-muted">Ingredient-level nutrition breakdown not available.</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <!-- Health Insights -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-success text-white">
+          <h6 class="card-title mb-0">
+            <i class="fas fa-lightbulb me-2"></i>Health Insights
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="health-insights">
+            {% if nutrition_data.is_high_protein %}
+            <div class="insight-item mb-3">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-dumbbell text-success me-2"></i>
+                <span class="fw-bold">High Protein</span>
+              </div>
+              <small class="text-muted">Great for muscle building and recovery</small>
+            </div>
+            {% endif %}
+            
+            {% if nutrition_data.is_low_carb %}
+            <div class="insight-item mb-3">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-leaf text-success me-2"></i>
+                <span class="fw-bold">Low Carb</span>
+              </div>
+              <small class="text-muted">Suitable for low-carb diets</small>
+            </div>
+            {% endif %}
+            
+            {% if nutrition_data.is_low_fat %}
+            <div class="insight-item mb-3">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-heart text-success me-2"></i>
+                <span class="fw-bold">Low Fat</span>
+              </div>
+              <small class="text-muted">Heart-healthy option</small>
+            </div>
+            {% endif %}
+            
+            {% if nutrition_data.is_high_fiber %}
+            <div class="insight-item mb-3">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-seedling text-success me-2"></i>
+                <span class="fw-bold">High Fiber</span>
+              </div>
+              <small class="text-muted">Supports digestive health</small>
+            </div>
+            {% endif %}
+            
+            {% if nutrition_data.sodium_mg > 1000 %}
+            <div class="insight-item mb-3">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                <span class="fw-bold">High Sodium</span>
+              </div>
+              <small class="text-muted">Consider reducing salt content</small>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      
+      <!-- Dietary Compatibility -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-warning text-dark">
+          <h6 class="card-title mb-0">
+            <i class="fas fa-check-circle me-2"></i>Diet Compatibility
+          </h6>
+        </div>
+        <div class="card-body">
+          {% if diet_compatibility %}
+          <div class="diet-badges">
+            {% for diet, compatible in diet_compatibility.items() %}
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span>{{ diet|title }}</span>
+              {% if compatible %}
+                <span class="badge bg-success">
+                  <i class="fas fa-check"></i> Compatible
+                </span>
+              {% else %}
+                <span class="badge bg-danger">
+                  <i class="fas fa-times"></i> Not Compatible
+                </span>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p class="text-muted small">Diet compatibility analysis not available.</p>
+          {% endif %}
+        </div>
+      </div>
+      
+      <!-- Actions -->
+      <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white">
+          <h6 class="card-title mb-0">
+            <i class="fas fa-tools me-2"></i>Actions
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-2">
+            <a href="{{ url_for('main.recipe', recipe_id=recipe.id) }}" 
+               class="btn btn-primary">
+              <i class="fas fa-eye me-2"></i>View Recipe
+            </a>
+            
+            {% if current_user.can_access_feature('ingredient_substitutions') %}
+            <a href="{{ url_for('main.ingredient_substitutions', recipe_id=recipe.id) }}" 
+               class="btn btn-info">
+              <i class="fas fa-exchange-alt me-2"></i>Find Substitutes
+            </a>
+            {% endif %}
+            
+            {% if current_user.can_access_feature('meal_planning') %}
+            <button class="btn btn-success" onclick="addToMealPlan()">
+              <i class="fas fa-calendar-plus me-2"></i>Add to Meal Plan
+            </button>
+            {% endif %}
+            
+            <button class="btn btn-outline-primary" onclick="shareNutrition()">
+              <i class="fas fa-share me-2"></i>Share Analysis
+            </button>
+            
+            <button class="btn btn-outline-secondary" onclick="printNutrition()">
+              <i class="fas fa-print me-2"></i>Print
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+.nutrition-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  border: 4px solid;
+  background: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.nutrition-circle.calories {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+.nutrition-circle.protein {
+  border-color: #28a745;
+  color: #28a745;
+}
+
+.nutrition-circle.carbs {
+  border-color: #ffc107;
+  color: #ffc107;
+}
+
+.nutrition-circle.fat {
+  border-color: #17a2b8;
+  color: #17a2b8;
+}
+
+.nutrition-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.nutrition-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
+.insight-item {
+  padding: 0.5rem;
+  border-left: 3px solid #28a745;
+  background: #f8f9fa;
+  border-radius: 0.25rem;
+}
+
+@media print {
+  .card-header {
+    background: #f8f9fa !important;
+    color: #000 !important;
+  }
+  
+  .btn {
+    display: none;
+  }
+  
+  .nutrition-circle {
+    border-color: #000 !important;
+    color: #000 !important;
+  }
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+{% if nutrition_data %}
+// Macronutrient Chart
+const ctx = document.getElementById('macroChart').getContext('2d');
+const macroChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Protein', 'Carbohydrates', 'Fat'],
+        datasets: [{
+            data: [
+                {{ nutrition_data.protein_g * 4 }},  // 4 calories per gram
+                {{ nutrition_data.carbs_g * 4 }},    // 4 calories per gram
+                {{ nutrition_data.fat_g * 9 }}       // 9 calories per gram
+            ],
+            backgroundColor: [
+                '#28a745',
+                '#ffc107',
+                '#17a2b8'
+            ],
+            borderWidth: 2,
+            borderColor: '#fff'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const label = context.label || '';
+                        const value = context.parsed;
+                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        const percentage = ((value / total) * 100).toFixed(1);
+                        return label + ': ' + value + ' cal (' + percentage + '%)';
+                    }
+                }
+            }
+        }
+    }
+});
+{% endif %}
+
+function addToMealPlan() {
+    // Implementation for adding to meal plan
+    alert('Add to meal plan functionality coming soon!');
+}
+
+function shareNutrition() {
+    // Implementation for sharing nutrition analysis
+    if (navigator.share) {
+        navigator.share({
+            title: 'Nutrition Analysis - {{ recipe.title }}',
+            text: 'Check out this nutrition analysis for {{ recipe.title }}!',
+            url: window.location.href
+        });
+    } else {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(window.location.href);
+        alert('Link copied to clipboard!');
+    }
+}
+
+function printNutrition() {
+    window.print();
+}
+</script>
+{% endblock %}

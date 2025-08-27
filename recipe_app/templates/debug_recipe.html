@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <h1>DEBUG: Recipe Method Testing</h1>
+  <h2>{{ recipe.title }}</h2>
+  
+  <div class="card">
+    <div class="card-header">
+      <h3>Raw Method Data Debug</h3>
+    </div>
+    <div class="card-body">
+      <p><strong>Method exists:</strong> {{ recipe.method is not none }}</p>
+      <p><strong>Method length:</strong> {{ recipe.method|length if recipe.method else 0 }}</p>
+      <p><strong>Method type:</strong> {{ recipe.method.__class__.__name__ if recipe.method else 'None' }}</p>
+      
+      <h4>Raw Method Content:</h4>
+      <pre style="background: #f8f9fa; padding: 10px; border-radius: 5px;">{{ recipe.method if recipe.method else 'NO METHOD DATA' }}</pre>
+      
+      <h4>Method Strip Test:</h4>
+      {% set method_text = recipe.method.strip() if recipe.method else '' %}
+      <p><strong>After strip length:</strong> {{ method_text|length }}</p>
+      <pre style="background: #e9ecef; padding: 10px; border-radius: 5px;">{{ method_text if method_text else 'EMPTY AFTER STRIP' }}</pre>
+      
+      <h4>Line Break Test:</h4>
+      <p><strong>Contains \\n:</strong> {{ '\\n' in method_text if method_text else False }}</p>
+      <p><strong>Split by \\n length:</strong> {{ method_text.split('\\n')|length if method_text else 0 }}</p>
+      
+      {% if method_text %}
+      <h4>Split Lines:</h4>
+      {% set method_lines = method_text.split('\\n') %}
+      {% for line in method_lines %}
+      <div style="border: 1px solid #ccc; margin: 2px 0; padding: 5px;">
+        <strong>Line {{ loop.index }}:</strong> "{{ line }}"
+      </div>
+      {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card mt-4">
+    <div class="card-header">
+      <h3>Template Logic Test</h3>
+    </div>
+    <div class="card-body">
+      {% if recipe.method %}
+        {% set method_text = recipe.method.strip() %}
+        {% if method_text %}
+          {% if '\\n' in method_text and method_text.split('\\n')|length > 1 %}
+            <h4>✅ Processing as Multi-line Method</h4>
+            {% set method_lines = method_text.split('\\n') %}
+            {% for step in method_lines %}
+              {% if step.strip() %}
+              <div class="step-item d-flex mb-3 border p-2">
+                <div class="step-number bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
+                     style="width: 30px; height: 30px; min-width: 30px; font-size: 0.9rem;">
+                  {{ loop.index }}
+                </div>
+                <div class="step-content">
+                  <p class="mb-0">{{ step.strip() }}</p>
+                </div>
+              </div>
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            <h4>⚠️ Processing as Single Block</h4>
+            <p>Method will be processed as sentences or single block</p>
+            <div class="alert alert-info">
+              <strong>Single block content:</strong><br>
+              {{ method_text }}
+            </div>
+          {% endif %}
+        {% else %}
+          <h4>❌ Method is empty after strip</h4>
+        {% endif %}
+      {% else %}
+        <h4>❌ No method data</h4>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

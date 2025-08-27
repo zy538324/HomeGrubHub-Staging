@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Log Weight</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+    <h1>Log Your Weight</h1>
+    <form method="POST" action="/nutrition/log-weight">
+        <label for="weight">Weight (kg):</label>
+        <input type="number" name="weight" id="weight" step="0.1" required><br><br>
+        <label for="log_date">Date:</label>
+        <input type="date" name="log_date" id="log_date" value="{{ today }}"><br><br>
+        <button type="submit">Log Weight</button>
+    </form>
+    <a href="/nutrition/weight-history">View Weight History</a>
+</body>
+</html>

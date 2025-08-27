@@ -1,0 +1,387 @@
+{% extends "base.html" %}
+
+{% block seo_title %}
+{%- if recipes -%}
+{{ recipes|length }} {{ query|title }} Recipes Found | HomeGrubHub Recipe Search
+{%- else -%}
+Search Recipes | Find Your Perfect Meal | HomeGrubHub
+{%- endif -%}
+{% endblock %}
+
+{% block seo_description %}
+{%- if recipes -%}
+Found {{ recipes|length }} delicious {{ query|lower }} recipes. Browse healthy, budget-friendly meals with nutrition info, ratings, and cooking times.
+{%- else -%}
+Search thousands of family-friendly recipes by ingredient, cuisine, dietary needs, or cooking time. Find your perfect meal with HomeGrubHub's smart recipe search.
+{%- endif -%}
+{% endblock %}
+
+{% block seo_keywords %}recipe search, {{ query|lower if query else '' }} recipes, healthy recipes UK, family recipes, quick dinner ideas, budget meals, cooking recipes{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SearchResultsPage",
+  "url": "{{ request.url }}",
+  "name": "Recipe Search Results",
+  "description": "Search results for recipes on HomeGrubHub",
+  "provider": {
+    "@type": "Organization",
+    "name": "HomeGrubHub"
+  }
+  {%- if recipes -%},
+  "mainEntity": {
+    "@type": "ItemList",
+    "numberOfItems": {{ recipes|length }},
+    "itemListElement": [
+      {%- for recipe in recipes[:10] -%}
+      {
+        "@type": "ListItem",
+        "position": {{ loop.index }},
+        "item": {
+          "@type": "Recipe",
+          "name": "{{ recipe.title|e }}",
+          "url": "{{ url_for('main.recipe_detail', id=recipe.id, _external=True) }}",
+          "image": "{{ url_for('static', filename='images/recipes/' + (recipe.image_url or 'default-recipe.jpg'), _external=True) }}",
+          "description": "{{ recipe.description[:150]|e }}...",
+          "cookTime": "PT{{ recipe.cook_time or 30 }}M",
+          "nutrition": {
+            "@type": "NutritionInformation",
+            "calories": "{{ recipe.calories or 350 }}"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "{{ recipe.average_rating or 4.5 }}",
+            "reviewCount": "{{ recipe.review_count or 1 }}"
+          }
+        }
+      }{%- if not loop.last -%},{%- endif -%}
+      {%- endfor -%}
+    ]
+  }
+  {%- endif -%}
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <!-- SEO-Optimized Search Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <!-- Breadcrumb Navigation -->
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+          <li class="breadcrumb-item"><a href="{{ url_for('main.recipe_categories') }}">Recipes</a></li>
+          <li class="breadcrumb-item active">Search Results</li>
+        </ol>
+      </nav>
+      
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <h1 class="display-5 mb-2">
+            <i class="fas fa-search me-3 text-primary"></i>
+            {% if recipes and request.args.get('q') %}
+              {{ request.args.get('q')|title }} Recipes
+            {% elif recipes %}
+              Recipe Search Results
+            {% else %}
+              Recipe Search
+            {% endif %}
+          </h1>
+          <p class="text-muted mb-0">
+            {% if recipes %}
+              <strong>{{ recipes|length }} delicious recipe{{ 's' if recipes|length != 1 else '' }} found</strong>
+              {% if request.args.get('q') %}
+                matching "<em>{{ request.args.get('q') }}</em>"
+              {% endif %}
+              - All with nutrition info, cooking times, and user ratings
+            {% else %}
+              {% if request.args.get('q') %}
+                No recipes found for "<strong>{{ request.args.get('q') }}</strong>". Try different keywords or browse our categories below.
+              {% else %}
+                Search our collection of healthy, family-friendly recipes
+              {% endif %}
+            {% endif %}
+          </p>
+        </div>
+        <div class="d-flex gap-2">
+          <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+          </a>
+          <a href="{{ url_for('main.recipe_categories') }}" class="btn btn-outline-primary">
+            <i class="fas fa-th-large me-1"></i>Browse Categories
+          </a>
+        </div>
+      </div>
+      <hr class="my-4">
+    </div>
+  </div>
+
+  {% if recipes %}
+  <!-- Recipe Results -->
+  <div class="row g-4">
+    {% for recipe in recipes %}
+    <div class="col-lg-4 col-md-6">
+      <div class="card recipe-card h-100 border-0 shadow-sm">
+        {% if recipe.image_url %}
+        <div class="card-img-container">
+          <img src="{{ recipe.image_url }}" class="card-img-top" alt="{{ recipe.title }}" 
+               style="height: 200px; object-fit: cover;">
+          <div class="card-img-overlay-gradient"></div>
+        </div>
+        {% else %}
+        <div class="card-img-placeholder d-flex align-items-center justify-content-center bg-light" 
+             style="height: 200px;">
+          <i class="fas fa-utensils fa-3x text-muted"></i>
+        </div>
+        {% endif %}
+        
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">
+            <a href="{{ url_for('main.recipe', recipe_id=recipe.id) }}" 
+               class="text-decoration-none text-dark stretched-link">
+              {{ recipe.title }}
+            </a>
+          </h5>
+          
+          {% if recipe.description %}
+          <p class="card-text text-muted small">
+            {{ recipe.description[:100] }}{% if recipe.description|length > 100 %}...{% endif %}
+          </p>
+          {% endif %}
+          
+          <!-- Recipe Stats -->
+          <div class="recipe-stats mt-auto">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              {% if recipe.prep_time %}
+              <span class="badge bg-light text-dark">
+                <i class="fas fa-clock me-1"></i>{{ recipe.prep_time }} min
+              </span>
+              {% endif %}
+              
+              {% if recipe.servings %}
+              <span class="badge bg-light text-dark">
+                <i class="fas fa-users me-1"></i>{{ recipe.servings }} servings
+              </span>
+              {% endif %}
+              
+              {% if recipe.difficulty %}
+              <span class="badge bg-light text-dark">
+                <i class="fas fa-signal me-1"></i>{{ recipe.difficulty }}
+              </span>
+              {% endif %}
+            </div>
+            
+            <!-- Tags -->
+            {% if recipe.tags %}
+            <div class="recipe-tags">
+              {% for tag in recipe.tags[:3] %}
+              <span class="badge bg-primary me-1 mb-1">{{ tag.name }}</span>
+              {% endfor %}
+              {% if recipe.tags|length > 3 %}
+              <span class="badge bg-secondary">+{{ recipe.tags|length - 3 }} more</span>
+              {% endif %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="card-footer bg-transparent border-0 pt-0">
+          <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">
+              {% if recipe.country %}
+                <i class="fas fa-flag me-1"></i>{{ recipe.country }}
+              {% endif %}
+            </small>
+            <div class="btn-group btn-group-sm" role="group">
+              <button type="button" class="btn btn-outline-danger btn-sm favorite-btn" 
+                      data-recipe-id="{{ recipe.id }}">
+                <i class="far fa-heart"></i>
+              </button>
+              <a href="{{ url_for('main.recipe', recipe_id=recipe.id) }}" 
+                 class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-eye me-1"></i>View
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Search Actions -->
+  <div class="row mt-5">
+    <div class="col-12">
+      <div class="card border-0 bg-light">
+        <div class="card-body text-center">
+          <h5 class="card-title">
+            <i class="fas fa-search-plus me-2 text-primary"></i>Refine Your Search
+          </h5>
+          <p class="card-text">Try different search terms or explore our categories</p>
+          <div class="d-flex justify-content-center gap-2 flex-wrap">
+            <a href="{{ url_for('main.tags') }}" class="btn btn-primary">
+              <i class="fas fa-tags me-1"></i>Browse Categories
+            </a>
+            <a href="{{ url_for('main.ingredient_search') }}" class="btn btn-outline-success">
+              <i class="fas fa-search me-1"></i>Search by Ingredients
+            </a>
+            <a href="{{ url_for('main.all_recipes') }}" class="btn btn-outline-info">
+              <i class="fas fa-th-large me-1"></i>View All Recipes
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+  <!-- No Results -->
+  <div class="row">
+    <div class="col-12">
+      <div class="text-center py-5">
+        <div class="mb-4">
+          <i class="fas fa-search fa-4x text-muted mb-3"></i>
+          <h3 class="text-muted">No recipes found</h3>
+          <p class="lead text-muted">
+            {% if request.args.get('q') %}
+              We couldn't find any recipes matching "<strong>{{ request.args.get('q') }}</strong>"
+            {% else %}
+              No recipes match your search criteria
+            {% endif %}
+          </p>
+        </div>
+        
+        <div class="suggestions">
+          <h5 class="mb-3">Try these suggestions:</h5>
+          <div class="d-flex justify-content-center gap-2 flex-wrap mb-4">
+            <span class="badge bg-light text-dark fs-6 p-2">Check your spelling</span>
+            <span class="badge bg-light text-dark fs-6 p-2">Use fewer keywords</span>
+            <span class="badge bg-light text-dark fs-6 p-2">Try more general terms</span>
+            <span class="badge bg-light text-dark fs-6 p-2">Browse categories instead</span>
+          </div>
+          
+          <div class="d-flex justify-content-center gap-2 flex-wrap">
+            <a href="{{ url_for('main.tags') }}" class="btn btn-primary">
+              <i class="fas fa-tags me-1"></i>Browse Categories
+            </a>
+            <a href="{{ url_for('main.ingredient_search') }}" class="btn btn-outline-success">
+              <i class="fas fa-search me-1"></i>Search by Ingredients
+            </a>
+            <a href="{{ url_for('main.all_recipes') }}" class="btn btn-outline-info">
+              <i class="fas fa-th-large me-1"></i>View All Recipes
+            </a>
+            <a href="{{ url_for('main.add_recipe') }}" class="btn btn-outline-warning">
+              <i class="fas fa-plus me-1"></i>Add This Recipe
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+.recipe-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.recipe-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+
+.card-img-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-img-container img {
+  transition: transform 0.3s ease;
+}
+
+.recipe-card:hover .card-img-container img {
+  transform: scale(1.05);
+}
+
+.card-img-overlay-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.1) 100%);
+}
+
+.recipe-stats .badge {
+  font-size: 0.75rem;
+}
+
+.recipe-tags .badge {
+  font-size: 0.7rem;
+}
+
+.favorite-btn.active {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
+}
+
+.favorite-btn.active i {
+  color: white;
+}
+
+.suggestions .badge {
+  margin: 0.2rem;
+}
+
+.card-img-placeholder {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Favorite button functionality
+    document.querySelectorAll('.favorite-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            this.classList.toggle('active');
+            const icon = this.querySelector('i');
+            
+            if (this.classList.contains('active')) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                this.classList.remove('btn-outline-danger');
+                this.classList.add('btn-danger');
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                this.classList.remove('btn-danger');
+                this.classList.add('btn-outline-danger');
+            }
+        });
+    });
+
+    // Card click handling
+    document.querySelectorAll('.recipe-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (!e.target.closest('.btn') && !e.target.closest('.favorite-btn')) {
+                const link = this.querySelector('a.stretched-link');
+                if (link) {
+                    window.location.href = link.href;
+                }
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,750 @@
+{% extends "base.html" %}
+
+{% block title %}🍎 Add New Food - Smart Nutrition Tracker{% endblock %}
+
+{% block page_styles %}
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        --danger-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+        --info-gradient: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        --glass-bg: rgba(255, 255, 255, 0.25);
+        --glass-border: rgba(255, 255, 255, 0.18);
+        --shadow-soft: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        padding: 2rem 0;
+    }
+
+    .add-food-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    /* Glassmorphism Hero Section */
+    .hero-section {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 25px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+        animation: float 20s ease-in-out infinite;
+        z-index: 0;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(45deg, #fff, #a8edea);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+        opacity: 0.9;
+        color: white;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Beautiful Form Container */
+    .form-container {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 25px;
+        padding: 2.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .form-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--success-gradient);
+        border-radius: 25px 25px 0 0;
+    }
+
+    /* Smart Form Sections */
+    .form-section {
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        color: white;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .section-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--success-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+    }
+
+    /* Enhanced Form Fields */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        color: white;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 1rem 1.5rem;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .form-input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* Nutrition Fields Grid */
+    .nutrition-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .nutrition-field {
+        position: relative;
+    }
+
+    .nutrition-field .form-input {
+        padding-right: 3rem;
+    }
+
+    .nutrition-unit {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+        font-weight: 500;
+        pointer-events: none;
+    }
+
+    /* Quick Suggestions */
+    .quick-suggestions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .suggestion-tag {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .suggestion-tag:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-1px);
+    }
+
+    /* Action Buttons */
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        background: var(--success-gradient);
+        border: none;
+        border-radius: 25px;
+        color: white;
+        padding: 1rem 2.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+        min-width: 150px;
+        justify-content: center;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+
+    .action-btn.secondary {
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+    }
+
+    .action-btn.secondary:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.5);
+        box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+    }
+
+    /* Barcode Scanner */
+    .scanner-section {
+        text-align: center;
+        margin: 2rem 0;
+        padding: 2rem;
+        border: 2px dashed rgba(255, 255, 255, 0.3);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .scanner-icon {
+        font-size: 3rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 1rem;
+    }
+
+    .scanner-text {
+        color: white;
+        opacity: 0.8;
+        margin-bottom: 1rem;
+    }
+
+    /* Animations */
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(180deg); }
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2rem;
+        }
+        
+        .form-container {
+            padding: 1.5rem;
+        }
+        
+        .nutrition-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .action-btn {
+            width: 100%;
+        }
+    }
+
+    /* Loading States */
+    .loading {
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    /* Success States */
+    .form-input.success {
+        border-color: rgba(79, 172, 254, 0.6);
+        background: rgba(79, 172, 254, 0.1);
+    }
+
+    /* Smart Input Icons */
+    .input-with-icon {
+        position: relative;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.6);
+        z-index: 1;
+    }
+
+    .input-with-icon .form-input {
+        padding-left: 3rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="add-food-container">
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <h1 class="hero-title">🍎 Add New Food</h1>
+        <p class="hero-subtitle">Expand your nutrition database with detailed food information</p>
+    </div>
+
+    <!-- Barcode Scanner Section -->
+    <div class="scanner-section">
+        <div class="scanner-icon">
+            <i class="fas fa-qrcode"></i>
+        </div>
+        <div class="scanner-text">
+            Scan a barcode to auto-fill nutrition information
+        </div>
+        <button class="action-btn secondary" onclick="startBarcodeScanner()">
+            <i class="fas fa-camera"></i>
+            Scan Barcode
+        </button>
+    </div>
+
+    <!-- Enhanced Form -->
+    <div class="form-container">
+        <form method="POST" action="/nutrition/add-food" id="addFoodForm">
+            <!-- Basic Information Section -->
+            <div class="form-section">
+                <div class="section-title">
+                    <div class="section-icon">
+                        <i class="fas fa-tag"></i>
+                    </div>
+                    Basic Information
+                </div>
+
+                <div class="form-group">
+                    <label for="name" class="form-label">
+                        <i class="fas fa-apple-alt"></i> Food Name *
+                    </label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-apple-alt input-icon"></i>
+                        <input type="text" 
+                               name="name" 
+                               id="name" 
+                               class="form-input" 
+                               placeholder="e.g., Chicken Breast, Brown Rice, Apple..."
+                               required>
+                    </div>
+                    <div class="quick-suggestions">
+                        <span class="suggestion-tag" onclick="fillSuggestion('name', 'Chicken Breast')">Chicken Breast</span>
+                        <span class="suggestion-tag" onclick="fillSuggestion('name', 'Brown Rice')">Brown Rice</span>
+                        <span class="suggestion-tag" onclick="fillSuggestion('name', 'Greek Yogurt')">Greek Yogurt</span>
+                        <span class="suggestion-tag" onclick="fillSuggestion('name', 'Banana')">Banana</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="brand" class="form-label">
+                        <i class="fas fa-store"></i> Brand (Optional)
+                    </label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-store input-icon"></i>
+                        <input type="text" 
+                               name="brand" 
+                               id="brand" 
+                               class="form-input" 
+                               placeholder="e.g., Tyson, Uncle Ben's, Dannon...">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="barcode" class="form-label">
+                        <i class="fas fa-barcode"></i> Barcode (Optional)
+                    </label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-barcode input-icon"></i>
+                        <input type="text" 
+                               name="barcode" 
+                               id="barcode" 
+                               class="form-input" 
+                               placeholder="Scan or enter barcode number">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="serving_size" class="form-label">
+                        <i class="fas fa-balance-scale"></i> Serving Size
+                    </label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-balance-scale input-icon"></i>
+                        <input type="text" 
+                               name="serving_size" 
+                               id="serving_size" 
+                               class="form-input" 
+                               placeholder="e.g., 100g, 1 cup, 1 piece...">
+                    </div>
+                    <div class="quick-suggestions">
+                        <span class="suggestion-tag" onclick="fillSuggestion('serving_size', '100g')">100g</span>
+                        <span class="suggestion-tag" onclick="fillSuggestion('serving_size', '1 cup')">1 cup</span>
+                        <span class="suggestion-tag" onclick="fillSuggestion('serving_size', '1 piece')">1 piece</span>
+                        <span class="suggestion-tag" onclick="fillSuggestion('serving_size', '1 tbsp')">1 tbsp</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nutrition Information Section -->
+            <div class="form-section">
+                <div class="section-title">
+                    <div class="section-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    Nutrition Information (per serving)
+                </div>
+
+                <div class="nutrition-grid">
+                    <div class="form-group">
+                        <label for="calories" class="form-label">
+                            <i class="fas fa-fire"></i> Calories *
+                        </label>
+                        <div class="nutrition-field">
+                            <input type="number" 
+                                   name="calories" 
+                                   id="calories" 
+                                   class="form-input" 
+                                   step="0.1" 
+                                   placeholder="0"
+                                   required>
+                            <span class="nutrition-unit">kcal</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="protein" class="form-label">
+                            <i class="fas fa-drumstick-bite"></i> Protein *
+                        </label>
+                        <div class="nutrition-field">
+                            <input type="number" 
+                                   name="protein" 
+                                   id="protein" 
+                                   class="form-input" 
+                                   step="0.1" 
+                                   placeholder="0"
+                                   required>
+                            <span class="nutrition-unit">g</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="carbs" class="form-label">
+                            <i class="fas fa-bread-slice"></i> Carbs *
+                        </label>
+                        <div class="nutrition-field">
+                            <input type="number" 
+                                   name="carbs" 
+                                   id="carbs" 
+                                   class="form-input" 
+                                   step="0.1" 
+                                   placeholder="0"
+                                   required>
+                            <span class="nutrition-unit">g</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fat" class="form-label">
+                            <i class="fas fa-cheese"></i> Fat *
+                        </label>
+                        <div class="nutrition-field">
+                            <input type="number" 
+                                   name="fat" 
+                                   id="fat" 
+                                   class="form-input" 
+                                   step="0.1" 
+                                   placeholder="0"
+                                   required>
+                            <span class="nutrition-unit">g</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-actions">
+                <button type="submit" class="action-btn">
+                    <i class="fas fa-plus-circle"></i>
+                    Add Food to Database
+                </button>
+                <a href="/nutrition/food-list" class="action-btn secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Food List
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Enhanced JavaScript -->
+<script>
+// Smart form enhancements
+class SmartFoodForm {
+    constructor() {
+        this.init();
+    }
+
+    init() {
+        this.bindEvents();
+        this.addValidation();
+        this.animateOnLoad();
+    }
+
+    // Animate form on load
+    animateOnLoad() {
+        const sections = document.querySelectorAll('.form-section');
+        sections.forEach((section, index) => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                section.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                section.style.opacity = '1';
+                section.style.transform = 'translateY(0)';
+            }, index * 200);
+        });
+    }
+
+    // Add smart form validation
+    addValidation() {
+        const inputs = document.querySelectorAll('.form-input');
+        inputs.forEach(input => {
+            input.addEventListener('blur', (e) => {
+                if (e.target.value && e.target.required) {
+                    e.target.classList.add('success');
+                } else {
+                    e.target.classList.remove('success');
+                }
+            });
+
+            // Auto-format numbers
+            if (input.type === 'number') {
+                input.addEventListener('input', (e) => {
+                    if (e.target.value < 0) {
+                        e.target.value = 0;
+                    }
+                });
+            }
+        });
+    }
+
+    // Bind interactive events
+    bindEvents() {
+        const form = document.getElementById('addFoodForm');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.submitForm(e.target);
+        });
+    }
+
+    // Enhanced form submission
+    async submitForm(form) {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+
+        // Show loading state
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding Food...';
+        submitBtn.disabled = true;
+        submitBtn.classList.add('loading');
+
+        try {
+            const formData = new FormData(form);
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                showToast('✅ Food added successfully!', 'success');
+                form.reset();
+                setTimeout(() => {
+                    window.location.href = '/nutrition/food-list';
+                }, 1500);
+            } else {
+                showToast('❌ Error adding food. Please try again.', 'error');
+            }
+        } catch (error) {
+            showToast('❌ Network error. Please check your connection.', 'error');
+        } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('loading');
+        }
+    }
+}
+
+// Fill suggestion function
+function fillSuggestion(fieldName, value) {
+    const field = document.getElementById(fieldName);
+    field.value = value;
+    field.focus();
+    field.classList.add('success');
+    
+    // Add animation
+    field.style.transform = 'scale(1.02)';
+    setTimeout(() => {
+        field.style.transform = 'scale(1)';
+    }, 200);
+}
+
+// Barcode scanner simulation
+function startBarcodeScanner() {
+    showToast('📱 Opening camera for barcode scanning...', 'info');
+    
+    // Simulate barcode scanning
+    setTimeout(() => {
+        const mockFoodData = {
+            name: 'Greek Yogurt Plain',
+            brand: 'Chobani',
+            barcode: '894700010045',
+            serving_size: '1 container (170g)',
+            calories: '100',
+            protein: '18',
+            carbs: '6',
+            fat: '0'
+        };
+        
+        fillMockData(mockFoodData);
+        showToast('📊 Barcode scanned! Food data filled automatically.', 'success');
+    }, 2000);
+}
+
+// Fill mock data from barcode scan
+function fillMockData(data) {
+    Object.keys(data).forEach(key => {
+        const field = document.getElementById(key);
+        if (field) {
+            field.value = data[key];
+            field.classList.add('success');
+            
+            // Animate field
+            field.style.transform = 'scale(1.02)';
+            setTimeout(() => {
+                field.style.transform = 'scale(1)';
+            }, 200);
+        }
+    });
+}
+
+// Toast notification system
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast-notification ${type}`;
+    toast.innerHTML = `
+        <div class="toast-content">
+            <span>${message}</span>
+            <button onclick="this.parentElement.parentElement.remove()">×</button>
+        </div>
+    `;
+    
+    const toastStyles = `
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+            max-width: 300px;
+        }
+        .toast-notification.success { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .toast-notification.error { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
+        .toast-content { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+        .toast-content button { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; flex-shrink: 0; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    `;
+    
+    // Add styles if not already added
+    if (!document.querySelector('#toast-styles')) {
+        const style = document.createElement('style');
+        style.id = 'toast-styles';
+        style.textContent = toastStyles;
+        document.head.appendChild(style);
+    }
+    
+    document.body.appendChild(toast);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.style.animation = 'slideIn 0.3s ease reverse';
+            setTimeout(() => toast.remove(), 300);
+        }
+    }, 5000);
+}
+
+// Initialize smart form
+document.addEventListener('DOMContentLoaded', () => {
+    new SmartFoodForm();
+});
+</script>
+{% endblock %}

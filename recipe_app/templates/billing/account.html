@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <!-- Header -->
+      <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-primary mb-3">
+          <i class="fas fa-user-circle me-3"></i>Account & Billing
+        </h1>
+        <p class="lead text-muted">Manage your subscription and account settings</p>
+      </div>
+
+      <!-- Current Plan Card -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">
+            <i class="fas fa-crown me-2"></i>Current Subscription
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <h4 class="text-primary mb-2">{{ user.current_plan }} Plan</h4>
+              
+              {% if user.current_plan == 'Free' %}
+                <p class="text-muted mb-3">You're currently on our free plan.</p>
+                <p class="mb-0">
+                  <strong>Recipes:</strong> {{ user.get_recipe_count() }} / {{ user.get_recipe_limit() }}
+                </p>
+              {% else %}
+                <p class="text-muted mb-3">Thank you for being a Home Grub Hub subscriber!</p>
+                
+                {% if user.is_on_trial() %}
+                  <div class="alert alert-info mb-3">
+                    <i class="fas fa-gift me-2"></i>
+                    You're currently in your free trial period. 
+                    <strong>{{ user.days_left_in_trial() }} days remaining</strong>
+                  </div>
+                {% endif %}
+                
+                <p class="mb-2">
+                  <strong>Status:</strong> 
+                  <span class="badge bg-success">Active</span>
+                </p>
+                <p class="mb-0">
+                  <strong>Recipes:</strong> {{ user.get_recipe_count() }} (Unlimited)
+                </p>
+              {% endif %}
+            </div>
+            <div class="col-md-4 text-md-end">
+              {% if user.current_plan == 'Free' %}
+                <a href="{{ url_for('billing.pricing') }}" class="btn btn-primary">
+                  <i class="fas fa-arrow-up me-2"></i>Upgrade Plan
+                </a>
+              {% else %}
+                <div class="d-grid gap-2">
+                  <a href="{{ url_for('billing.pricing') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-exchange-alt me-2"></i>Change Plan
+                  </a>
+                  <a href="{{ url_for('billing.cancel_subscription') }}" class="btn btn-outline-danger btn-sm" 
+                     onclick="return confirm('Are you sure you want to cancel your subscription?')">
+                    <i class="fas fa-times me-2"></i>Cancel Subscription
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Usage Statistics -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-chart-bar me-2"></i>Usage Statistics
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row text-center">
+            <div class="col-md-4">
+              <div class="border-end">
+                <h3 class="text-primary">{{ user.get_recipe_count() }}</h3>
+                <p class="text-muted mb-0">Total Recipes</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="border-end">
+                <h3 class="text-success">{{ user.favorites|length }}</h3>
+                <p class="text-muted mb-0">Favorite Recipes</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <h3 class="text-info">{{ (user.created_at | string)[:10] }}</h3>
+              <p class="text-muted mb-0">Member Since</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Information -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-user me-2"></i>Account Information
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <p class="mb-2">
+                <strong>Username:</strong> {{ user.username }}
+              </p>
+              <p class="mb-2">
+                <strong>Email:</strong> {{ user.email }}
+              </p>
+            </div>
+            <div class="col-md-6">
+              <p class="mb-2">
+                <strong>Account Type:</strong> 
+                {% if user.is_admin %}
+                  <span class="badge bg-warning">Administrator</span>
+                {% else %}
+                  <span class="badge bg-secondary">User</span>
+                {% endif %}
+              </p>
+              <p class="mb-2">
+                <strong>Account Status:</strong> 
+                <span class="badge bg-success">Active</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Access -->
+      <div class="card shadow-sm">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-key me-2"></i>Feature Access
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <ul class="list-unstyled">
+                <li class="mb-2">
+                  <i class="fas {{ 'fa-check text-success' if user.can_access_feature('unlimited_recipes') else 'fa-times text-muted' }} me-2"></i>
+                  Unlimited Recipes
+                </li>
+                <li class="mb-2">
+                  <i class="fas {{ 'fa-check text-success' if user.can_access_feature('private_recipes') else 'fa-times text-muted' }} me-2"></i>
+                  Private Recipes
+                </li>
+                <li class="mb-2">
+                  <i class="fas {{ 'fa-check text-success' if user.can_access_feature('multi_user') else 'fa-times text-muted' }} me-2"></i>
+                  Multi-User Access
+                </li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <ul class="list-unstyled">
+                <li class="mb-2">
+                  <i class="fas {{ 'fa-check text-success' if user.can_access_feature('family_sharing') else 'fa-times text-muted' }} me-2"></i>
+                  Weekly Meal Planner
+                </li>
+                <li class="mb-2">
+                  <i class="fas {{ 'fa-check text-success' if user.can_access_feature('rss_import') else 'fa-times text-muted' }} me-2"></i>
+                  Recipe Import
+                </li>
+                <li class="mb-2">
+                  <i class="fas {{ 'fa-check text-success' if user.can_access_feature('nutrition') else 'fa-times text-muted' }} me-2"></i>
+                  Nutrition Analysis
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Need Help? -->
+      <div class="text-center mt-5">
+        <p class="text-muted">
+          Need help with your account? 
+          <a href="mailto:support@flavorio.app" class="text-decoration-none">Contact our support team</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

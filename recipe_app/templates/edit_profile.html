@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+
+{% block seo_title %}Edit Profile - HomeGrubHub{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.profile') }}">Profile</a></li>
+                    <li class="breadcrumb-item active">Edit Profile</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-edit me-2"></i>Edit Your Profile
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+                        
+                        <!-- Profile Image Section -->
+                        <div class="row mb-4">
+                            <div class="col-md-3 text-center">
+                                <div class="mb-3">
+                                    <img src="{{ current_user.get_profile_image_url() }}" 
+                                         alt="Current Profile Picture" 
+                                         class="rounded-circle border" 
+                                         style="width: 150px; height: 150px; object-fit: cover;"
+                                         id="profile-preview">
+                                </div>
+                                <small class="text-muted">Current Profile Picture</small>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="mb-3">
+                                    {{ form.profile_image.label(class="form-label") }}
+                                    {{ form.profile_image(class="form-control", onchange="previewImage(event)") }}
+                                    {% if form.profile_image.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.profile_image.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text">
+                                        Upload a profile picture (JPG, PNG, GIF). Image will be resized to 300x300 pixels.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Basic Information -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    {{ form.username.label(class="form-label") }}
+                                    {{ form.username(class="form-control") }}
+                                    <div class="form-text">Username cannot be changed.</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    {{ form.display_name.label(class="form-label") }}
+                                    {{ form.display_name(class="form-control") }}
+                                    {% if form.display_name.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.display_name.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text">Optional: How you want to appear to other users</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control") }}
+                            {% if form.email.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.email.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.profile_bio.label(class="form-label") }}
+                            {{ form.profile_bio(class="form-control") }}
+                            {% if form.profile_bio.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.profile_bio.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                <span id="bio-count">0</span>/500 characters
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Social Media Links -->
+                        <h5 class="mb-3">
+                            <i class="fas fa-share-alt me-2"></i>Social Media & Links
+                        </h5>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    {{ form.instagram_url.label(class="form-label") }}
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fab fa-instagram"></i></span>
+                                        {{ form.instagram_url(class="form-control") }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    {{ form.youtube_url.label(class="form-label") }}
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fab fa-youtube"></i></span>
+                                        {{ form.youtube_url(class="form-control") }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    {{ form.website_url.label(class="form-label") }}
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-globe"></i></span>
+                                        {{ form.website_url(class="form-control") }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Location -->
+                        <h5 class="mb-3">
+                            <i class="fas fa-map-marker-alt me-2"></i>Location
+                        </h5>
+                        
+                        <div class="mb-3">
+                            {{ form.postcode.label(class="form-label") }}
+                            {{ form.postcode(class="form-control") }}
+                            {% if form.postcode.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.postcode.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Used for location-specific grocery pricing and local recipe recommendations.
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ url_for('main.profile') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Character counter for bio
+document.addEventListener('DOMContentLoaded', function() {
+    const bioField = document.querySelector('#profile_bio');
+    const bioCount = document.querySelector('#bio-count');
+    
+    function updateBioCount() {
+        const count = bioField.value.length;
+        bioCount.textContent = count;
+        bioCount.className = count > 450 ? 'text-warning' : count > 480 ? 'text-danger' : '';
+    }
+    
+    if (bioField) {
+        bioField.addEventListener('input', updateBioCount);
+        updateBioCount(); // Initial count
+    }
+});
+
+// Profile image preview
+function previewImage(event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById('profile-preview');
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// Form validation feedback
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    
+    form.addEventListener('submit', function() {
+        const submitBtn = form.querySelector('input[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.value = 'Updating...';
+        
+        // Re-enable after 5 seconds in case of error
+        setTimeout(() => {
+            submitBtn.disabled = false;
+            submitBtn.value = 'Update Profile';
+        }, 5000);
+    });
+});
+</script>
+{% endblock %}

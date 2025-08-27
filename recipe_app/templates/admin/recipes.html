@@ -1,0 +1,151 @@
+{% extends "admin/dashboard.html" %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <!-- Admin Sidebar -->
+    <div class="col-md-3 col-lg-2 bg-light sidebar">
+      <div class="position-sticky pt-3">
+        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+          <span><i class="fas fa-tools me-1"></i>Admin Panel</span>
+        </h6>
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('admin.dashboard') }}">
+              <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('admin.users') }}">
+              <i class="fas fa-users me-2"></i>Manage Users
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="{{ url_for('admin.recipes') }}">
+              <i class="fas fa-utensils me-2"></i>Manage Recipes
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('admin.settings') }}">
+              <i class="fas fa-cog me-2"></i>Settings
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('admin.system_info') }}">
+              <i class="fas fa-info-circle me-2"></i>System Info
+            </a>
+          </li>
+        </ul>
+        
+        <hr>
+        
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('main.index') }}">
+              <i class="fas fa-arrow-left me-2"></i>Back to Site
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Main Content -->
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2"><i class="fas fa-utensils me-2"></i>Manage Recipes</h1>
+      </div>
+
+      <!-- Recipes Table -->
+      <div class="card shadow">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th>Author</th>
+                  <th>Created</th>
+                  <th>Tags</th>
+                  <th>Favorites</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for recipe in recipes.items %}
+                <tr>
+                  <td>{{ recipe.id }}</td>
+                  <td>
+                    <strong>{{ recipe.title }}</strong>
+                    {% if recipe.country %}
+                      <br><small class="text-muted">{{ recipe.country }}</small>
+                    {% endif %}
+                  </td>
+                  <td>{{ recipe.user.username }}</td>
+                  <td>{{ recipe.created_at.strftime('%Y-%m-%d') }}</td>
+                  <td>
+                    {% for tag in recipe.tags %}
+                      <span class="badge bg-secondary me-1">{{ tag.name }}</span>
+                    {% endfor %}
+                  </td>
+                  <td>
+                    <span class="badge bg-info">{{ recipe.favorited_by|length }}</span>
+                  </td>
+                  <td>
+                    <div class="btn-group" role="group">
+                      <a href="{{ url_for('main.recipe', recipe_id=recipe.id) }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                        <i class="fas fa-eye"></i>
+                      </a>
+                      <a href="{{ url_for('admin.delete_recipe', recipe_id=recipe.id) }}" class="btn btn-sm btn-outline-danger">
+                        <i class="fas fa-trash"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- Pagination -->
+          {% if recipes.pages > 1 %}
+          <nav aria-label="Recipe pagination">
+            <ul class="pagination justify-content-center">
+              {% if recipes.has_prev %}
+                <li class="page-item">
+                  <a class="page-link" href="{{ url_for('admin.recipes', page=recipes.prev_num) }}">Previous</a>
+                </li>
+              {% endif %}
+              
+              {% for page_num in recipes.iter_pages() %}
+                {% if page_num %}
+                  {% if page_num != recipes.page %}
+                    <li class="page-item">
+                      <a class="page-link" href="{{ url_for('admin.recipes', page=page_num) }}">{{ page_num }}</a>
+                    </li>
+                  {% else %}
+                    <li class="page-item active">
+                      <span class="page-link">{{ page_num }}</span>
+                    </li>
+                  {% endif %}
+                {% else %}
+                  <li class="page-item disabled">
+                    <span class="page-link">…</span>
+                  </li>
+                {% endif %}
+              {% endfor %}
+              
+              {% if recipes.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="{{ url_for('admin.recipes', page=recipes.next_num) }}">Next</a>
+                </li>
+              {% endif %}
+            </ul>
+          </nav>
+          {% endif %}
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+{% endblock %}

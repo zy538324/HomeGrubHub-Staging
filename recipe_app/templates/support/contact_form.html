@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Support - HomeGrubHub{% endblock %}
+
+{% block head %}
+{{ super() }}
+<style>
+    
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="contact-hero">
+    <div class="container text-center">
+        <h1 class="display-5 mb-3">
+            <i class="fas fa-envelope me-3"></i>
+            Contact Support
+        </h1>
+        <p class="lead mb-0">We're here to help! Send us a message and we'll respond within 24 hours.</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row g-5">
+        <!-- Contact Form -->
+        <div class="col-lg-8">
+            <div class="card contact-card">
+                <div class="card-body p-4 p-md-5">
+                    <h3 class="mb-4 text-center">
+                        <i class="fas fa-paper-plane me-2 text-primary"></i>
+                        Send us a Message
+                    </h3>
+                    
+                    <form method="POST" id="contactForm">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        
+                        <!-- Name and Email Row -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="name" name="name" 
+                                           placeholder="Your Name" required 
+                                           value="{{ current_user.username if current_user.is_authenticated else '' }}">
+                                    <label for="name">Your Name *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control" id="email" name="email" 
+                                           placeholder="your.email@example.com" required
+                                           value="{{ current_user.email if current_user.is_authenticated else '' }}">
+                                    <label for="email">Email Address *</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Category Selection -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted mb-3">What can we help you with? *</label>
+                            <div class="category-selector">
+                                <div class="category-option">
+                                    <input type="radio" id="general" name="category" value="General Question" required>
+                                    <label for="general" class="category-label">
+                                        <i class="fas fa-question-circle"></i>
+                                        <span>General</span>
+                                    </label>
+                                </div>
+                                <div class="category-option">
+                                    <input type="radio" id="technical" name="category" value="Technical Issue" required>
+                                    <label for="technical" class="category-label">
+                                        <i class="fas fa-cog"></i>
+                                        <span>Technical</span>
+                                    </label>
+                                </div>
+                                <div class="category-option">
+                                    <input type="radio" id="billing" name="category" value="Billing" required>
+                                    <label for="billing" class="category-label">
+                                        <i class="fas fa-credit-card"></i>
+                                        <span>Billing</span>
+                                    </label>
+                                </div>
+                                <div class="category-option">
+                                    <input type="radio" id="feedback" name="category" value="Feedback" required>
+                                    <label for="feedback" class="category-label">
+                                        <i class="fas fa-star"></i>
+                                        <span>Feedback</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Subject -->
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="subject" name="subject" 
+                                   placeholder="Brief description of your issue" required>
+                            <label for="subject">Subject *</label>
+                        </div>
+                        
+                        <!-- Message -->
+                        <div class="form-floating">
+                            <textarea class="form-control" id="message" name="message" 
+                                      placeholder="Please describe your question or issue in detail..." 
+                                      style="height: 150px" required></textarea>
+                            <label for="message">Message *</label>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-submit">
+                                <i class="fas fa-paper-plane me-2"></i>
+                                Send Message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contact Information -->
+        <div class="col-lg-4">
+            <div class="contact-info">
+                <h4 class="mb-4 text-center">
+                    <i class="fas fa-info-circle me-2 text-primary"></i>
+                    Other Ways to Reach Us
+                </h4>
+                
+                <div class="contact-info-item">
+                    <div class="contact-info-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-info-content">
+                        <h6>Email Support</h6>
+                        <p>support@homegrubhub.com<br>
+                        <small>Response within 24 hours</small></p>
+                    </div>
+                </div>
+                
+                <div class="contact-info-item">
+                    <div class="contact-info-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="contact-info-content">
+                        <h6>Support Hours</h6>
+                        <p>Monday - Friday: 9am - 6pm GMT<br>
+                        <small>Weekend: Emergency only</small></p>
+                    </div>
+                </div>
+                
+                <div class="contact-info-item">
+                    <div class="contact-info-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="contact-info-content">
+                        <h6>Live Chat</h6>
+                        <p>Available for Premium users<br>
+                        <small>Real-time assistance</small></p>
+                    </div>
+                </div>
+                
+                <div class="contact-info-item">
+                    <div class="contact-info-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="contact-info-content">
+                        <h6>Help Center</h6>
+                        <p>Browse our FAQ and guides<br>
+                        <small>Instant answers to common questions</small></p>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div class="mt-4 pt-3 border-top">
+                    <h6 class="text-center mb-3">Quick Actions</h6>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('support.faq') }}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-question me-2"></i>View FAQ
+                        </a>
+                        <a href="{{ url_for('support.getting_started') }}" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-rocket me-2"></i>Getting Started
+                        </a>
+                        {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('support.create_ticket') }}" class="btn btn-outline-warning btn-sm">
+                            <i class="fas fa-ticket-alt me-2"></i>Create Ticket
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('contactForm');
+    const submitBtn = form.querySelector('.btn-submit');
+    
+    form.addEventListener('submit', function(e) {
+        // Add loading state
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
+        submitBtn.disabled = true;
+    });
+    
+    // Character counter for message
+    const messageField = document.getElementById('message');
+    const maxLength = 2000;
+    
+    // Create counter element
+    const counter = document.createElement('div');
+    counter.className = 'text-muted text-end mt-1';
+    counter.style.fontSize = '0.8rem';
+    messageField.parentNode.appendChild(counter);
+    
+    function updateCounter() {
+        const remaining = maxLength - messageField.value.length;
+        counter.textContent = `${messageField.value.length}/${maxLength} characters`;
+        
+        if (remaining < 100) {
+            counter.className = 'text-warning text-end mt-1';
+        } else if (remaining < 0) {
+            counter.className = 'text-danger text-end mt-1';
+        } else {
+            counter.className = 'text-muted text-end mt-1';
+        }
+    }
+    
+    messageField.addEventListener('input', updateCounter);
+    messageField.setAttribute('maxlength', maxLength);
+    updateCounter();
+});
+</script>
+{% endblock %}

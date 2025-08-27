@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}Submit a Price - Share with the Community{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-tag"></i> Submit a Price
+                    </h3>
+                    <p class="mb-0 mt-2">Help the community by sharing prices you see in stores</p>
+                </div>
+                
+                <div class="card-body">
+                    <!-- Information Alert -->
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Community Pricing:</strong> 
+                        Your price submissions help other users make informed shopping decisions. 
+                        All data is user-contributed and verified by the community.
+                    </div>
+                    
+                    <!-- Price Submission Form -->
+                    <form method="POST" id="priceSubmissionForm">
+                        <div class="row">
+                            <!-- Shop Information -->
+                            <div class="col-md-6">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-store"></i> Shop Information
+                                </h5>
+                                
+                                <div class="mb-3">
+                                    <label for="shop_name" class="form-label">
+                                        Shop Name <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="shop_name" 
+                                           name="shop_name" 
+                                           placeholder="e.g., Tesco, Sainsbury's, ASDA"
+                                           required>
+                                    <div class="form-text">The name of the store where you saw this price</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="shop_location" class="form-label">
+                                        Shop Location <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="shop_location" 
+                                           name="shop_location" 
+                                           placeholder="e.g., Tesco Extra, High Street, SW1A 1AA"
+                                           required>
+                                    <div class="form-text">Full address including postcode (we'll verify the postcode automatically)</div>
+                                    <div id="postcodeValidation" class="mt-2"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Product Information -->
+                            <div class="col-md-6">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-shopping-basket"></i> Product Information
+                                </h5>
+                                
+                                <div class="mb-3">
+                                    <label for="item_name" class="form-label">
+                                        Item Name <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="item_name" 
+                                           name="item_name" 
+                                           placeholder="e.g., Chicken Breast, Milk, Bread"
+                                           required>
+                                    <div class="form-text">The name of the product</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="brand_name" class="form-label">
+                                        Brand Name (Optional)
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="brand_name" 
+                                           name="brand_name" 
+                                           placeholder="e.g., Tesco Finest, Own Brand">
+                                    <div class="form-text">Brand or product line (leave blank for unbranded items)</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="size" class="form-label">
+                                        Size/Quantity (Optional)
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="size" 
+                                           name="size" 
+                                           placeholder="e.g., 500g, 1L, 6 pack">
+                                    <div class="form-text">Size or quantity of the product</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="price" class="form-label">
+                                        Price <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">£</span>
+                                        <input type="number" 
+                                               class="form-control" 
+                                               id="price" 
+                                               name="price" 
+                                               step="0.01" 
+                                               min="0.01" 
+                                               max="999.99"
+                                               placeholder="0.00"
+                                               required>
+                                    </div>
+                                    <div class="form-text">The price you saw in the store</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Community Guidelines -->
+                        <div class="alert alert-warning mt-4">
+                            <h6><i class="fas fa-users"></i> Community Guidelines</h6>
+                            <ul class="mb-0">
+                                <li>Only submit prices you have personally seen in stores</li>
+                                <li>Make sure the price information is accurate and current</li>
+                                <li>Include clear product descriptions to help other users</li>
+                                <li>Your submissions will be verified by other community members</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-plus-circle"></i> Submit Price
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-chart-bar"></i> Community Stats
+                    </h6>
+                    <div class="row text-center" id="priceStats">
+                        <div class="col">
+                            <div class="h4 text-primary mb-0" id="totalPrices">-</div>
+                            <small class="text-muted">Total Prices</small>
+                        </div>
+                        <div class="col">
+                            <div class="h4 text-success mb-0" id="verifiedPrices">-</div>
+                            <small class="text-muted">Verified</small>
+                        </div>
+                        <div class="col">
+                            <div class="h4 text-info mb-0" id="uniqueItems">-</div>
+                            <small class="text-muted">Unique Items</small>
+                        </div>
+                        <div class="col">
+                            <div class="h4 text-warning mb-0" id="recentSubmissions">-</div>
+                            <small class="text-muted">This Week</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Help Section -->
+            <div class="text-center mt-4">
+                <a href="{{ url_for('user_prices.browse_prices') }}" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-search"></i> Browse Prices
+                </a>
+                <a href="{{ url_for('user_prices.my_submissions') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-list"></i> My Submissions
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Load community stats
+function loadPriceStats() {
+    fetch('/api/prices/stats')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('totalPrices').textContent = data.stats.total_prices.toLocaleString();
+                document.getElementById('verifiedPrices').textContent = data.stats.verified_prices.toLocaleString();
+                document.getElementById('uniqueItems').textContent = data.stats.unique_items.toLocaleString();
+                document.getElementById('recentSubmissions').textContent = data.stats.recent_submissions.toLocaleString();
+            }
+        })
+        .catch(error => {
+            console.error('Error loading stats:', error);
+        });
+}
+
+// Validate postcode when shop location changes
+document.getElementById('shop_location').addEventListener('blur', function() {
+    const location = this.value;
+    const validation = document.getElementById('postcodeValidation');
+    
+    // Try to extract postcode from location
+    const postcodePattern = /([A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2})/i;
+    const match = location.match(postcodePattern);
+    
+    if (match) {
+        const postcode = match[1].toUpperCase();
+        
+        // Validate postcode via API
+        fetch(`/api/postcode/lookup/${postcode}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    validation.innerHTML = `
+                        <div class="text-success">
+                            <i class="fas fa-check-circle"></i> 
+                            Postcode verified: ${data.postcode_data.postcode}
+                        </div>
+                    `;
+                } else {
+                    validation.innerHTML = `
+                        <div class="text-warning">
+                            <i class="fas fa-exclamation-triangle"></i> 
+                            Could not verify postcode
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                validation.innerHTML = `
+                    <div class="text-muted">
+                        <i class="fas fa-info-circle"></i> 
+                        Include postcode for better location accuracy
+                    </div>
+                `;
+            });
+    } else {
+        validation.innerHTML = `
+            <div class="text-muted">
+                <i class="fas fa-info-circle"></i> 
+                Include postcode for better location accuracy
+            </div>
+        `;
+    }
+});
+
+// Form validation
+document.getElementById('priceSubmissionForm').addEventListener('submit', function(e) {
+    const price = parseFloat(document.getElementById('price').value);
+    
+    if (price <= 0) {
+        e.preventDefault();
+        alert('Please enter a valid price greater than £0.00');
+        return;
+    }
+    
+    if (price > 1000) {
+        e.preventDefault();
+        if (!confirm('This price seems very high (over £1000). Are you sure this is correct?')) {
+            return;
+        }
+    }
+});
+
+// Load stats when page loads
+document.addEventListener('DOMContentLoaded', loadPriceStats);
+</script>
+{% endblock %}

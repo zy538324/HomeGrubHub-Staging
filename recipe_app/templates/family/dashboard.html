@@ -1,0 +1,431 @@
+{% extends "base.html" %}
+{% block title %}Family Dashboard - HomeGrubHub{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Family Navigation Bar -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav class="navbar navbar-expand-lg navbar-light bg-gradient-primary text-white rounded">
+                <div class="container-fluid">
+                    <span class="navbar-brand mb-0 h1 text-white">
+                        <i class="fas fa-home me-2"></i>{{ family_account.family_name }} Family Dashboard
+                    </span>
+                    <div class="navbar-nav ms-auto">
+                        <a class="nav-link text-white active" href="{{ url_for('family.family_dashboard') }}">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                        <div class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="collaborationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-users me-1"></i>Collaboration
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="collaborationDropdown">
+                                <li><a class="dropdown-item" href="{{ url_for('family_collab.cooking_assignments') }}">
+                                    <i class="fas fa-user-friends me-2 text-success"></i>Cooking Assignments
+                                </a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('family_collab.family_recipe_collection') }}">
+                                    <i class="fas fa-book-open me-2 text-info"></i>Recipe Collection
+                                </a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('family_collab.family_messages') }}">
+                                    <i class="fas fa-comments me-2 text-primary"></i>Family Messages
+                                </a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('family_collab.shopping_coordination') }}">
+                                    <i class="fas fa-shopping-cart me-2 text-secondary"></i>Shopping Requests
+                                </a></li>
+                            </ul>
+                        </div>
+                        <a class="nav-link text-white" href="{{ url_for('family.family_meal_planning') }}">
+                            <i class="fas fa-calendar-alt me-1"></i>Meal Planning
+                        </a>
+                        <a class="nav-link text-white" href="{{ url_for('family.family_shopping') }}">
+                            <i class="fas fa-shopping-cart me-1"></i>Shopping
+                        </a>
+                        <a class="nav-link text-white" href="{{ url_for('family.family_challenges') }}">
+                            <i class="fas fa-trophy me-1"></i>Challenges
+                        </a>
+                        <a class="nav-link text-white" href="{{ url_for('family.manage_members') }}">
+                            <i class="fas fa-users me-1"></i>Members
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Family Overview Cards -->
+    <div class="row mb-4">
+        <!-- Family Health Score -->
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body text-center">
+                    <div class="display-4 mb-2">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3 class="mb-1">{{ family_nutrition.family_health_score or 'N/A' }}</h3>
+                    <p class="card-text">Family Health Score</p>
+                    <small>
+                        {% if family_nutrition.top_performing_member %}
+                            Top: {{ family_nutrition.top_performing_member }}
+                        {% else %}
+                            Track meals for insights
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Members -->
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body text-center">
+                    <div class="display-4 mb-2">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="mb-1">{{ family_members|length }}</h3>
+                    <p class="card-text">Family Members</p>
+                    <small>
+                        {{ family_account.max_members - family_members|length }} spots available
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily Calories -->
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body text-center">
+                    <div class="display-4 mb-2">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <h3 class="mb-1">{{ family_nutrition.avg_daily_calories or 'N/A' }}</h3>
+                    <p class="card-text">Avg Daily Calories</p>
+                    <small>Per family member</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Challenges -->
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body text-center">
+                    <div class="display-4 mb-2">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3 class="mb-1">{{ active_challenges|length }}</h3>
+                    <p class="card-text">Active Challenges</p>
+                    <small>
+                        <a href="{{ url_for('family.family_challenges') }}" class="text-white">
+                            <u>Create new challenge</u>
+                        </a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Family Members Panel -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-users me-2 text-primary"></i>Family Members
+                    </h5>
+                    <a href="{{ url_for('family.manage_members') }}" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-cog me-1"></i>Manage
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if family_members %}
+                        <div class="row">
+                            {% for member in family_members %}
+                            <div class="col-md-6 mb-3">
+                                <div class="border rounded p-3 h-100">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" 
+                                             style="width: 50px; height: 50px;">
+                                            {% if member.age_group == 'child' %}
+                                                <i class="fas fa-child"></i>
+                                            {% elif member.age_group == 'teen' %}
+                                                <i class="fas fa-user-graduate"></i>
+                                            {% else %}
+                                                <i class="fas fa-user"></i>
+                                            {% endif %}
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1">{{ member.display_name }}</h6>
+                                            <small class="text-muted">{{ member.role.title() }}</small>
+                                            {% if member.user_id == family_account.primary_user_id %}
+                                                <span class="badge bg-success ms-1">Admin</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="small">
+                                        <div class="d-flex justify-content-between">
+                                            <span>Last Active:</span>
+                                            <span class="text-muted">
+                                                {{ member.last_active.strftime('%m/%d') if member.last_active else 'Never' }}
+                                            </span>
+                                        </div>
+                                        {% if member.dietary_restrictions %}
+                                        <div class="mt-1">
+                                            <span class="badge bg-info">Dietary Restrictions</span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted">
+                            <i class="fas fa-users fa-3x mb-3"></i>
+                            <p>No family members found</p>
+                        </div>
+                    {% endif %}
+                    
+                    {% if family_members|length < family_account.max_members %}
+                        <div class="border-top pt-3 text-center">
+                            <div class="mb-2">
+                                <strong>Family Code:</strong> 
+                                <code class="bg-light px-2 py-1 rounded">{{ family_account.family_code }}</code>
+                                <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyFamilyCode('{{ family_account.family_code }}')">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <small class="text-muted">Share this code with family members to join</small>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity Panel -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clock me-2 text-success"></i>Recent Family Activity
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_meals %}
+                        <div class="timeline">
+                            {% for meal in recent_meals %}
+                            <div class="timeline-item mb-3">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0 me-3">
+                                        <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" 
+                                             style="width: 40px; height: 40px;">
+                                            {% if meal.meal_type == 'breakfast' %}
+                                                <i class="fas fa-coffee"></i>
+                                            {% elif meal.meal_type == 'lunch' %}
+                                                <i class="fas fa-hamburger"></i>
+                                            {% elif meal.meal_type == 'dinner' %}
+                                                <i class="fas fa-utensils"></i>
+                                            {% else %}
+                                                <i class="fas fa-cookie"></i>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">
+                                            {{ meal.recipe_name or meal.recipe.name if meal.recipe else 'Custom Meal' }}
+                                        </h6>
+                                        <p class="mb-1 small text-muted">
+                                            {{ meal.meal_type.title() }} • {{ meal.date.strftime('%A, %m/%d') }}
+                                            {% if meal.cook %}
+                                                • Cooked by {{ meal.cook.display_name }}
+                                            {% endif %}
+                                        </p>
+                                        {% if meal.servings_planned %}
+                                            <small class="text-success">{{ meal.servings_planned }} servings planned</small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="text-center">
+                            <a href="{{ url_for('family.family_meal_planning') }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-calendar-plus me-1"></i>Plan More Meals
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted">
+                            <i class="fas fa-utensils fa-3x mb-3"></i>
+                            <p>No recent meal plans</p>
+                            <a href="{{ url_for('family.family_meal_planning') }}" class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i>Start Planning
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Challenges & Achievements Row -->
+    <div class="row">
+        <!-- Active Challenges -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-trophy me-2 text-warning"></i>Active Challenges
+                    </h5>
+                    <a href="{{ url_for('family.family_challenges') }}" class="btn btn-sm btn-outline-warning">
+                        <i class="fas fa-plus me-1"></i>Create
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if active_challenges %}
+                        {% for challenge in active_challenges %}
+                        <div class="border rounded p-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="mb-0">{{ challenge.challenge_name }}</h6>
+                                <span class="badge bg-{{ 'success' if challenge.get_family_progress() >= 100 else 'primary' }}">
+                                    {{ challenge.get_family_progress()|round(1) }}%
+                                </span>
+                            </div>
+                            <p class="small text-muted mb-2">{{ challenge.description[:100] }}...</p>
+                            
+                            <!-- Progress Bar -->
+                            <div class="progress mb-2" style="height: 8px;">
+                                <div class="progress-bar" role="progressbar" 
+                                     style="width: {{ challenge.get_family_progress() }}%"
+                                     aria-valuenow="{{ challenge.get_family_progress() }}" 
+                                     aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between small">
+                                <span class="text-muted">
+                                    Ends: {{ challenge.end_date.strftime('%m/%d/%Y') }}
+                                </span>
+                                <span class="text-primary">
+                                    {{ challenge.participants|length }} participants
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center text-muted">
+                            <i class="fas fa-trophy fa-3x mb-3"></i>
+                            <p>No active challenges</p>
+                            <a href="{{ url_for('family.family_challenges') }}" class="btn btn-warning">
+                                <i class="fas fa-plus me-1"></i>Create Challenge
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Achievements -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-medal me-2 text-success"></i>Recent Achievements
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_achievements %}
+                        {% for achievement in recent_achievements %}
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0 me-3">
+                                <div class="rounded-circle text-white d-flex align-items-center justify-content-center" 
+                                     style="width: 50px; height: 50px; background: {{ achievement.badge_color or '#28a745' }};">
+                                    <i class="{{ achievement.badge_icon or 'fas fa-star' }}"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">{{ achievement.achievement_name }}</h6>
+                                <p class="mb-1 small text-muted">{{ achievement.achievement_description }}</p>
+                                <small class="text-success">
+                                    {% if achievement.member %}
+                                        Earned by {{ achievement.member.display_name }}
+                                    {% else %}
+                                        Family Achievement
+                                    {% endif %}
+                                    • {{ achievement.earned_date.strftime('%m/%d') }}
+                                    {% if achievement.points_earned > 0 %}
+                                        • {{ achievement.points_earned }} points
+                                    {% endif %}
+                                </small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center text-muted">
+                            <i class="fas fa-medal fa-3x mb-3"></i>
+                            <p>No achievements yet</p>
+                            <small>Complete challenges to earn achievements!</small>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+}
+
+.timeline-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 60px;
+    width: 2px;
+    height: 30px;
+    background: #dee2e6;
+}
+
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: none;
+}
+
+.card-header {
+    background: rgba(0,123,255,0.1);
+    border-bottom: 1px solid rgba(0,123,255,0.2);
+}
+
+.progress {
+    background-color: rgba(0,123,255,0.1);
+}
+
+.badge {
+    font-size: 0.75em;
+}
+</style>
+
+<!-- JavaScript -->
+<script>
+function copyFamilyCode(code) {
+    navigator.clipboard.writeText(code).then(function() {
+        // Show success message
+        const button = event.target.closest('button');
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i>';
+        button.classList.remove('btn-outline-secondary');
+        button.classList.add('btn-success');
+        
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('btn-success');
+            button.classList.add('btn-outline-secondary');
+        }, 2000);
+    });
+}
+
+// Auto-refresh dashboard data every 5 minutes
+setTimeout(() => {
+    location.reload();
+}, 300000);
+</script>
+{% endblock %}

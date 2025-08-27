@@ -1,0 +1,1202 @@
+{% extends "base.html" %}
+
+{% block title %}🍎 Smart Nutrition Tracker - HomeGrubHub{% endblock %}
+
+{% block page_styles %}
+<style>
+    :root {
+        /* Modern Color Palette - Matching Fitness Dashboard */
+        --primary-color: #10b981;
+        --secondary-color: #3b82f6;
+        --accent-color: #f59e0b;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --info-color: #06b6d4;
+        --purple-accent: #8b5cf6;
+        
+        /* Backgrounds & Surfaces */
+        --bg-primary: #f8fafc;
+        --bg-secondary: #ffffff;
+        --bg-card: #ffffff;
+        --bg-hover: #f1f5f9;
+        --bg-active: #e2e8f0;
+        
+        /* Text Colors */
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+        --text-white: #ffffff;
+        
+        /* Borders & Shadows */
+        --border-color: #e2e8f0;
+        --border-light: #f1f5f9;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        --shadow-hover: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+        
+        /* Modern Gradients */
+        --gradient-primary: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        --gradient-secondary: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        --gradient-accent: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        --gradient-purple: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        --gradient-rainbow: linear-gradient(135deg, #10b981 0%, #3b82f6 25%, #8b5cf6 50%, #f59e0b 75%, #ef4444 100%);
+        
+        /* Spacing & Sizing */
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --radius-xl: 20px;
+        --radius-full: 9999px;
+        
+        /* Animations */
+        --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        --bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    body {
+        background: var(--bg-primary);
+        min-height: 100vh;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        color: var(--text-primary);
+        line-height: 1.6;
+    }
+
+    .nutrition-dashboard {
+        padding: 2rem 1rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* Modern Hero Section */
+    .hero-section {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-xl);
+        padding: 3rem 2rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition-normal);
+    }
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient-rainbow);
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    }
+
+    .hero-section::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        border-radius: 50%;
+        opacity: 0.05;
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .hero-title {
+        font-size: 2.75rem;
+        font-weight: 800;
+        margin-bottom: 0.75rem;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-subtitle {
+        font-size: 1.125rem;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+        font-weight: 500;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Progress Cards Grid - Matching Fitness Dashboard */
+    .progress-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .progress-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+        transition: all var(--transition-normal);
+        cursor: pointer;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .progress-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--primary-color);
+    }
+
+    .progress-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+
+    .progress-card-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .progress-card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: var(--text-white);
+        box-shadow: var(--shadow-sm);
+        transition: all var(--transition-normal);
+    }
+
+    .calories .progress-card-icon { background: var(--gradient-accent); }
+    .protein .progress-card-icon { background: var(--gradient-primary); }
+    .carbs .progress-card-icon { background: var(--gradient-secondary); }
+    .fat .progress-card-icon { background: var(--gradient-purple); }
+
+    .progress-card:hover .progress-card-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .progress-value-display {
+        text-align: center;
+        margin: 1.5rem 0;
+    }
+
+    .progress-current {
+        font-size: 2.25rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        line-height: 1;
+    }
+
+    .progress-goal {
+        font-size: 1rem;
+        color: var(--text-muted);
+        margin-top: 0.25rem;
+    }
+
+    .progress-bar-container {
+        width: 100%;
+        height: 8px;
+        background: var(--border-light);
+        border-radius: var(--radius-full);
+        overflow: hidden;
+        margin: 1rem 0;
+    }
+
+    .progress-bar {
+        height: 100%;
+        border-radius: var(--radius-full);
+        transition: width 1.5s var(--bounce);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .progress-bar::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        animation: shimmer 2s infinite;
+    }
+
+    .calories .progress-bar { background: var(--gradient-accent); }
+    .protein .progress-bar { background: var(--gradient-primary); }
+    .carbs .progress-bar { background: var(--gradient-secondary); }
+    .fat .progress-bar { background: var(--gradient-purple); }
+
+    .progress-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .progress-stat {
+        text-align: center;
+        padding: 0.75rem;
+        background: var(--bg-primary);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border-light);
+    }
+
+    .progress-stat-value {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1;
+    }
+
+    .progress-stat-label {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 0.25rem;
+    }
+
+    /* Modern Meal Sections */
+    .meals-container {
+        display: grid;
+        gap: 2rem;
+    }
+
+    .meal-section {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        transition: all var(--transition-normal);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .meal-section:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .meal-header {
+        background: var(--bg-primary);
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        transition: all var(--transition-normal);
+    }
+
+    .meal-header:hover {
+        background: var(--bg-hover);
+    }
+
+    .meal-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 1.375rem;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .meal-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: var(--text-white);
+        box-shadow: var(--shadow-sm);
+        transition: all var(--transition-normal);
+    }
+
+    .meal-section.breakfast .meal-icon { background: var(--gradient-accent); }
+    .meal-section.lunch .meal-icon { background: var(--gradient-primary); }
+    .meal-section.dinner .meal-icon { background: var(--gradient-secondary); }
+    .meal-section.snacks .meal-icon { background: var(--gradient-purple); }
+
+    .meal-stats {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+    }
+
+    .meal-stat {
+        text-align: center;
+    }
+
+    .meal-stat-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1;
+    }
+
+    .meal-stat-label {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 0.25rem;
+    }
+
+    .meal-content {
+        padding: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: all var(--transition-slow);
+    }
+
+    .meal-section.expanded .meal-content {
+        max-height: 2000px;
+        padding: 1.5rem 2rem 2rem;
+    }
+
+    .expand-icon {
+        color: var(--text-muted);
+        font-size: 1.25rem;
+        transition: all var(--transition-normal);
+    }
+
+    .meal-section.expanded .expand-icon {
+        transform: rotate(180deg);
+        color: var(--primary-color);
+    }
+
+    /* Food Entry Cards */
+    .food-entries {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .food-entry-card {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-md);
+        padding: 1.5rem;
+        cursor: pointer;
+        transition: all var(--transition-normal);
+        position: relative;
+    }
+
+    .food-entry-card:hover {
+        transform: translateX(4px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary-color);
+        background: var(--bg-secondary);
+    }
+
+    .food-entry-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .food-entry-info h4 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 0.25rem 0;
+        line-height: 1.3;
+    }
+
+    .food-entry-serving {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    .food-entry-calories {
+        background: var(--gradient-accent);
+        color: var(--text-white);
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius-full);
+        font-size: 0.875rem;
+        font-weight: 600;
+        box-shadow: var(--shadow-sm);
+        transition: all var(--transition-normal);
+    }
+
+    .food-entry-card:hover .food-entry-calories {
+        transform: scale(1.05);
+    }
+
+    .food-entry-nutrients {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+    }
+
+    .nutrient-item {
+        text-align: center;
+        padding: 0.75rem;
+        background: var(--bg-secondary);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border-light);
+        transition: all var(--transition-normal);
+    }
+
+    .food-entry-card:hover .nutrient-item {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .nutrient-value {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1;
+        margin-bottom: 0.25rem;
+    }
+
+    .nutrient-label {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Empty States */
+    .empty-meal {
+        padding: 3rem 2rem;
+        text-align: center;
+        color: var(--text-muted);
+        background: var(--bg-primary);
+        border-radius: var(--radius-md);
+        border: 2px dashed var(--border-color);
+        margin: 1rem 0;
+        transition: all var(--transition-normal);
+    }
+
+    .empty-meal:hover {
+        border-color: var(--primary-color);
+        background: var(--bg-secondary);
+    }
+
+    .empty-meal-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.6;
+    }
+
+    .empty-meal-text {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-secondary);
+    }
+
+    .empty-meal-subtext {
+        font-size: 0.875rem;
+        margin-bottom: 2rem;
+    }
+
+    .add-food-btn {
+        background: var(--gradient-primary);
+        color: var(--text-white);
+        border: none;
+        border-radius: var(--radius-full);
+        padding: 1rem 2rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition-normal);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: var(--shadow-md);
+    }
+
+    .add-food-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        color: var(--text-white);
+        text-decoration: none;
+    }
+
+    /* Hero Actions */
+    .hero-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-btn {
+        background: var(--gradient-primary);
+        color: var(--text-white);
+        border: none;
+        border-radius: var(--radius-full);
+        padding: 1rem 2rem;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all var(--transition-normal);
+        box-shadow: var(--shadow-md);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+
+    .hero-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-xl);
+        color: var(--text-white);
+        text-decoration: none;
+    }
+
+    .hero-btn.secondary {
+        background: var(--bg-secondary);
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
+    }
+
+    .hero-btn.secondary:hover {
+        background: var(--primary-color);
+        color: var(--text-white);
+    }
+
+    /* Animations */
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-10px) rotate(2deg); }
+    }
+
+    @keyframes shimmer {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+
+    @keyframes slideInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .hero-title { font-size: 2.25rem; }
+        .progress-grid { grid-template-columns: 1fr; }
+        .meal-stats { gap: 1rem; }
+        .food-entry-nutrients { grid-template-columns: repeat(2, 1fr); }
+        .hero-actions { flex-direction: column; align-items: stretch; }
+        .progress-stats { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 480px) {
+        .nutrition-dashboard { padding: 1rem 0.5rem; }
+        .hero-section { padding: 2rem 1rem; }
+        .progress-card { padding: 1.5rem; }
+        .meal-header { padding: 1rem 1.5rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="nutrition-dashboard">
+    <!-- Modern Hero Section -->
+    <div class="hero-section">
+        <h1 class="hero-title">🍎 Smart Nutrition Tracker</h1>
+        <p class="hero-subtitle">Track your daily nutrition with intelligent insights and beautiful analytics</p>
+        <div class="hero-actions">
+            <a href="/nutrition/add-food" class="hero-btn">
+                <i class="fas fa-plus-circle"></i>
+                Add Food
+            </a>
+            <button class="hero-btn secondary" onclick="generateMealPlan()">
+                <i class="fas fa-magic"></i>
+                Smart Meal Plan
+            </button>
+        </div>
+    </div>
+
+    <!-- Modern Progress Cards -->
+    <div class="progress-grid">
+        <!-- Calories Card -->
+        <div class="progress-card calories">
+            <div class="progress-card-header">
+                <div class="progress-card-title">
+                    <div class="progress-card-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    Calories
+                </div>
+            </div>
+            <div class="progress-value-display">
+                <div class="progress-current">{{ goals.calories_consumed|int }}</div>
+                <div class="progress-goal">/ {{ goals.calories_goal|int }} goal</div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: {{ (goals.calories_consumed / goals.calories_goal * 100)|round(1) if goals.calories_goal > 0 else 0 }}%"></div>
+            </div>
+            <div class="progress-stats">
+                <div class="progress-stat">
+                    <div class="progress-stat-value">{{ ((goals.calories_consumed / goals.calories_goal * 100)|round(1)) if goals.calories_goal > 0 else 0 }}%</div>
+                    <div class="progress-stat-label">Complete</div>
+                </div>
+                <div class="progress-stat">
+                    <div class="progress-stat-value">{{ (goals.calories_goal - goals.calories_consumed)|int if goals.calories_goal > goals.calories_consumed else 0 }}</div>
+                    <div class="progress-stat-label">Remaining</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Protein Card -->
+        <div class="progress-card protein">
+            <div class="progress-card-header">
+                <div class="progress-card-title">
+                    <div class="progress-card-icon">
+                        <i class="fas fa-drumstick-bite"></i>
+                    </div>
+                    Protein
+                </div>
+            </div>
+            <div class="progress-value-display">
+                <div class="progress-current">{{ goals.protein_consumed|round(1) }}</div>
+                <div class="progress-goal">/ {{ goals.protein_goal|int }}g goal</div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: {{ (goals.protein_consumed / goals.protein_goal * 100)|round(1) if goals.protein_goal > 0 else 0 }}%"></div>
+            </div>
+            <div class="progress-stats">
+                <div class="progress-stat">
+                    <div class="progress-stat-value">{{ ((goals.protein_consumed / goals.protein_goal * 100)|round(1)) if goals.protein_goal > 0 else 0 }}%</div>
+                    <div class="progress-stat-label">Complete</div>
+                </div>
+                <div class="progress-stat">
+                    <div class="progress-stat-value">{{ (goals.protein_goal - goals.protein_consumed)|round(1) if goals.protein_goal > goals.protein_consumed else 0 }}g</div>
+                    <div class="progress-stat-label">Remaining</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carbs Card -->
+        <div class="progress-card carbs">
+            <div class="progress-card-header">
+                <div class="progress-card-title">
+                    <div class="progress-card-icon">
+                        <i class="fas fa-bread-slice"></i>
+                    </div>
+                    Carbs
+                </div>
+            </div>
+            <div class="progress-value-display">
+                <div class="progress-current">{{ goals.carbs_consumed|round(1) }}</div>
+                <div class="progress-goal">/ {{ goals.carbs_goal|int }}g goal</div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: {{ (goals.carbs_consumed / goals.carbs_goal * 100)|round(1) if goals.carbs_goal > 0 else 0 }}%"></div>
+            </div>
+            <div class="progress-stats">
+                <div class="progress-stat">
+                    <div class="progress-stat-value">{{ ((goals.carbs_consumed / goals.carbs_goal * 100)|round(1)) if goals.carbs_goal > 0 else 0 }}%</div>
+                    <div class="progress-stat-label">Complete</div>
+                </div>
+                <div class="progress-stat">
+                    <div class="progress-stat-value">{{ (goals.carbs_goal - goals.carbs_consumed)|round(1) if goals.carbs_goal > goals.carbs_consumed else 0 }}g</div>
+                    <div class="progress-stat-label">Remaining</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fat Card -->
+        <div class="progress-card fat">
+            <div class="progress-card-header">
+                <div class="progress-card-title">
+                    <div class="progress-card-icon">
+                        <i class="fas fa-cheese"></i>
+                    </div>
+                    Fat
+                </div>
+            </div>
+            <div class="progress-value-display">
+                <div class="progress-current">{{ goals.fat_consumed|round(1) }}</div>
+                <div class="progress-goal">/ {{ goals.fat_goal|int }}g goal</div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: {{ (goals.fat_consumed / goals.fat_goal * 100)|round(1) if goals.fat_goal > 0 else 0 }}%"></div>
+            </div>
+            <div class="progress-stats">
+                <div class="progress-stat">
+                    <div class="progress-stat-value">{{ ((goals.fat_consumed / goals.fat_goal * 100)|round(1)) if goals.fat_goal > 0 else 0 }}%</div>
+                    <div class="progress-stat-label">Complete</div>
+                </div>
+                <div class="progress-stat">
+                    <div class="progress-stat-value">{{ (goals.fat_goal - goals.fat_consumed)|round(1) if goals.fat_goal > goals.fat_consumed else 0 }}g</div>
+                    <div class="progress-stat-label">Remaining</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Meal Sections -->
+    <div class="meals-container">
+        <!-- Breakfast -->
+        <div class="meal-section breakfast" id="breakfast-section">
+            <div class="meal-header" onclick="toggleMeal('breakfast')">
+                <div class="meal-title">
+                    <div class="meal-icon">
+                        <i class="fas fa-sun"></i>
+                    </div>
+                    Breakfast
+                </div>
+                <div class="meal-stats">
+                    <div class="meal-stat">
+                        <div class="meal-stat-value">{{ breakfast_calories|round(0) }}</div>
+                        <div class="meal-stat-label">Calories</div>
+                    </div>
+                    <div class="meal-stat">
+                        <div class="meal-stat-value">{{ breakfast_protein|round(1) }}g</div>
+                        <div class="meal-stat-label">Protein</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-down expand-icon"></i>
+            </div>
+            <div class="meal-content">
+                {% if breakfast_entries %}
+                    <div class="food-entries">
+                        {% for entry in breakfast_entries %}
+                            <div class="food-entry-card" onclick="editFoodEntry({{ entry.id }})">
+                                <div class="food-entry-header">
+                                    <div class="food-entry-info">
+                                        <h4>{{ entry.food_name }}</h4>
+                                        <div class="food-entry-serving">{{ entry.serving_amount }} {{ entry.serving_unit }}</div>
+                                    </div>
+                                    <div class="food-entry-calories">{{ entry.calories|round(0) }} cal</div>
+                                </div>
+                                <div class="food-entry-nutrients">
+                                    <div class="nutrient-item">
+                                        <div class="nutrient-value">{{ entry.protein|round(1) }}g</div>
+                                        <div class="nutrient-label">Protein</div>
+                                    </div>
+                                    <div class="nutrient-item">
+                                        <div class="nutrient-value">{{ entry.carbs|round(1) }}g</div>
+                                        <div class="nutrient-label">Carbs</div>
+                                    </div>
+                                    <div class="nutrient-item">
+                                        <div class="nutrient-value">{{ entry.fat|round(1) }}g</div>
+                                        <div class="nutrient-label">Fat</div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-meal">
+                        <div class="empty-meal-icon">🌅</div>
+                        <div class="empty-meal-text">No breakfast logged yet</div>
+                        <div class="empty-meal-subtext">Start your day by adding your first meal</div>
+                        <a href="/nutrition/log-food?meal=breakfast" class="add-food-btn">
+                            <i class="fas fa-plus"></i>
+                            Add Breakfast Food
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Lunch -->
+        <div class="meal-section lunch" id="lunch-section">
+            <div class="meal-header" onclick="toggleMeal('lunch')">
+                <div class="meal-title">
+                    <div class="meal-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    Lunch
+                </div>
+                <div class="meal-stats">
+                    <div class="meal-stat">
+                        <div class="meal-stat-value">{{ lunch_calories|round(0) }}</div>
+                        <div class="meal-stat-label">Calories</div>
+                    </div>
+                    <div class="meal-stat">
+                        <div class="meal-stat-value">{{ lunch_protein|round(1) }}g</div>
+                        <div class="meal-stat-label">Protein</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-down expand-icon"></i>
+            </div>
+            <div class="meal-content">
+                {% if lunch_entries %}
+                    <div class="food-entries">
+                        {% for entry in lunch_entries %}
+                            <div class="food-entry-card" onclick="editFoodEntry({{ entry.id }})">
+                                <div class="food-entry-header">
+                                    <div class="food-entry-info">
+                                        <h4>{{ entry.food_name }}</h4>
+                                        <div class="food-entry-serving">{{ entry.serving_amount }} {{ entry.serving_unit }}</div>
+                                    </div>
+                                    <div class="food-entry-calories">{{ entry.calories|round(0) }} cal</div>
+                                </div>
+                                <div class="food-entry-nutrients">
+                                    <div class="nutrient-item">
+                                        <div class="nutrient-value">{{ entry.protein|round(1) }}g</div>
+                                        <div class="nutrient-label">Protein</div>
+                                    </div>
+                                    <div class="nutrient-item">
+                                        <div class="nutrient-value">{{ entry.carbs|round(1) }}g</div>
+                                        <div class="nutrient-label">Carbs</div>
+                                    </div>
+                                    <div class="nutrient-item">
+                                        <div class="nutrient-value">{{ entry.fat|round(1) }}g</div>
+                                        <div class="nutrient-label">Fat</div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-meal">
+                        <div class="empty-meal-icon">🥗</div>
+                        <div class="empty-meal-text">No lunch logged yet</div>
+                        <div class="empty-meal-subtext">Add your midday nutrition</div>
+                        <a href="/nutrition/log-food?meal=lunch" class="add-food-btn">
+                            <i class="fas fa-plus"></i>
+                            Add Lunch Food
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Dinner -->
+        <div class="meal-section dinner" id="dinner-section">
+            <div class="meal-header" onclick="toggleMeal('dinner')">
+                <div class="meal-title">
+                    <div class="meal-icon">
+                        <i class="fas fa-moon"></i>
+                    </div>
+                    Dinner
+                </div>
+                <div class="meal-stats">
+                    <div class="meal-stat">
+                        <div class="meal-stat-value">{{ dinner_calories|round(0) }}</div>
+                        <div class="meal-stat-label">Calories</div>
+                    </div>
+                    <div class="meal-stat">
+                        <div class="meal-stat-value">{{ dinner_protein|round(1) }}g</div>
+                        <div class="meal-stat-label">Protein</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-down expand-icon"></i>
+            </div>
+            <div class="meal-content">
+                {% if dinner_entries %}
+                    <div class="food-entries">
+                        {% for entry in dinner_entries %}
+                            <div class="food-entry-card" onclick="editFoodEntry({{ entry.id }})">
+                                <div class="food-entry-header">
+                                    <div class="food-entry-info">
+                                        <h4>{{ entry.food_name }}</h4>
+                                        <div class="food-entry-serving">{{ entry.serving_amount }} {{ entry.serving_unit }}</div>
+                                    </div>
+                                    <div class="food-entry-calories">{{ entry.calories|round(0) }} cal</div>
+                                </div>
+                                <div class="food-entry-nutrients">
+                                    <div class="nutrient-item">
+                                        <div class="nutrient-value">{{ entry.protein|round(1) }}g</div>
+                                        <div class="nutrient-label">Protein</div>
+                                    </div>
+                                    <div class="nutrient-item">
+                                        <div class="nutrient-value">{{ entry.carbs|round(1) }}g</div>
+                                        <div class="nutrient-label">Carbs</div>
+                                    </div>
+                                    <div class="nutrient-item">
+                                        <div class="nutrient-value">{{ entry.fat|round(1) }}g</div>
+                                        <div class="nutrient-label">Fat</div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-meal">
+                        <div class="empty-meal-icon">🍽️</div>
+                        <div class="empty-meal-text">No dinner logged yet</div>
+                        <div class="empty-meal-subtext">Complete your day with dinner</div>
+                        <a href="/nutrition/log-food?meal=dinner" class="add-food-btn">
+                            <i class="fas fa-plus"></i>
+                            Add Dinner Food
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Snacks -->
+        <div class="meal-section snacks" id="snacks-section">
+            <div class="meal-header" onclick="toggleMeal('snacks')">
+                <div class="meal-title">
+                    <div class="meal-icon">
+                        <i class="fas fa-cookie-bite"></i>
+                    </div>
+                    Snacks
+                </div>
+                <div class="meal-stats">
+                    <div class="meal-stat">
+                        <div class="meal-stat-value">{{ snacks_calories|round(0) }}</div>
+                        <div class="meal-stat-label">Calories</div>
+                    </div>
+                    <div class="meal-stat">
+                        <div class="meal-stat-value">{{ snacks_protein|round(1) }}g</div>
+                        <div class="meal-stat-label">Protein</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-down expand-icon"></i>
+            </div>
+            <div class="meal-content">
+                {% if snacks_entries %}
+                    <div class="food-entries">
+                        {% for entry in snacks_entries %}
+                            <div class="food-entry-card" onclick="editFoodEntry({{ entry.id }})">
+                                <div class="food-entry-header">
+                                    <div class="food-entry-info">
+                                        <h4>{{ entry.food_name }}</h4>
+                                        <div class="food-entry-serving">{{ entry.serving_amount }} {{ entry.serving_unit }}</div>
+                                    </div>
+                                    <div class="food-entry-calories">{{ entry.calories|round(0) }} cal</div>
+                                </div>
+                                <div class="food-entry-nutrients">
+                                    <div class="nutrient-item">
+                                        <div class="nutrient-value">{{ entry.protein|round(1) }}g</div>
+                                        <div class="nutrient-label">Protein</div>
+                                    </div>
+                                    <div class="nutrient-item">
+                                        <div class="nutrient-value">{{ entry.carbs|round(1) }}g</div>
+                                        <div class="nutrient-label">Carbs</div>
+                                    </div>
+                                    <div class="nutrient-item">
+                                        <div class="nutrient-value">{{ entry.fat|round(1) }}g</div>
+                                        <div class="nutrient-label">Fat</div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-meal">
+                        <div class="empty-meal-icon">🍿</div>
+                        <div class="empty-meal-text">No snacks logged yet</div>
+                        <div class="empty-meal-subtext">Track your between-meal nutrition</div>
+                        <a href="/nutrition/log-food?meal=snacks" class="add-food-btn">
+                            <i class="fas fa-plus"></i>
+                            Add Snack
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced JavaScript -->
+<script>
+// Modern Nutrition Tracker Class
+class ModernNutritionTracker {
+    constructor() {
+        this.init();
+    }
+
+    init() {
+        this.animateOnLoad();
+        this.bindEvents();
+        this.loadUserPreferences();
+    }
+
+    // Smooth entrance animations
+    animateOnLoad() {
+        const elements = document.querySelectorAll('.progress-card, .meal-section');
+        elements.forEach((el, index) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                el.style.transition = 'all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
+                el.classList.add('success-state');
+            }, index * 100);
+        });
+    }
+
+    // Bind modern interactions
+    bindEvents() {
+        // Progress card clicks
+        document.querySelectorAll('.progress-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                this.showNutrientDetails(e.currentTarget.classList[1]);
+            });
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', this.handleKeyboard.bind(this));
+    }
+
+    // Show detailed nutrient breakdown
+    showNutrientDetails(nutrient) {
+        this.showToast(`📊 ${nutrient.charAt(0).toUpperCase() + nutrient.slice(1)} breakdown coming soon!`, 'info');
+    }
+
+    // Modern keyboard navigation
+    handleKeyboard(e) {
+        if (e.key === 'a' && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            window.location.href = '/nutrition/add-food';
+        }
+    }
+
+    // Load and save user preferences
+    loadUserPreferences() {
+        const preferences = localStorage.getItem('nutrition-preferences');
+        if (preferences) {
+            const prefs = JSON.parse(preferences);
+            if (prefs.expandedMeals) {
+                prefs.expandedMeals.forEach(meal => {
+                    const section = document.getElementById(`${meal}-section`);
+                    if (section) {
+                        section.classList.add('expanded');
+                    }
+                });
+            }
+        }
+    }
+
+    saveUserPreferences() {
+        const expandedMeals = Array.from(document.querySelectorAll('.meal-section.expanded'))
+            .map(section => section.id.replace('-section', ''));
+        
+        localStorage.setItem('nutrition-preferences', JSON.stringify({
+            expandedMeals,
+            lastUpdated: new Date().toISOString()
+        }));
+    }
+
+    // Modern toast notifications
+    showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `modern-toast ${type}`;
+        toast.innerHTML = `
+            <div class="toast-icon">
+                ${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️'}
+            </div>
+            <div class="toast-message">${message}</div>
+            <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+        `;
+
+        // Toast styles
+        const styles = `
+            .modern-toast {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--bg-secondary);
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius-lg);
+                padding: 1rem 1.5rem;
+                box-shadow: var(--shadow-xl);
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                z-index: 10000;
+                animation: slideInRight 0.3s ease;
+                max-width: 400px;
+            }
+            .modern-toast.success { border-left: 4px solid var(--success-color); }
+            .modern-toast.error { border-left: 4px solid var(--danger-color); }
+            .modern-toast.warning { border-left: 4px solid var(--warning-color); }
+            .modern-toast.info { border-left: 4px solid var(--info-color); }
+            .toast-message { flex: 1; color: var(--text-primary); font-weight: 500; }
+            .toast-close { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); }
+            @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        `;
+
+        if (!document.querySelector('#modern-toast-styles')) {
+            const style = document.createElement('style');
+            style.id = 'modern-toast-styles';
+            style.textContent = styles;
+            document.head.appendChild(style);
+        }
+
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.style.animation = 'slideInRight 0.3s ease reverse';
+                setTimeout(() => toast.remove(), 300);
+            }
+        }, 5000);
+    }
+}
+
+// Toggle meal sections
+function toggleMeal(mealType) {
+    const section = document.getElementById(`${mealType}-section`);
+    const isExpanded = section.classList.contains('expanded');
+    
+    if (isExpanded) {
+        section.classList.remove('expanded');
+    } else {
+        section.classList.add('expanded');
+    }
+    
+    // Save user preference
+    if (window.nutritionTracker) {
+        window.nutritionTracker.saveUserPreferences();
+    }
+}
+
+// Edit food entry
+function editFoodEntry(entryId) {
+    window.location.href = `/nutrition/edit-entry/${entryId}`;
+}
+
+// Generate meal plan
+function generateMealPlan() {
+    if (window.nutritionTracker) {
+        window.nutritionTracker.showToast('🎯 Smart meal planning feature coming soon!', 'info');
+    }
+}
+
+// Initialize when DOM loads
+document.addEventListener('DOMContentLoaded', () => {
+    window.nutritionTracker = new ModernNutritionTracker();
+    console.log('🍎 Modern Nutrition Tracker initialized!');
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    if (e.key === '?' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        if (window.nutritionTracker) {
+            window.nutritionTracker.showToast('⌨️ Ctrl+A: Add Food | Click cards for details', 'info');
+        }
+    }
+});
+</script>
+{% endblock %}

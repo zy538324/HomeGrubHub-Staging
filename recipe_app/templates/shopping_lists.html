@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">
+          <i class="fas fa-shopping-cart me-2"></i>My Shopping Lists
+        </h1>
+        <a href="{{ url_for('meal_planning.meal_planner') }}" class="btn btn-primary">
+          <i class="fas fa-plus me-1"></i>Create from Meal Plan
+        </a>
+      </div>
+    </div>
+  </div>
+
+  {% if shopping_lists %}
+    <div class="row">
+      {% for list in shopping_lists %}
+      <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">{{ list.name }}</h5>
+            {% if list.is_completed %}
+              <span class="badge bg-success">Completed</span>
+            {% else %}
+              <span class="badge bg-primary">Active</span>
+            {% endif %}
+          </div>
+          <div class="card-body">
+            {% if list.meal_plan %}
+              <p class="text-muted small">
+                <i class="fas fa-utensils me-1"></i>From: {{ list.meal_plan.name }}
+              </p>
+            {% endif %}
+            
+            <p class="text-muted small">
+              <i class="fas fa-calendar me-1"></i>Created: {{ list.created_at.strftime('%b %d, %Y') }}
+            </p>
+            
+            {% if list.items %}
+              <div class="mb-3">
+                {% set completed_items = list.items|selectattr('is_purchased')|list|length %}
+                {% set total_items = list.items|length %}
+                <div class="progress mb-2" style="height: 8px;">
+                  <div class="progress-bar bg-success" 
+                       style="width: {{ (completed_items / total_items * 100)|round }}%">
+                  </div>
+                </div>
+                <small class="text-muted">{{ completed_items }} of {{ total_items }} items completed</small>
+              </div>
+            {% else %}
+              <p class="text-muted">No items yet</p>
+            {% endif %}
+          </div>
+          <div class="card-footer">
+            <div class="d-flex justify-content-between">
+              <a href="{{ url_for('meal_planning.view_shopping_list', list_id=list.id) }}" 
+                 class="btn btn-primary btn-sm">
+                <i class="fas fa-eye me-1"></i>View
+              </a>
+              {% if not list.is_completed %}
+                <button class="btn btn-success btn-sm" onclick="markCompleted({{ list.id }})">
+                  <i class="fas fa-check me-1"></i>Mark Complete
+                </button>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="row">
+      <div class="col-12">
+        <div class="text-center py-5">
+          <i class="fas fa-shopping-cart fa-4x text-muted mb-4"></i>
+          <h3 class="text-muted">No Shopping Lists Yet</h3>
+          <p class="text-muted mb-4">Create a meal plan and generate a shopping list from it!</p>
+          <a href="{{ url_for('meal_planning.meal_planner') }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-utensils me-2"></i>Start Meal Planning
+          </a>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+<script>
+function markCompleted(listId) {
+  if (confirm('Mark this shopping list as completed?')) {
+    fetch(`/shopping-list/${listId}/complete`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token() }}'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        location.reload();
+      } else {
+        alert('Error completing shopping list');
+      }
+    });
+  }
+}
+</script>
+{% endblock %}

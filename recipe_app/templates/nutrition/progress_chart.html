@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nutrition Progress Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+    <h1>Nutrition Progress Chart</h1>
+    <canvas id="nutritionChart" width="800" height="400"></canvas>
+    <script>
+    const chartData = {{ chart_data|tojson|safe }};
+    const ctx = document.getElementById('nutritionChart').getContext('2d');
+    const nutritionChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: chartData.dates,
+            datasets: [
+                {
+                    label: 'Calories',
+                    data: chartData.calories,
+                    borderColor: 'rgba(255,99,132,1)',
+                    fill: false
+                },
+                {
+                    label: 'Protein',
+                    data: chartData.protein,
+                    borderColor: 'rgba(54,162,235,1)',
+                    fill: false
+                },
+                {
+                    label: 'Carbs',
+                    data: chartData.carbs,
+                    borderColor: 'rgba(255,206,86,1)',
+                    fill: false
+                },
+                {
+                    label: 'Fat',
+                    data: chartData.fat,
+                    borderColor: 'rgba(75,192,192,1)',
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: { title: { display: true, text: 'Date' } },
+                y: { title: { display: true, text: 'Amount' } }
+            }
+        }
+    });
+    </script>
+</body>
+</html>

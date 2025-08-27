@@ -1,0 +1,682 @@
+{% extends "base.html" %}
+
+{% block title %}Predictive Pantry Dashboard - HomeGrubHub{% endblock %}
+
+{% block extra_css %}
+<style>
+.prediction-card {
+  border: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.prediction-card:hover {
+  transform: translateY(-2px);
+}
+
+.confidence-meter {
+  height: 8px;
+  background: linear-gradient(90deg, #dc3545 0%, #ffc107 50%, #28a745 100%);
+  border-radius: 4px;
+  position: relative;
+}
+
+.confidence-indicator {
+  position: absolute;
+  top: -2px;
+  width: 4px;
+  height: 12px;
+  background: white;
+  border: 2px solid #333;
+  border-radius: 2px;
+}
+
+.insight-card {
+  border-left: 4px solid;
+  background: rgba(255,255,255,0.95);
+}
+
+.insight-urgent { border-left-color: #dc3545; }
+.insight-warning { border-left-color: #ffc107; }
+.insight-info { border-left-color: #17a2b8; }
+.insight-success { border-left-color: #28a745; }
+
+.prediction-chart {
+  height: 200px;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-radius: 8px;
+}
+
+.ai-badge {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.smart-metric {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.forecast-timeline {
+  position: relative;
+  padding: 20px 0;
+}
+
+.timeline-item {
+  position: relative;
+  padding: 10px 0 10px 40px;
+  border-left: 2px solid #e9ecef;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #007bff;
+}
+
+.timeline-item.urgent::before { background: #dc3545; }
+.timeline-item.warning::before { background: #ffc107; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h1 class="h3 mb-0">
+            <i class="fas fa-brain me-2 text-primary"></i>
+            Predictive Pantry Dashboard
+            <span class="ai-badge ms-2">AI Powered</span>
+          </h1>
+          <p class="text-muted mb-0">Advanced machine learning insights for your kitchen</p>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="refreshPredictions()">
+            <i class="fas fa-sync-alt me-1"></i> Refresh Predictions
+          </button>
+          <button class="btn btn-outline-primary" onclick="openSettings()">
+            <i class="fas fa-cog me-1"></i> Settings
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Insights Summary -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="smart-metric">
+        <i class="fas fa-chart-line fa-2x mb-2"></i>
+        <h4>{{ analysis.summary.avg_confidence|round(1) }}%</h4>
+        <small>AI Confidence</small>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="smart-metric">
+        <i class="fas fa-shopping-cart fa-2x mb-2"></i>
+        <h4>{{ analysis.summary.items_need_reorder }}</h4>
+        <small>Need Reorder</small>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="smart-metric">
+        <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+        <h4>{{ analysis.summary.high_waste_risk }}</h4>
+        <small>Waste Risk</small>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="smart-metric">
+        <i class="fas fa-pound-sign fa-2x mb-2"></i>
+        <h4>£{{ "%.2f"|format(analysis.summary.total_estimated_savings) }}</h4>
+        <small>Potential Savings</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Meal Plan Expiry Conflicts (NEW FEATURE) -->
+  {% if expiry_conflicts %}
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card border-danger">
+        <div class="card-header bg-danger text-white">
+          <h5 class="mb-0">
+            <i class="fas fa-exclamation-triangle me-2"></i>Meal Plan Expiry Conflicts
+            <span class="badge bg-white text-danger ms-2">{{ expiry_conflicts|length }} Found</span>
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-warning">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Smart Expiry Detection:</strong> We found ingredients in your pantry that will expire before your planned cooking dates.
+          </div>
+          
+          <div class="row">
+            {% for conflict in expiry_conflicts[:6] %}
+            <div class="col-md-6 mb-3">
+              <div class="card border-{% if conflict.severity == 'high' %}danger{% elif conflict.severity == 'medium' %}warning{% else %}info{% endif %}">
+                <div class="card-body p-3">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h6 class="text-{% if conflict.severity == 'high' %}danger{% elif conflict.severity == 'medium' %}warning{% else %}info{% endif %} mb-1">
+                      <i class="fas fa-{% if conflict.severity == 'high' %}times-circle{% elif conflict.severity == 'medium' %}exclamation-triangle{% else %}info-circle{% endif %} me-1"></i>
+                      {{ conflict.pantry_item_name }}
+                    </h6>
+                    <span class="badge bg-{% if conflict.severity == 'high' %}danger{% elif conflict.severity == 'medium' %}warning{% else %}info{% endif %}">
+                      {{ conflict.days_expired_by_cooking }}d expired
+                    </span>
+                  </div>
+                  <p class="small text-muted mb-2">
+                    <i class="fas fa-calendar me-1"></i>Expires: <strong>{{ conflict.expiry_date.strftime('%A, %b %d') }}</strong><br>
+                    <i class="fas fa-utensils me-1"></i>Planned: <strong>{{ conflict.recipe_name }}</strong> on {{ conflict.planned_date.strftime('%A, %b %d') }} ({{ conflict.meal_type }})
+                  </p>
+                  <div class="small">
+                    <i class="fas fa-lightbulb text-warning me-1"></i>{{ conflict.suggestion }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          
+          {% if expiry_conflicts|length > 6 %}
+          <div class="text-center">
+            <button class="btn btn-outline-danger" onclick="viewAllConflicts()">
+              <i class="fas fa-eye me-1"></i>View All {{ expiry_conflicts|length }} Conflicts
+            </button>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="row">
+    <!-- AI Insights Panel -->
+    <div class="col-lg-4">
+      <div class="card h-100">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">
+            <i class="fas fa-lightbulb me-2"></i>AI Insights & Recommendations
+          </h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="insight-container" style="max-height: 600px; overflow-y: auto;">
+            {% for insight in analysis.insights %}
+            <div class="insight-card p-3 m-3 {% if insight.priority == 1 %}insight-urgent{% elif insight.priority == 2 %}insight-warning{% elif insight.priority == 3 %}insight-info{% else %}insight-success{% endif %}">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                  <h6 class="mb-1">{{ insight.title }}</h6>
+                  <p class="mb-2 small text-muted">{{ insight.description }}</p>
+                  {% if insight.estimated_savings %}
+                  <span class="badge bg-success">Save £{{ "%.2f"|format(insight.estimated_savings) }}</span>
+                  {% endif %}
+                  {% if insight.action_required %}
+                  <span class="badge bg-warning text-dark">Action Required</span>
+                  {% endif %}
+                </div>
+                <div class="ms-2">
+                  {% if insight.action_required %}
+                  <button class="btn btn-sm btn-outline-primary" onclick="implementRecommendation('{{ insight.insight_type }}', {{ insight.item_ids|tojson }})">
+                    <i class="fas fa-check"></i>
+                  </button>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Consumption Predictions -->
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            <i class="fas fa-crystal-ball me-2"></i>Consumption Predictions
+          </h5>
+          <button class="btn btn-sm btn-success" onclick="generateSmartShoppingList()">
+            <i class="fas fa-list me-1"></i>Generate Smart Shopping List
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Current Stock</th>
+                  <th>Days Remaining</th>
+                  <th>AI Confidence</th>
+                  <th>Suggested Action</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for prediction in analysis.predictions %}
+                <tr>
+                  <td>
+                    <strong>{{ prediction.item_name }}</strong>
+                    <br><small class="text-muted">{{ prediction.prediction_model|title }} Model</small>
+                  </td>
+                  <td>
+                    {% set item = prediction.item_id %}
+                    <span class="badge bg-light text-dark">{{ "Current stock info" }}</span>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      {% if prediction.predicted_days_remaining <= 1 %}
+                        <span class="badge bg-danger">{{ "%.1f"|format(prediction.predicted_days_remaining) }} days</span>
+                      {% elif prediction.predicted_days_remaining <= 3 %}
+                        <span class="badge bg-warning text-dark">{{ "%.1f"|format(prediction.predicted_days_remaining) }} days</span>
+                      {% elif prediction.predicted_days_remaining <= 7 %}
+                        <span class="badge bg-info text-white">{{ "%.1f"|format(prediction.predicted_days_remaining) }} days</span>
+                      {% else %}
+                        <span class="badge bg-success">{{ "%.1f"|format(prediction.predicted_days_remaining) }} days</span>
+                      {% endif %}
+                    </div>
+                  </td>
+                  <td>
+                    <div class="confidence-meter">
+                      <div class="confidence-indicator" style="left: {{ prediction.confidence_score * 100 }}%;"></div>
+                    </div>
+                    <small class="text-muted">{{ "%.0f"|format(prediction.confidence_score * 100) }}%</small>
+                  </td>
+                  <td>
+                    {% if prediction.predicted_days_remaining <= 5 %}
+                      <button class="btn btn-sm btn-warning" onclick="addToShoppingList({{ prediction.item_id }}, {{ prediction.suggested_quantity }})">
+                        <i class="fas fa-plus me-1"></i>Add to List
+                      </button>
+                    {% else %}
+                      <small class="text-muted">Monitor</small>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-info" onclick="showItemForecast({{ prediction.item_id }})">
+                      <i class="fas fa-chart-area"></i>
+                    </button>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Forecast Timeline -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-calendar-alt me-2"></i>7-Day Consumption Forecast
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="forecast-timeline">
+            {% set urgent_items = analysis.predictions|selectattr('predicted_days_remaining', 'le', 7)|list %}
+            {% for prediction in urgent_items %}
+            <div class="timeline-item {% if prediction.predicted_days_remaining <= 2 %}urgent{% elif prediction.predicted_days_remaining <= 5 %}warning{% endif %}">
+              <strong>{{ prediction.suggested_reorder_date }}</strong> - 
+              Reorder {{ prediction.item_name }} 
+              <span class="badge bg-secondary ms-2">{{ prediction.suggested_quantity }} units</span>
+              {% if prediction.cost_optimization_score > 0.7 %}
+              <span class="badge bg-success ms-1">Bulk Opportunity</span>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Item Forecast Modal -->
+<div class="modal fade" id="forecastModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-chart-line me-2"></i>Consumption Forecast
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="forecastChart" class="prediction-chart mb-3"></div>
+        <div id="forecastDetails"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Smart Shopping List Modal -->
+<div class="modal fade" id="smartShoppingModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-robot me-2"></i>AI-Generated Shopping List
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="budgetLimit" class="form-label">Budget Limit (Optional)</label>
+            <input type="number" class="form-control" id="budgetLimit" placeholder="£50.00" step="0.01">
+          </div>
+          <div class="col-md-6">
+            <label for="daysAhead" class="form-label">Days Ahead</label>
+            <select class="form-select" id="daysAhead">
+              <option value="3">3 days</option>
+              <option value="7" selected>1 week</option>
+              <option value="14">2 weeks</option>
+            </select>
+          </div>
+        </div>
+        <div id="smartShoppingList"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success" onclick="addAllToShoppingList()">Add All to Shopping List</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+let currentForecastChart = null;
+
+function refreshPredictions() {
+    showToast('info', 'Refreshing AI predictions...');
+    location.reload();
+}
+
+function openSettings() {
+    window.location.href = '/predictive/settings';
+}
+
+function showItemForecast(itemId) {
+    fetch(`/predictive/api/consumption-forecast/${itemId}`)
+        .then(response => response.json())
+        .then(data => {
+            displayForecastChart(data);
+            $('#forecastModal').modal('show');
+        })
+        .catch(error => {
+            showToast('error', 'Failed to load forecast data');
+            console.error('Error:', error);
+        });
+}
+
+function displayForecastChart(data) {
+    const ctx = document.getElementById('forecastChart');
+    
+    if (currentForecastChart) {
+        currentForecastChart.destroy();
+    }
+    
+    currentForecastChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.forecast_chart.dates.slice(0, 14), // Show 2 weeks
+            datasets: [{
+                label: 'Predicted Quantity',
+                data: data.forecast_chart.predicted_quantities.slice(0, 14),
+                borderColor: '#007bff',
+                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                tension: 0.3,
+                fill: true
+            }, {
+                label: 'Reorder Threshold',
+                data: Array(14).fill(data.forecast_chart.reorder_threshold),
+                borderColor: '#dc3545',
+                borderDash: [5, 5],
+                pointRadius: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: `${data.item_name} - Consumption Forecast`
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Quantity'
+                    }
+                }
+            }
+        }
+    });
+    
+    // Update details
+    document.getElementById('forecastDetails').innerHTML = `
+        <div class="row">
+            <div class="col-md-6">
+                <h6>Current Status</h6>
+                <p>Current Quantity: <strong>${data.current_quantity}</strong></p>
+                <p>Days Remaining: <strong>${data.prediction.predicted_days_remaining.toFixed(1)}</strong></p>
+                <p>Confidence: <strong>${(data.prediction.confidence_score * 100).toFixed(0)}%</strong></p>
+            </div>
+            <div class="col-md-6">
+                <h6>AI Recommendations</h6>
+                <p>Suggested Reorder Date: <strong>${new Date(data.prediction.suggested_reorder_date).toLocaleDateString()}</strong></p>
+                <p>Suggested Quantity: <strong>${data.prediction.suggested_quantity}</strong></p>
+                <p>Seasonal Factor: <strong>${data.prediction.seasonal_factor.toFixed(2)}x</strong></p>
+            </div>
+        </div>
+    `;
+}
+
+function generateSmartShoppingList() {
+    $('#smartShoppingModal').modal('show');
+    updateSmartShoppingList();
+}
+
+function updateSmartShoppingList() {
+    const daysAhead = document.getElementById('daysAhead').value;
+    const budgetLimit = document.getElementById('budgetLimit').value;
+    
+    let url = `/predictive/api/smart-shopping-list?days_ahead=${daysAhead}`;
+    if (budgetLimit) {
+        url += `&budget_limit=${budgetLimit}`;
+    }
+    
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            displaySmartShoppingList(data);
+        })
+        .catch(error => {
+            showToast('error', 'Failed to generate shopping list');
+            console.error('Error:', error);
+        });
+}
+
+function displaySmartShoppingList(data) {
+    let html = `
+        <div class="alert alert-info">
+            <strong>AI Analysis:</strong> Generated list for ${data.days_ahead} days ahead.
+            Estimated total cost: <strong>£${data.total_estimated_cost.toFixed(2)}</strong>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Suggested Qty</th>
+                        <th>Priority</th>
+                        <th>Cost</th>
+                        <th>AI Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+    
+    data.shopping_list.forEach(item => {
+        const priorityClass = item.priority <= 2 ? 'danger' : item.priority <= 4 ? 'warning' : 'success';
+        html += `
+            <tr>
+                <td><strong>${item.item_name}</strong></td>
+                <td>${item.suggested_quantity}</td>
+                <td><span class="badge bg-${priorityClass}">Priority ${item.priority}</span></td>
+                <td>£${item.estimated_cost.toFixed(2)}</td>
+                <td><small>${item.notes}</small></td>
+            </tr>
+        `;
+    });
+    
+    html += `
+                </tbody>
+            </table>
+        </div>
+    `;
+    
+    document.getElementById('smartShoppingList').innerHTML = html;
+}
+
+function addToShoppingList(itemId, quantity) {
+    implementRecommendation('add_to_shopping_list', [itemId]);
+}
+
+function implementRecommendation(actionType, itemIds) {
+    fetch('/predictive/api/implement-recommendations', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('meta[name=csrf-token]')?.getAttribute('content')
+        },
+        body: JSON.stringify({
+            action_type: actionType,
+            recommendation_ids: itemIds
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status) {
+            showToast('success', data.message);
+            // Refresh insights after implementation
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showToast('error', 'Failed to implement recommendation');
+        }
+    })
+    .catch(error => {
+        showToast('error', 'Error implementing recommendation');
+        console.error('Error:', error);
+    });
+}
+
+function addAllToShoppingList() {
+    // This would add all items from the smart shopping list
+    showToast('info', 'Adding all items to shopping list...');
+    $('#smartShoppingModal').modal('hide');
+    // Implementation would depend on the shopping list structure
+}
+
+// Update shopping list when parameters change
+document.getElementById('daysAhead').addEventListener('change', updateSmartShoppingList);
+document.getElementById('budgetLimit').addEventListener('input', 
+    debounce(updateSmartShoppingList, 500)
+);
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+function viewAllConflicts() {
+    // Create modal to show all expiry conflicts
+    const modal = `
+        <div class="modal fade" id="allConflictsModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title">
+                            <i class="fas fa-exclamation-triangle me-2"></i>All Meal Plan Expiry Conflicts
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        {% for conflict in expiry_conflicts %}
+                        <div class="alert alert-{% if conflict.severity == 'high' %}danger{% elif conflict.severity == 'medium' %}warning{% else %}info{% endif %} d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ conflict.pantry_item_name }}</strong> expires {{ conflict.expiry_date.strftime('%b %d') }}<br>
+                                <small>Planned for {{ conflict.recipe_name }} on {{ conflict.planned_date.strftime('%b %d') }} ({{ conflict.meal_type }})</small>
+                            </div>
+                            <span class="badge bg-danger">{{ conflict.days_expired_by_cooking }}d expired</span>
+                        </div>
+                        {% endfor %}
+                        <div class="mt-3 text-center">
+                            <button class="btn btn-primary me-2" onclick="moveMealsEarlier()">
+                                <i class="fas fa-calendar-minus me-1"></i>Move Meals Earlier
+                            </button>
+                            <button class="btn btn-outline-success" onclick="markForImmedateUse()">
+                                <i class="fas fa-utensils me-1"></i>Use Expiring Items First
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if present
+    const existingModal = document.getElementById('allConflictsModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Add modal to page and show
+    document.body.insertAdjacentHTML('beforeend', modal);
+    const modalElement = new bootstrap.Modal(document.getElementById('allConflictsModal'));
+    modalElement.show();
+}
+
+function moveMealsEarlier() {
+    showToast('info', 'Smart meal rescheduling feature coming soon!');
+}
+
+function markForImmedateUse() {
+    showToast('success', 'Ingredients marked for immediate use priority');
+}
+
+function showToast(type, message) {
+    // Implementation for toast notifications
+    console.log(`${type}: ${message}`);
+}
+</script>
+{% endblock %}

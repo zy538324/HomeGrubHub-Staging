@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+{% block title %}Image Storage Management{% endblock %}
+
+{% block extra_css %}
+<style>
+    .storage-stats {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 8px;
+        padding: 15px;
+        margin: 10px 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .storage-type-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+    
+    .storage-filesystem {
+        background: #e3f2fd;
+        color: #1976d2;
+    }
+    
+    .storage-database {
+        background: #f3e5f5;
+        color: #7b1fa2;
+    }
+    
+    .admin-section {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .image-preview {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        object-fit: cover;
+        border: 2px solid #ddd;
+    }
+    
+    .migration-form {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 15px 0;
+    }
+    
+    .btn-migrate {
+        background: linear-gradient(45deg, #ff6b6b, #feca57);
+        border: none;
+        color: white;
+        font-weight: bold;
+    }
+    
+    .btn-cleanup {
+        background: linear-gradient(45deg, #48cae4, #023e8a);
+        border: none;
+        color: white;
+        font-weight: bold;
+    }
+    
+    .alert-info {
+        background: #e3f2fd;
+        color: #1976d2;
+        border: 1px solid #bbdefb;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">🖼️ Image Storage Management</h1>
+            
+            <!-- Storage Overview -->
+            <div class="storage-stats">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="stat-card text-center">
+                            <div class="stat-number">{{ stats.total_images }}</div>
+                            <div class="stat-label">Total Images</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card text-center">
+                            <div class="stat-number">{{ stats.database_images }}</div>
+                            <div class="stat-label">Database Storage</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card text-center">
+                            <div class="stat-number">{{ stats.filesystem_images }}</div>
+                            <div class="stat-label">Filesystem Storage</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card text-center">
+                            <div class="stat-number">{{ stats.total_size_mb }}</div>
+                            <div class="stat-label">Total Size (MB)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Current Configuration -->
+            <div class="admin-section">
+                <h3>📋 Current Configuration</h3>
+                <div class="alert alert-info">
+                    <strong>Active Storage Type:</strong> 
+                    <span class="storage-type-badge storage-{{ stats.storage_type }}">
+                        {{ stats.storage_type|title }}
+                    </span>
+                    <br>
+                    {% if stats.storage_type == 'filesystem' %}
+                    <strong>Storage Path:</strong> <code>{{ stats.storage_path }}</code>
+                    {% else %}
+                    <strong>Storage:</strong> PostgreSQL Database (Base64 encoded)
+                    {% endif %}
+                </div>
+                
+                <p class="text-muted">
+                    <strong>Filesystem Storage:</strong> Images stored on D: drive for better performance and space management.<br>
+                    <strong>Database Storage:</strong> Images stored as Base64 in PostgreSQL for easier backup and deployment.
+                </p>
+            </div>
+            
+            <!-- Migration Tools -->
+            <div class="admin-section">
+                <h3>🔄 Migration Tools</h3>
+                <p class="text-muted">Migrate images between storage types. This will move all images and update user references.</p>
+                
+                <form method="POST" action="{{ url_for('admin.migrate_images') }}" class="migration-form">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="source_type" class="form-label">From Storage Type:</label>
+                            <select name="source_type" id="source_type" class="form-select" required>
+                                <option value="filesystem">Filesystem (D: Drive)</option>
+                                <option value="database">Database (PostgreSQL)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="target_type" class="form-label">To Storage Type:</label>
+                            <select name="target_type" id="target_type" class="form-select" required>
+                                <option value="database">Database (PostgreSQL)</option>
+                                <option value="filesystem">Filesystem (D: Drive)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-migrate me-2" onclick="return confirm('Are you sure you want to migrate all images? This cannot be undone.')">
+                                🔄 Start Migration
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Cleanup Tools -->
+            <div class="admin-section">
+                <h3>🧹 Cleanup Tools</h3>
+                <p class="text-muted">Remove orphaned images that are no longer referenced by any users.</p>
+                
+                <form method="POST" action="{{ url_for('admin.cleanup_orphaned_images') }}" style="display: inline;">
+                    <button type="submit" class="btn btn-cleanup" onclick="return confirm('Are you sure you want to delete all orphaned images?')">
+                        🗑️ Clean Up Orphaned Images
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Recent Images -->
+            {% if recent_images %}
+            <div class="admin-section">
+                <h3>🖼️ Recent Images</h3>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Preview</th>
+                                <th>Filename</th>
+                                <th>Category</th>
+                                <th>Storage</th>
+                                <th>Size</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for image in recent_images %}
+                            <tr>
+                                <td>
+                                    <img src="{{ image.url }}" alt="Preview" class="image-preview" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0zMCAyMEMzMS4xIDIwIDMyIDIwLjkgMzIgMjJDMzIgMjMuMSAzMS4xIDI0IDMwIDI0QzI4LjkgMjQgMjggMjMuMSAyOCAyMkMyOCAyMC45IDI4LjkgMjAgMzAgMjBaTTQyIDM2VjQySDEyVjM2TDE4IDMwTDI0IDM2TDI4IDMyTDQyIDM2WiIgZmlsbD0iIzlFOUU5RSIvPgo8L3N2Zz4K'">
+                                </td>
+                                <td>{{ image.filename }}</td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ image.category }}</span>
+                                </td>
+                                <td>
+                                    <span class="storage-type-badge storage-{{ image.storage }}">
+                                        {{ image.storage|title }}
+                                    </span>
+                                </td>
+                                <td>{{ image.size_kb }} KB</td>
+                                <td>{{ image.created_at.strftime('%Y-%m-%d %H:%M') if image.created_at else 'N/A' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Storage Configuration Help -->
+            <div class="admin-section">
+                <h3>ℹ️ Storage Type Comparison</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>📁 Filesystem Storage (D: Drive)</h5>
+                        <ul class="text-muted">
+                            <li>✅ Better performance for large images</li>
+                            <li>✅ Lower database storage requirements</li>
+                            <li>✅ Direct file system access</li>
+                            <li>❌ Requires backup of separate directory</li>
+                            <li>❌ More complex deployment</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>🗄️ Database Storage (PostgreSQL)</h5>
+                        <ul class="text-muted">
+                            <li>✅ Included in database backups</li>
+                            <li>✅ Simpler deployment and migration</li>
+                            <li>✅ ACID compliance</li>
+                            <li>❌ Larger database size</li>
+                            <li>❌ Potential performance impact</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-update target type when source type changes
+document.getElementById('source_type').addEventListener('change', function() {
+    const sourceType = this.value;
+    const targetSelect = document.getElementById('target_type');
+    
+    // Clear target options
+    targetSelect.innerHTML = '';
+    
+    if (sourceType === 'filesystem') {
+        targetSelect.innerHTML = '<option value="database">Database (PostgreSQL)</option>';
+    } else {
+        targetSelect.innerHTML = '<option value="filesystem">Filesystem (D: Drive)</option>';
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Fitness Achievements{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fitness.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">
+                    <i class="fas fa-medal text-success me-2"></i>
+                    Fitness Achievements
+                </h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-trophy fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">Achievement System Coming Soon!</h4>
+                    <p class="text-muted">
+                        We're developing an exciting achievement system that will include:
+                    </p>
+                    <ul class="list-unstyled text-muted">
+                        <li><i class="fas fa-star text-warning me-2"></i>Workout streak badges</li>
+                        <li><i class="fas fa-star text-warning me-2"></i>Weight goal milestones</li>
+                        <li><i class="fas fa-star text-warning me-2"></i>Exercise variety rewards</li>
+                        <li><i class="fas fa-star text-warning me-2"></i>Consistency achievements</li>
+                        <li><i class="fas fa-star text-warning me-2"></i>Personal record celebrations</li>
+                    </ul>
+                    <a href="{{ url_for('fitness.fitness_dashboard') }}" class="btn btn-primary mt-3">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

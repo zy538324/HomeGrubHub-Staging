@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Log Steps</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+    <h1>Log Your Steps</h1>
+    <form method="POST" action="/nutrition/log-steps">
+        <label for="steps">Steps:</label>
+        <input type="number" name="steps" id="steps" required><br><br>
+        <label for="log_date">Date:</label>
+        <input type="date" name="log_date" id="log_date" value="{{ today }}"><br><br>
+        <button type="submit">Log Steps</button>
+    </form>
+    <a href="/nutrition/step-history">View Step History</a>
+</body>
+</html>

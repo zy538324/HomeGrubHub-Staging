@@ -1,0 +1,530 @@
+{% extends "base.html" %}
+{% block title %}Safe Weight Goal Planner{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fitness.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-bullseye me-2"></i>Safe Weight Goal Planner
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Safety Warning -->
+                    <div class="alert alert-danger">
+                        <h6><i class="fas fa-exclamation-triangle me-2"></i>Safety First</h6>
+                        <p class="mb-0">
+                            This tool enforces safe weight change limits of <strong>maximum 2 pounds (0.9kg) per week</strong>.
+                            Rapid weight changes can be dangerous and unsustainable. Always consult a healthcare professional before starting any weight loss or gain program.
+                        </p>
+                    </div>
+                    
+                    <form method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <div class="mb-3">
+                            <label for="weight_unit" class="form-label">Weight Unit</label>
+                            <select class="form-control mb-2" id="weight_unit" name="weight_unit">
+                                <option value="kg" {{ 'selected' if request.form.weight_unit == 'kg' or not request.form.weight_unit }}>Kilograms (kg)</option>
+                                <option value="lbs" {{ 'selected' if request.form.weight_unit == 'lbs' }}>Pounds (lbs)</option>
+                                <option value="st_lbs" {{ 'selected' if request.form.weight_unit == 'st_lbs' }}>Stones & Pounds (st lb)</option>
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <!-- Current Weight Section -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Current Weight</label>
+                                
+                                <div id="current_weight_kg_group">
+                                    {% if current_weight %}
+                                        <input type="number" 
+                                               step="0.1" 
+                                               min="1" 
+                                               max="500" 
+                                               class="form-control bg-light" 
+                                               id="current_weight_kg" 
+                                               name="current_weight_kg" 
+                                               value="{{ current_weight }}"
+                                               readonly>
+                                        <div class="form-text text-success">
+                                            <i class="fas fa-check-circle me-1"></i>From your latest weight log
+                                        </div>
+                                    {% else %}
+                                        <input type="number" 
+                                               step="0.1" 
+                                               min="1" 
+                                               max="500" 
+                                               class="form-control" 
+                                               id="current_weight_kg" 
+                                               name="current_weight_kg" 
+                                               value="{{ request.form.current_weight_kg if request.form.current_weight_kg }}">
+                                        <div class="form-text">Enter your current weight in kg</div>
+                                    {% endif %}
+                                </div>
+
+                                <div id="current_weight_lbs_group" style="display: none;">
+                                    <input type="number" 
+                                           step="0.1" 
+                                           min="1" 
+                                           max="1100" 
+                                           class="form-control" 
+                                           id="current_weight_lbs" 
+                                           name="current_weight_lbs" 
+                                           value="{{ request.form.current_weight_lbs if request.form.current_weight_lbs }}">
+                                    <div class="form-text">Enter your current weight in pounds</div>
+                                </div>
+
+                                <div id="current_weight_st_lbs_group" style="display: none;">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <input type="number" 
+                                                   min="0" 
+                                                   max="50" 
+                                                   class="form-control" 
+                                                   id="current_weight_stones" 
+                                                   name="current_weight_stones" 
+                                                   placeholder="Stones"
+                                                   value="{{ request.form.current_weight_stones if request.form.current_weight_stones }}">
+                                            <div class="form-text">Stones</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="number" 
+                                                   step="0.1" 
+                                                   min="0" 
+                                                   max="13.9" 
+                                                   class="form-control" 
+                                                   id="current_weight_pounds" 
+                                                   name="current_weight_pounds" 
+                                                   placeholder="Pounds"
+                                                   value="{{ request.form.current_weight_pounds if request.form.current_weight_pounds }}">
+                                            <div class="form-text">Pounds</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Target Weight Section -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Target Weight</label>
+                                
+                                <div id="target_weight_kg_group">
+                                    <input type="number" 
+                                           step="0.1" 
+                                           min="1" 
+                                           max="500" 
+                                           class="form-control" 
+                                           id="target_weight_kg" 
+                                           name="target_weight_kg" 
+                                           value="{{ request.form.target_weight_kg if request.form.target_weight_kg }}">
+                                    <div class="form-text">Your desired weight goal in kg</div>
+                                </div>
+
+                                <div id="target_weight_lbs_group" style="display: none;">
+                                    <input type="number" 
+                                           step="0.1" 
+                                           min="1" 
+                                           max="1100" 
+                                           class="form-control" 
+                                           id="target_weight_lbs" 
+                                           name="target_weight_lbs" 
+                                           value="{{ request.form.target_weight_lbs if request.form.target_weight_lbs }}">
+                                    <div class="form-text">Your desired weight goal in pounds</div>
+                                </div>
+
+                                <div id="target_weight_st_lbs_group" style="display: none;">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <input type="number" 
+                                                   min="0" 
+                                                   max="50" 
+                                                   class="form-control" 
+                                                   id="target_weight_stones" 
+                                                   name="target_weight_stones" 
+                                                   placeholder="Stones"
+                                                   value="{{ request.form.target_weight_stones if request.form.target_weight_stones }}">
+                                            <div class="form-text">Stones</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="number" 
+                                                   step="0.1" 
+                                                   min="0" 
+                                                   max="13.9" 
+                                                   class="form-control" 
+                                                   id="target_weight_pounds" 
+                                                   name="target_weight_pounds" 
+                                                   placeholder="Pounds"
+                                                   value="{{ request.form.target_weight_pounds if request.form.target_weight_pounds }}">
+                                            <div class="form-text">Pounds</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="weeks" class="form-label">Time Frame (weeks)</label>
+                            <input type="number" 
+                                   min="1" 
+                                   max="104" 
+                                   class="form-control" 
+                                   id="weeks" 
+                                   name="weeks" 
+                                   required
+                                   value="{{ request.form.weeks if request.form.weeks else 12 }}">
+                            <div class="form-text">How many weeks to reach your goal? (Default: 12 weeks)</div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="button" id="saveGoalBtn" class="btn btn-primary me-2">Save Goal</button>
+                            <button type="submit" class="btn btn-warning">Analyze Goal Safety</button>
+                        </div>
+                    </form>
+                    
+                    <div id="goalResultContainer" class="mt-4" style="display:none;"></div>
+                </div>
+            </div>
+            
+            <!-- Educational Content -->
+            <div class="card mt-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-graduation-cap me-2"></i>Safe Weight Management Guidelines
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-success">
+                                <i class="fas fa-arrow-down me-2"></i>Safe Weight Loss
+                            </h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>1-2 pounds (0.5-0.9kg) per week</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Gradual, sustainable changes</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Combination of diet and exercise</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Monitor for muscle loss</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-primary">
+                                <i class="fas fa-arrow-up me-2"></i>Safe Weight Gain
+                            </h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-primary me-2"></i>0.5-2 pounds (0.25-0.9kg) per week</li>
+                                <li><i class="fas fa-check text-primary me-2"></i>Focus on muscle gain</li>
+                                <li><i class="fas fa-check text-primary me-2"></i>Strength training essential</li>
+                                <li><i class="fas fa-check text-primary me-2"></i>Quality nutrition priority</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning mt-3">
+                        <h6><i class="fas fa-stethoscope me-2"></i>Medical Consultation</h6>
+                        <p class="mb-0">
+                            Always consult with healthcare professionals, especially if you have:
+                            medical conditions, take medications, have eating disorder history, 
+                            or plan significant weight changes (>20 pounds/9kg).
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6 class="card-title">Next Steps</h6>
+                    <div class="row">
+                        <div class="col-md-4 mb-2">
+                            <a href="{{ url_for('fitness.log_weight_page') }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-weight me-2"></i>Start Tracking
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <a href="{{ url_for('fitness.bmi_calculator') }}" class="btn btn-outline-success w-100">
+                                <i class="fas fa-calculator me-2"></i>Check BMI
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <a href="{{ url_for('nutrition.nutrition_log_list') }}" class="btn btn-outline-info w-100">
+                                <i class="fas fa-apple-alt me-2"></i>Nutrition Plan
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// --- Weight Goal Planner Enhancements ---
+document.addEventListener('DOMContentLoaded', function() {
+    // --- Load saved goal on page load ---
+    fetch('/fitness/api/weight-goal')
+        .then(r => r.json())
+        .then(data => {
+            if (data.success && data.goal) {
+                const g = data.goal;
+                // Set unit
+                document.getElementById('weight_unit').value = g.weight_unit || 'kg';
+                document.getElementById('weeks').value = g.time_frame_weeks;
+                // Set weights based on unit
+                if (g.weight_unit === 'kg') {
+                    document.getElementById('current_weight_kg').value = g.current_weight;
+                    document.getElementById('target_weight_kg').value = g.target_weight;
+                } else if (g.weight_unit === 'lbs') {
+                    document.getElementById('current_weight_lbs').value = (g.current_weight * 2.205).toFixed(1);
+                    document.getElementById('target_weight_lbs').value = (g.target_weight * 2.205).toFixed(1);
+                } else if (g.weight_unit === 'st_lbs') {
+                    // Convert kg to stones/pounds
+                    const setStLbs = (elSt, elLb, kg) => {
+                        const lbs = kg * 2.205;
+                        const st = Math.floor(lbs / 14);
+                        const lb = (lbs % 14).toFixed(1);
+                        document.getElementById(elSt).value = st;
+                        document.getElementById(elLb).value = lb;
+                    };
+                    setStLbs('current_weight_stones', 'current_weight_pounds', g.current_weight);
+                    setStLbs('target_weight_stones', 'target_weight_pounds', g.target_weight);
+                }
+                document.getElementById('weight_unit').dispatchEvent(new Event('change'));
+            }
+        });
+
+    // --- Save goal via AJAX ---
+    document.getElementById('saveGoalBtn').addEventListener('click', function() {
+        // Gather data
+        const unit = document.getElementById('weight_unit').value;
+        let current = 0, target = 0;
+        if (unit === 'kg') {
+            current = parseFloat(document.getElementById('current_weight_kg').value || 0);
+            target = parseFloat(document.getElementById('target_weight_kg').value || 0);
+        } else if (unit === 'lbs') {
+            current = parseFloat(document.getElementById('current_weight_lbs').value || 0) / 2.205;
+            target = parseFloat(document.getElementById('target_weight_lbs').value || 0) / 2.205;
+        } else if (unit === 'st_lbs') {
+            const stC = parseFloat(document.getElementById('current_weight_stones').value || 0);
+            const lbC = parseFloat(document.getElementById('current_weight_pounds').value || 0);
+            current = ((stC * 14) + lbC) / 2.205;
+            const stT = parseFloat(document.getElementById('target_weight_stones').value || 0);
+            const lbT = parseFloat(document.getElementById('target_weight_pounds').value || 0);
+            target = ((stT * 14) + lbT) / 2.205;
+        }
+        const weeks = parseInt(document.getElementById('weeks').value) || 12;
+        if (current <= 0 || target <= 0) {
+            showGoalResult('Please enter valid current and target weights.', false);
+            return;
+        }
+        fetch('/fitness/api/weight-goal', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                current_weight: current,
+                target_weight: target,
+                time_frame_weeks: weeks,
+                weight_unit: unit
+            })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                showGoalResult('Goal saved successfully!', true);
+            } else {
+                showGoalResult('Failed to save goal: ' + (data.error || 'Unknown error'), false);
+            }
+        })
+        .catch(() => showGoalResult('Failed to save goal (network error)', false));
+    });
+
+    // --- Show result/feedback and persist until dismissed ---
+    function showGoalResult(msg, success) {
+        const c = document.getElementById('goalResultContainer');
+        c.innerHTML = `<div class="alert alert-${success ? 'success' : 'danger'} alert-dismissible fade show" role="alert">
+            ${msg}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>`;
+        c.style.display = 'block';
+    }
+
+    // --- Show server-rendered result if present ---
+    const serverGoalResult = document.getElementById('serverGoalResult');
+    if (serverGoalResult && serverGoalResult.innerHTML.trim()) {
+        const c = document.getElementById('goalResultContainer');
+        c.innerHTML = serverGoalResult.innerHTML;
+        c.style.display = 'block';
+    }
+    const weightUnitSelect = document.getElementById('weight_unit');
+    const form = document.querySelector('form');
+    
+    // Weight input groups
+    const currentWeightKgGroup = document.getElementById('current_weight_kg_group');
+    const currentWeightLbsGroup = document.getElementById('current_weight_lbs_group');
+    const currentWeightStLbsGroup = document.getElementById('current_weight_st_lbs_group');
+    
+    const targetWeightKgGroup = document.getElementById('target_weight_kg_group');
+    const targetWeightLbsGroup = document.getElementById('target_weight_lbs_group');
+    const targetWeightStLbsGroup = document.getElementById('target_weight_st_lbs_group');
+    
+    // Handle weight unit switching
+    weightUnitSelect.addEventListener('change', function() {
+        // Hide all weight groups
+        [currentWeightKgGroup, currentWeightLbsGroup, currentWeightStLbsGroup,
+         targetWeightKgGroup, targetWeightLbsGroup, targetWeightStLbsGroup].forEach(group => {
+            group.style.display = 'none';
+        });
+        
+        // Show the selected groups
+        switch(this.value) {
+            case 'kg':
+                currentWeightKgGroup.style.display = 'block';
+                targetWeightKgGroup.style.display = 'block';
+                break;
+            case 'lbs':
+                currentWeightLbsGroup.style.display = 'block';
+                targetWeightLbsGroup.style.display = 'block';
+                break;
+            case 'st_lbs':
+                currentWeightStLbsGroup.style.display = 'block';
+                targetWeightStLbsGroup.style.display = 'block';
+                break;
+        }
+        
+        // If there's a current weight in kg, convert it to other units
+        const currentWeightKg = document.getElementById('current_weight_kg').value;
+        if (currentWeightKg && !document.getElementById('current_weight_kg').readOnly) {
+            convertFromKg(parseFloat(currentWeightKg));
+        }
+    });
+    
+    function convertFromKg(weightKg) {
+        // Convert to pounds
+        const weightLbs = weightKg * 2.205;
+        document.getElementById('current_weight_lbs').value = weightLbs.toFixed(1);
+        
+        // Convert to stones and pounds
+        const totalLbs = weightLbs;
+        const stones = Math.floor(totalLbs / 14);
+        const remainingLbs = (totalLbs % 14).toFixed(1);
+        document.getElementById('current_weight_stones').value = stones;
+        document.getElementById('current_weight_pounds').value = remainingLbs;
+    }
+    
+    // Form submission with unit conversion
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        let currentWeightKg = 0;
+        let targetWeightKg = 0;
+        
+        // Convert current weight to kg
+        const weightUnit = formData.get('weight_unit');
+        if (weightUnit === 'kg') {
+            currentWeightKg = parseFloat(formData.get('current_weight_kg') || 0);
+            targetWeightKg = parseFloat(formData.get('target_weight_kg') || 0);
+        } else if (weightUnit === 'lbs') {
+            const currentLbs = parseFloat(formData.get('current_weight_lbs') || 0);
+            const targetLbs = parseFloat(formData.get('target_weight_lbs') || 0);
+            currentWeightKg = currentLbs / 2.205;
+            targetWeightKg = targetLbs / 2.205;
+        } else if (weightUnit === 'st_lbs') {
+            const currentStones = parseFloat(formData.get('current_weight_stones') || 0);
+            const currentPounds = parseFloat(formData.get('current_weight_pounds') || 0);
+            const currentTotalLbs = (currentStones * 14) + currentPounds;
+            currentWeightKg = currentTotalLbs / 2.205;
+            
+            const targetStones = parseFloat(formData.get('target_weight_stones') || 0);
+            const targetPounds = parseFloat(formData.get('target_weight_pounds') || 0);
+            const targetTotalLbs = (targetStones * 14) + targetPounds;
+            targetWeightKg = targetTotalLbs / 2.205;
+        }
+        
+        if (currentWeightKg <= 0 || targetWeightKg <= 0) {
+            alert('Please enter valid current and target weights.');
+            return;
+        }
+        
+        // Add converted values to form data and submit
+        const hiddenCurrentKg = document.createElement('input');
+        hiddenCurrentKg.type = 'hidden';
+        hiddenCurrentKg.name = 'current_weight_converted';
+        hiddenCurrentKg.value = currentWeightKg.toFixed(2);
+        form.appendChild(hiddenCurrentKg);
+        
+        const hiddenTargetKg = document.createElement('input');
+        hiddenTargetKg.type = 'hidden';
+        hiddenTargetKg.name = 'target_weight_converted';
+        hiddenTargetKg.value = targetWeightKg.toFixed(2);
+        form.appendChild(hiddenTargetKg);
+        
+        form.submit();
+    });
+    
+    // Initialize display based on current selection
+    weightUnitSelect.dispatchEvent(new Event('change'));
+    
+    // Real-time preview calculation
+    function calculatePreview() {
+        // Get values based on current unit
+        let currentWeight = 0;
+        let targetWeight = 0;
+        const weeks = parseInt(document.getElementById('weeks').value) || 0;
+        
+        const weightUnit = weightUnitSelect.value;
+        
+        try {
+            if (weightUnit === 'kg') {
+                currentWeight = parseFloat(document.getElementById('current_weight_kg').value || 0);
+                targetWeight = parseFloat(document.getElementById('target_weight_kg').value || 0);
+            } else if (weightUnit === 'lbs') {
+                const currentLbs = parseFloat(document.getElementById('current_weight_lbs').value || 0);
+                const targetLbs = parseFloat(document.getElementById('target_weight_lbs').value || 0);
+                currentWeight = currentLbs / 2.205;
+                targetWeight = targetLbs / 2.205;
+            } else if (weightUnit === 'st_lbs') {
+                const currentStones = parseFloat(document.getElementById('current_weight_stones').value || 0);
+                const currentPounds = parseFloat(document.getElementById('current_weight_pounds').value || 0);
+                const currentTotalLbs = (currentStones * 14) + currentPounds;
+                currentWeight = currentTotalLbs / 2.205;
+                
+                const targetStones = parseFloat(document.getElementById('target_weight_stones').value || 0);
+                const targetPounds = parseFloat(document.getElementById('target_weight_pounds').value || 0);
+                const targetTotalLbs = (targetStones * 14) + targetPounds;
+                targetWeight = targetTotalLbs / 2.205;
+            }
+            
+            if (currentWeight > 0 && targetWeight > 0 && weeks > 0) {
+                const weeklyChangeKg = Math.abs(targetWeight - currentWeight) / weeks;
+                const weeklyChangeLbs = weeklyChangeKg * 2.205;
+                const maxSafeLbs = 2;
+                
+                // Show preview (you can add a preview div if desired)
+                console.log(`Weekly change: ${weeklyChangeLbs.toFixed(2)} lbs (${weeklyChangeKg.toFixed(2)} kg)`);
+                console.log(`Safe: ${weeklyChangeLbs <= maxSafeLbs ? 'Yes' : 'No'}`);
+            }
+        } catch (error) {
+            // Ignore calculation errors during input
+        }
+    }
+    
+    // Add preview calculation to all inputs
+    document.getElementById('weeks').addEventListener('input', calculatePreview);
+    
+    // Add to all weight inputs
+    ['current_weight_kg', 'target_weight_kg', 'current_weight_lbs', 'target_weight_lbs',
+     'current_weight_stones', 'current_weight_pounds', 'target_weight_stones', 'target_weight_pounds'].forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.addEventListener('input', calculatePreview);
+        }
+    });
+});
+</script>
+{% endblock %}

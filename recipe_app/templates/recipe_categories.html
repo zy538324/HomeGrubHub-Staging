@@ -1,0 +1,379 @@
+{% extends "base.html" %}
+
+{% block seo_title %}Recipe Categories | Browse Healthy Family Meals by Type | HomeGrubHub{% endblock %}
+{% block seo_description %}Browse our recipe categories: Quick dinners, healthy meals, budget-friendly recipes, family favourites, and more. Find the perfect meal for every occasion and dietary need.{% endblock %}
+{% block seo_keywords %}recipe categories, quick dinner recipes, healthy family meals, budget recipes UK, vegetarian recipes, gluten free recipes, meal ideas{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Recipe Categories",
+  "description": "Browse recipes by category - quick meals, healthy options, budget-friendly dishes, and dietary preferences",
+  "url": "{{ request.url }}",
+  "provider": {
+    "@type": "Organization",
+    "name": "HomeGrubHub"
+  },
+  "mainEntity": {
+    "@type": "ItemList",
+    "name": "Recipe Categories",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@type": "Thing",
+          "name": "Quick & Easy Meals",
+          "url": "{{ url_for('main.search', category='quick', _external=True) }}",
+          "description": "Ready in 30 minutes or less"
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "item": {
+          "@type": "Thing",
+          "name": "Healthy Family Meals",
+          "url": "{{ url_for('main.search', category='healthy', _external=True) }}",
+          "description": "Nutritious recipes the whole family will love"
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@type": "Thing",
+          "name": "Budget-Friendly Recipes",
+          "url": "{{ url_for('main.search', category='budget', _external=True) }}",
+          "description": "Delicious meals under £2 per serving"
+        }
+      }
+    ]
+  }
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <!-- Header Section -->
+  <div class="row mb-5">
+    <div class="col-12 text-center">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb justify-content-center">
+          <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+          <li class="breadcrumb-item active">Recipe Categories</li>
+        </ol>
+      </nav>
+      
+      <h1 class="display-4 fw-bold mb-3">Recipe Categories</h1>
+      <p class="lead text-muted mb-4">Find the perfect meal for every occasion, budget, and dietary need</p>
+      
+      <!-- Search Bar -->
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+          <form method="GET" action="{{ url_for('main.search') }}" class="d-flex mb-4">
+            <input type="text" name="q" class="form-control form-control-lg me-2" 
+                   placeholder="Search recipes..." value="{{ request.args.get('q', '') }}">
+            <button type="submit" class="btn btn-primary btn-lg">
+              <i class="fas fa-search"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popular Categories -->
+  <section class="mb-5">
+    <h2 class="h3 mb-4 text-center">Popular Categories</h2>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100 category-card">
+          <div class="card-img-wrapper" style="height: 200px; overflow: hidden;">
+            <img src="{{ url_for('static', filename='images/categories/quick-meals.jpg') }}" 
+                 class="card-img-top h-100 w-100" style="object-fit: cover;" 
+                 alt="Quick and easy meals ready in 30 minutes">
+          </div>
+          <div class="card-body d-flex flex-column">
+            <h3 class="card-title h5">🚀 Quick & Easy Meals</h3>
+            <p class="card-text text-muted flex-grow-1">Ready in 30 minutes or less. Perfect for busy weeknights when you need dinner fast.</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <small class="text-muted">235+ recipes</small>
+              <a href="{{ url_for('main.search', category='quick') }}" class="btn btn-outline-primary">Browse Recipes</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100 category-card">
+          <div class="card-img-wrapper" style="height: 200px; overflow: hidden;">
+            <img src="{{ url_for('static', filename='images/categories/healthy-family.jpg') }}" 
+                 class="card-img-top h-100 w-100" style="object-fit: cover;" 
+                 alt="Healthy family meals with nutrition information">
+          </div>
+          <div class="card-body d-flex flex-column">
+            <h3 class="card-title h5">🥗 Healthy Family Meals</h3>
+            <p class="card-text text-muted flex-grow-1">Nutritious recipes packed with vegetables and lean proteins. Kid-approved, parent-trusted.</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <small class="text-muted">180+ recipes</small>
+              <a href="{{ url_for('main.search', category='healthy') }}" class="btn btn-outline-primary">Browse Recipes</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100 category-card">
+          <div class="card-img-wrapper" style="height: 200px; overflow: hidden;">
+            <img src="{{ url_for('static', filename='images/categories/budget-friendly.jpg') }}" 
+                 class="card-img-top h-100 w-100" style="object-fit: cover;" 
+                 alt="Budget-friendly meals under £2 per serving">
+          </div>
+          <div class="card-body d-flex flex-column">
+            <h3 class="card-title h5">💰 Budget-Friendly</h3>
+            <p class="card-text text-muted flex-grow-1">Delicious meals under £2 per serving. Save money without sacrificing taste or nutrition.</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <small class="text-muted">145+ recipes</small>
+              <a href="{{ url_for('main.search', category='budget') }}" class="btn btn-outline-primary">Browse Recipes</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dietary Preferences -->
+  <section class="mb-5">
+    <h2 class="h3 mb-4">Dietary Preferences</h2>
+    <div class="row g-3">
+      <div class="col-md-6 col-lg-3">
+        <div class="card text-center border-success h-100">
+          <div class="card-body">
+            <i class="fas fa-leaf fa-2x text-success mb-3"></i>
+            <h4 class="card-title h6">Vegetarian</h4>
+            <p class="card-text small">Plant-based meals full of flavour</p>
+            <a href="{{ url_for('main.search', diet='vegetarian') }}" class="btn btn-sm btn-outline-success">95+ Recipes</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6 col-lg-3">
+        <div class="card text-center border-warning h-100">
+          <div class="card-body">
+            <i class="fas fa-wheat fa-2x text-warning mb-3"></i>
+            <h4 class="card-title h6">Gluten-Free</h4>
+            <p class="card-text small">Safe, delicious options for coeliacs</p>
+            <a href="{{ url_for('main.search', diet='gluten-free') }}" class="btn btn-sm btn-outline-warning">67+ Recipes</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6 col-lg-3">
+        <div class="card text-center border-info h-100">
+          <div class="card-body">
+            <i class="fas fa-drumstick-bite fa-2x text-info mb-3"></i>
+            <h4 class="card-title h6">High Protein</h4>
+            <p class="card-text small">Muscle-building meals for active families</p>
+            <a href="{{ url_for('main.search', diet='high-protein') }}" class="btn btn-sm btn-outline-info">89+ Recipes</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6 col-lg-3">
+        <div class="card text-center border-danger h-100">
+          <div class="card-body">
+            <i class="fas fa-fire fa-2x text-danger mb-3"></i>
+            <h4 class="card-title h6">Low Carb</h4>
+            <p class="card-text small">Keto-friendly and diabetes-safe options</p>
+            <a href="{{ url_for('main.search', diet='low-carb') }}" class="btn btn-sm btn-outline-danger">73+ Recipes</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Meal Types -->
+  <section class="mb-5">
+    <h2 class="h3 mb-4">Browse by Meal Type</h2>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body text-center">
+            <i class="fas fa-sun fa-3x text-warning mb-3"></i>
+            <h4 class="card-title">Breakfast & Brunch</h4>
+            <p class="card-text text-muted">Start your day right with healthy, energising morning meals</p>
+            <a href="{{ url_for('main.search', meal_type='breakfast') }}" class="btn btn-outline-primary">42+ Recipes</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body text-center">
+            <i class="fas fa-cloud-sun fa-3x text-primary mb-3"></i>
+            <h4 class="card-title">Lunch Ideas</h4>
+            <p class="card-text text-muted">Satisfying midday meals for work, school, or home</p>
+            <a href="{{ url_for('main.search', meal_type='lunch') }}" class="btn btn-outline-primary">78+ Recipes</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body text-center">
+            <i class="fas fa-moon fa-3x text-dark mb-3"></i>
+            <h4 class="card-title">Dinner Favourites</h4>
+            <p class="card-text text-muted">Family dinners that bring everyone to the table</p>
+            <a href="{{ url_for('main.search', meal_type='dinner') }}" class="btn btn-outline-primary">195+ Recipes</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- World Cuisines -->
+  <section class="mb-5">
+    <h2 class="h3 mb-4">World Cuisines</h2>
+    <div class="row g-3">
+      <div class="col-6 col-md-4 col-lg-2">
+        <a href="{{ url_for('main.search', cuisine='british') }}" class="text-decoration-none">
+          <div class="card text-center h-100 cuisine-card">
+            <div class="card-body">
+              <div class="flag-emoji mb-2">🇬🇧</div>
+              <h5 class="card-title h6">British</h5>
+              <small class="text-muted">85 recipes</small>
+            </div>
+          </div>
+        </a>
+      </div>
+      
+      <div class="col-6 col-md-4 col-lg-2">
+        <a href="{{ url_for('main.search', cuisine='italian') }}" class="text-decoration-none">
+          <div class="card text-center h-100 cuisine-card">
+            <div class="card-body">
+              <div class="flag-emoji mb-2">🇮🇹</div>
+              <h5 class="card-title h6">Italian</h5>
+              <small class="text-muted">67 recipes</small>
+            </div>
+          </div>
+        </a>
+      </div>
+      
+      <div class="col-6 col-md-4 col-lg-2">
+        <a href="{{ url_for('main.search', cuisine='indian') }}" class="text-decoration-none">
+          <div class="card text-center h-100 cuisine-card">
+            <div class="card-body">
+              <div class="flag-emoji mb-2">🇮🇳</div>
+              <h5 class="card-title h6">Indian</h5>
+              <small class="text-muted">43 recipes</small>
+            </div>
+          </div>
+        </a>
+      </div>
+      
+      <div class="col-6 col-md-4 col-lg-2">
+        <a href="{{ url_for('main.search', cuisine='chinese') }}" class="text-decoration-none">
+          <div class="card text-center h-100 cuisine-card">
+            <div class="card-body">
+              <div class="flag-emoji mb-2">🇨🇳</div>
+              <h5 class="card-title h6">Chinese</h5>
+              <small class="text-muted">38 recipes</small>
+            </div>
+          </div>
+        </a>
+      </div>
+      
+      <div class="col-6 col-md-4 col-lg-2">
+        <a href="{{ url_for('main.search', cuisine='mexican') }}" class="text-decoration-none">
+          <div class="card text-center h-100 cuisine-card">
+            <div class="card-body">
+              <div class="flag-emoji mb-2">🇲🇽</div>
+              <h5 class="card-title h6">Mexican</h5>
+              <small class="text-muted">29 recipes</small>
+            </div>
+          </div>
+        </a>
+      </div>
+      
+      <div class="col-6 col-md-4 col-lg-2">
+        <a href="{{ url_for('main.search', cuisine='thai') }}" class="text-decoration-none">
+          <div class="card text-center h-100 cuisine-card">
+            <div class="card-body">
+              <div class="flag-emoji mb-2">🇹🇭</div>
+              <h5 class="card-title h6">Thai</h5>
+              <small class="text-muted">22 recipes</small>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Collections -->
+  <section class="mb-5">
+    <h2 class="h3 mb-4">Featured Collections</h2>
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="card bg-gradient-primary text-white">
+          <div class="card-body">
+            <h4 class="card-title">🌟 This Week's Favourites</h4>
+            <p class="card-text">Our most popular recipes this week, voted by the HomeGrubHub community.</p>
+            <a href="{{ url_for('main.search', featured='weekly') }}" class="btn btn-light">View Collection</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="card bg-gradient-success text-white">
+          <div class="card-body">
+            <h4 class="card-title">🎯 Meal Prep Friendly</h4>
+            <p class="card-text">Recipes perfect for batch cooking and meal prep. Save time during busy weeks.</p>
+            <a href="{{ url_for('main.search', tags='meal-prep') }}" class="btn btn-light">View Collection</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <div class="text-center">
+    <div class="card bg-light border-0">
+      <div class="card-body">
+        <h3>Can't Find What You're Looking For?</h3>
+        <p class="mb-4">Our recipe recommendation engine learns your preferences and suggests meals you'll love.</p>
+        <a href="{{ url_for('main.register') }}" class="btn btn-primary btn-lg me-3">Get Personalized Recommendations</a>
+        <a href="{{ url_for('support.contact_form') }}" class="btn btn-outline-secondary">Request a Recipe</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.category-card:hover {
+  transform: translateY(-5px);
+  transition: transform 0.3s ease;
+}
+
+.cuisine-card:hover {
+  background-color: #f8f9fa;
+  transform: scale(1.05);
+  transition: all 0.3s ease;
+}
+
+.flag-emoji {
+  font-size: 2rem;
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+}
+
+.bg-gradient-success {
+  background: linear-gradient(135deg, #28a745, #1e7e34);
+}
+</style>
+{% endblock %}

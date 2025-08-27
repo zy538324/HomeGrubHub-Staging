@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+{% block title %}Fitness Dashboard{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fitness.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4 fitness-dashboard">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">
+                    <i class="fas fa-heartbeat text-danger me-2"></i>
+                    Fitness Dashboard
+                </h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions Row -->
+    <div class="row mb-4 fitness-quick-actions">
+        <div class="col-md-6 col-lg-3 mb-3">
+            <div class="card h-100 border-success">
+                <div class="card-body text-center">
+                    <i class="fas fa-calculator fa-2x text-success mb-3"></i>
+                    <h5 class="card-title">BMI Calculator</h5>
+                    <p class="card-text">Calculate your Body Mass Index and get health insights</p>
+                    <a href="{{ url_for('fitness.bmi_calculator') }}" class="btn btn-success">Calculate BMI</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3 mb-3">
+            <div class="card h-100 border-primary">
+                <div class="card-body text-center">
+                    <i class="fas fa-weight fa-2x text-primary mb-3"></i>
+                    <h5 class="card-title">Log Weight</h5>
+                    <p class="card-text">Track your daily weight progress</p>
+                    <a href="{{ url_for('fitness.log_weight_page') }}" class="btn btn-primary">Log Weight</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3 mb-3">
+            <div class="card h-100 border-warning">
+                <div class="card-body text-center">
+                    <i class="fas fa-bullseye fa-2x text-warning mb-3"></i>
+                    <h5 class="card-title">Weight Goals</h5>
+                    <p class="card-text">Plan safe weight loss or gain goals</p>
+                    <a href="{{ url_for('fitness.weight_goal_planner') }}" class="btn btn-warning">Plan Goals</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3 mb-3">
+            <div class="card h-100 border-orange">
+                <div class="card-body text-center">
+                    <i class="fas fa-dumbbell fa-2x text-orange mb-3"></i>
+                    <h5 class="card-title">Log Workout</h5>
+                    <p class="card-text">Track your exercises and training sessions</p>
+                    <a href="{{ url_for('fitness.log_workout_page') }}" class="btn btn-orange">Log Workout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Secondary Actions Row -->
+    <div class="row mb-4 fitness-quick-actions">
+        <div class="col-md-6 col-lg-3 mb-3">
+            <div class="card h-100 border-info">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-2x text-info mb-3"></i>
+                    <h5 class="card-title">Weight History</h5>
+                    <p class="card-text">View your weight progress over time</p>
+                    <a href="{{ url_for('fitness.weight_history') }}" class="btn btn-info">View History</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3 mb-3">
+            <div class="card h-100 border-secondary">
+                <div class="card-body text-center">
+                    <i class="fas fa-history fa-2x text-secondary mb-3"></i>
+                    <h5 class="card-title">Workout History</h5>
+                    <p class="card-text">Review your past workouts and exercises</p>
+                    <a href="{{ url_for('fitness.workout_history') }}" class="btn btn-secondary">View Workouts</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3 mb-3">
+            <div class="card h-100 border-dark">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-bar fa-2x text-dark mb-3"></i>
+                    <h5 class="card-title">Analytics</h5>
+                    <p class="card-text">Detailed insights and progress reports</p>
+                    <a href="{{ url_for('fitness.analytics') }}" class="btn btn-dark">View Analytics</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3 mb-3">
+            <div class="card h-100 border-success">
+                <div class="card-body text-center">
+                    <i class="fas fa-medal fa-2x text-success mb-3"></i>
+                    <h5 class="card-title">Achievements</h5>
+                    <p class="card-text">Track your fitness milestones and goals</p>
+                    <a href="{{ url_for('fitness.achievements') }}" class="btn btn-success">View Achievements</a>
+                </div>
+            </div>
+        </div>
+                    <a href="{{ url_for('fitness.weight_goal_planner') }}" class="btn btn-warning">Plan Goals</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3 mb-3">
+            <div class="card h-100 border-info">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-2x text-info mb-3"></i>
+                    <h5 class="card-title">Weight History</h5>
+                    <p class="card-text">View your weight tracking history</p>
+                    <a href="{{ url_for('fitness.weight_history') }}" class="btn btn-info">View History</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity Row -->
+    <div class="row">
+        <!-- Recent Weight Logs -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-weight me-2"></i>Recent Weight Logs
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_weights %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Weight (kg)</th>
+                                        <th>Body Fat %</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for weight in recent_weights[:5] %}
+                                    <tr>
+                                        <td>{{ weight.log_date.strftime('%m/%d') }}</td>
+                                        <td>{{ "%.1f"|format(weight.weight_kg) }}</td>
+                                        <td>
+                                            {% if weight.body_fat_percentage %}
+                                                {{ "%.1f"|format(weight.body_fat_percentage) }}%
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% if recent_weights|length > 5 %}
+                            <div class="text-center">
+                                <a href="{{ url_for('fitness.weight_history') }}" class="btn btn-sm btn-outline-success">View All</a>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center text-muted">
+                            <i class="fas fa-chart-line fa-3x mb-3"></i>
+                            <p>No weight logs yet. Start tracking your progress!</p>
+                            <a href="{{ url_for('fitness.log_weight_page') }}" class="btn btn-success">Log Your First Weight</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Workouts -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-dumbbell me-2"></i>Recent Workouts
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_workouts %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Duration</th>
+                                        <th>Exercises</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for workout in recent_workouts %}
+                                    <tr>
+                                        <td>{{ workout.workout_date.strftime('%m/%d') }}</td>
+                                        <td>
+                                            <span class="badge bg-secondary">{{ workout.workout_type or 'General' }}</span>
+                                        </td>
+                                        <td>
+                                            {% if workout.duration_minutes %}
+                                                {{ workout.duration_minutes }}min
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ workout.exercises.count() }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted">
+                            <i class="fas fa-dumbbell fa-3x mb-3"></i>
+                            <p>No workout logs yet. Start tracking your fitness!</p>
+                            <small class="text-muted">Workout logging coming soon...</small>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Health Tips -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>Health & Safety Tips
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="alert alert-warning">
+                                <h6><i class="fas fa-exclamation-triangle me-2"></i>Safe Weight Loss</h6>
+                                <small>Lose no more than 2 pounds (0.9kg) per week for sustainable and healthy weight loss.</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="alert alert-info">
+                                <h6><i class="fas fa-heart me-2"></i>BMI Guidelines</h6>
+                                <small>BMI is a screening tool. Consult healthcare providers for comprehensive health assessment.</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="alert alert-success">
+                                <h6><i class="fas fa-apple-alt me-2"></i>Balanced Approach</h6>
+                                <small>Combine healthy eating with regular physical activity for best results.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add any JavaScript for the fitness dashboard here
+</script>
+{% endblock %}

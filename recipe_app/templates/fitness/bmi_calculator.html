@@ -1,0 +1,411 @@
+{% extends "base.html" %}
+{% block title %}BMI Calculator{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fitness.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-calculator me-2"></i>BMI Calculator
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <div class="mb-3">
+                            <label for="weight_unit" class="form-label">Weight Unit</label>
+                            <select class="form-control mb-2" id="weight_unit" name="weight_unit">
+                                <option value="kg" {{ 'selected' if request.form.weight_unit == 'kg' or not request.form.weight_unit }}>Kilograms (kg)</option>
+                                <option value="lbs" {{ 'selected' if request.form.weight_unit == 'lbs' }}>Pounds (lbs)</option>
+                                <option value="st_lbs" {{ 'selected' if request.form.weight_unit == 'st_lbs' }}>Stones & Pounds (st lb)</option>
+                            </select>
+                        </div>
+
+                        <!-- Weight input fields that change based on unit -->
+                        <div class="mb-3" id="weight_kg_group" style="{{ 'display: block;' if not request.form.weight_unit or request.form.weight_unit == 'kg' else 'display: none;' }}">
+                            <label for="weight_kg" class="form-label">Weight (kg)</label>
+                            <input type="number" 
+                                   step="0.1" 
+                                   min="1" 
+                                   max="500" 
+                                   class="form-control" 
+                                   id="weight_kg" 
+                                   name="weight_kg" 
+                                   value="{{ request.form.weight_kg if request.form.weight_kg }}">
+                            <div class="form-text">Enter your weight in kilograms</div>
+                        </div>
+
+                        <div class="mb-3" id="weight_lbs_group" style="{{ 'display: block;' if request.form.weight_unit == 'lbs' else 'display: none;' }}">
+                            <label for="weight_lbs" class="form-label">Weight (lbs)</label>
+                            <input type="number" 
+                                   step="0.1" 
+                                   min="1" 
+                                   max="1100" 
+                                   class="form-control" 
+                                   id="weight_lbs" 
+                                   name="weight_lbs" 
+                                   value="{{ request.form.weight_lbs if request.form.weight_lbs }}">
+                            <div class="form-text">Enter your weight in pounds</div>
+                        </div>
+
+                        <div class="mb-3" id="weight_st_lbs_group" style="{{ 'display: block;' if request.form.weight_unit == 'st_lbs' else 'display: none;' }}">
+                            <label class="form-label">Weight (Stones & Pounds)</label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <input type="number" 
+                                           min="0" 
+                                           max="50" 
+                                           class="form-control" 
+                                           id="weight_stones" 
+                                           name="weight_stones" 
+                                           placeholder="Stones"
+                                           value="{{ request.form.weight_stones if request.form.weight_stones }}">
+                                    <div class="form-text">Stones</div>
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" 
+                                           step="0.1" 
+                                           min="0" 
+                                           max="13.9" 
+                                           class="form-control" 
+                                           id="weight_pounds" 
+                                           name="weight_pounds" 
+                                           placeholder="Pounds"
+                                           value="{{ request.form.weight_pounds if request.form.weight_pounds }}">
+                                    <div class="form-text">Pounds</div>
+                                </div>
+                            </div>
+                            <div class="form-text">1 stone = 14 pounds</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="height_unit" class="form-label">Height Unit</label>
+                            <select class="form-control mb-2" id="height_unit" name="height_unit">
+                                <option value="cm" {{ 'selected' if request.form.height_unit == 'cm' or not request.form.height_unit }}>Centimeters (cm)</option>
+                                <option value="ft_in" {{ 'selected' if request.form.height_unit == 'ft_in' }}>Feet & Inches (ft in)</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3" id="height_cm_group" style="{{ 'display: block;' if not request.form.height_unit or request.form.height_unit == 'cm' else 'display: none;' }}">
+                            <label for="height_cm" class="form-label">Height (cm)</label>
+                            <input type="number" 
+                                   step="0.1" 
+                                   min="50" 
+                                   max="250" 
+                                   class="form-control" 
+                                   id="height_cm" 
+                                   name="height_cm" 
+                                   value="{{ request.form.height_cm if request.form.height_cm }}">
+                            <div class="form-text">Enter your height in centimeters</div>
+                        </div>
+
+                        <div class="mb-3" id="height_ft_in_group" style="{{ 'display: block;' if request.form.height_unit == 'ft_in' else 'display: none;' }}">
+                            <label class="form-label">Height (Feet & Inches)</label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <input type="number" 
+                                           min="1" 
+                                           max="8" 
+                                           class="form-control" 
+                                           id="height_feet" 
+                                           name="height_feet" 
+                                           placeholder="Feet"
+                                           value="{{ request.form.height_feet if request.form.height_feet }}">
+                                    <div class="form-text">Feet</div>
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" 
+                                           step="0.1" 
+                                           min="0" 
+                                           max="11.9" 
+                                           class="form-control" 
+                                           id="height_inches" 
+                                           name="height_inches" 
+                                           placeholder="Inches"
+                                           value="{{ request.form.height_inches if request.form.height_inches }}">
+                                    <div class="form-text">Inches</div>
+                                </div>
+                            </div>
+                            <div class="form-text">1 foot = 12 inches</div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">Calculate BMI</button>
+                        </div>
+                    </form>
+                    
+                    {% if bmi %}
+                    <div class="mt-4">
+                        <div class="alert alert-primary bmi-result">
+                            <h5 class="alert-heading">Your BMI Results</h5>
+                            <hr>
+                            <div class="row text-center">
+                                <div class="col-md-6">
+                                    <h2 class="display-4 text-white bmi-value">{{ "%.1f"|format(bmi) }}</h2>
+                                    <p class="mb-0">BMI Value</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h4 class="text-white bmi-category">{{ category }}</h4>
+                                    <p class="mb-0">Category</p>
+                                </div>
+                            </div>
+                            {% if weight_display and height_display %}
+                            <div class="row mt-3 text-center">
+                                <div class="col-md-6">
+                                    <small class="text-white-50">Weight: {{ weight_display }}</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <small class="text-white-50">Height: {{ height_display }}</small>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- BMI Information -->
+            <div class="card mt-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Understanding BMI
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>BMI Range</th>
+                                    <th>Category</th>
+                                    <th>Health Risk</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="table-info">
+                                    <td>Below 18.5</td>
+                                    <td><span class="text-info fw-bold">Underweight</span></td>
+                                    <td>Increased risk of malnutrition</td>
+                                </tr>
+                                <tr class="table-success">
+                                    <td>18.5 - 24.9</td>
+                                    <td><span class="text-success fw-bold">Normal weight</span></td>
+                                    <td>Lowest risk</td>
+                                </tr>
+                                <tr class="table-warning">
+                                    <td>25.0 - 29.9</td>
+                                    <td><span class="text-warning fw-bold">Overweight</span></td>
+                                    <td>Increased risk</td>
+                                </tr>
+                                <tr class="table-danger">
+                                    <td>30.0 and above</td>
+                                    <td><span class="text-danger fw-bold">Obese</span></td>
+                                    <td>High risk</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="alert alert-warning mt-3">
+                        <h6><i class="fas fa-exclamation-triangle me-2"></i>Important Note</h6>
+                        <p class="mb-0">
+                            BMI is a screening tool and does not directly assess body fat or health status. 
+                            Factors like muscle mass, bone density, and body composition are not considered. 
+                            Always consult with a healthcare professional for a comprehensive health assessment.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6 class="card-title">Next Steps</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <a href="{{ url_for('fitness.weight_goal_planner') }}" class="btn btn-outline-warning w-100">
+                                <i class="fas fa-bullseye me-2"></i>Plan Weight Goals
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <a href="{{ url_for('fitness.log_weight_page') }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-weight me-2"></i>Log Current Weight
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const weightUnitSelect = document.getElementById('weight_unit');
+    const heightUnitSelect = document.getElementById('height_unit');
+    
+    const weightKgGroup = document.getElementById('weight_kg_group');
+    const weightLbsGroup = document.getElementById('weight_lbs_group');
+    const weightStLbsGroup = document.getElementById('weight_st_lbs_group');
+    
+    const heightCmGroup = document.getElementById('height_cm_group');
+    const heightFtInGroup = document.getElementById('height_ft_in_group');
+    
+    // Function to update weight display
+    function updateWeightDisplay() {
+        // Hide all weight groups first
+        weightKgGroup.style.display = 'none';
+        weightLbsGroup.style.display = 'none';
+        weightStLbsGroup.style.display = 'none';
+        
+        // Clear required attributes
+        document.getElementById('weight_kg').required = false;
+        document.getElementById('weight_lbs').required = false;
+        document.getElementById('weight_stones').required = false;
+        document.getElementById('weight_pounds').required = false;
+        
+        // Show the selected group and set required
+        switch(weightUnitSelect.value) {
+            case 'kg':
+                weightKgGroup.style.display = 'block';
+                document.getElementById('weight_kg').required = true;
+                break;
+            case 'lbs':
+                weightLbsGroup.style.display = 'block';
+                document.getElementById('weight_lbs').required = true;
+                break;
+            case 'st_lbs':
+                weightStLbsGroup.style.display = 'block';
+                document.getElementById('weight_stones').required = true;
+                break;
+        }
+    }
+    
+    // Function to update height display
+    function updateHeightDisplay() {
+        // Hide all height groups first
+        heightCmGroup.style.display = 'none';
+        heightFtInGroup.style.display = 'none';
+        
+        // Clear required attributes
+        document.getElementById('height_cm').required = false;
+        document.getElementById('height_feet').required = false;
+        
+        // Show the selected group and set required
+        switch(heightUnitSelect.value) {
+            case 'cm':
+                heightCmGroup.style.display = 'block';
+                document.getElementById('height_cm').required = true;
+                break;
+            case 'ft_in':
+                heightFtInGroup.style.display = 'block';
+                document.getElementById('height_feet').required = true;
+                break;
+        }
+    }
+    
+    // Handle weight unit switching
+    weightUnitSelect.addEventListener('change', updateWeightDisplay);
+    
+    // Handle height unit switching  
+    heightUnitSelect.addEventListener('change', updateHeightDisplay);
+    
+    // Initialize display based on current selection - run immediately
+    updateWeightDisplay();
+    updateHeightDisplay();
+    
+    // Real-time conversion helpers
+    const weightKgInput = document.getElementById('weight_kg');
+    const weightLbsInput = document.getElementById('weight_lbs');
+    const heightCmInput = document.getElementById('height_cm');
+    const heightFeetInput = document.getElementById('height_feet');
+    const heightInchesInput = document.getElementById('height_inches');
+    
+    // Add conversion tooltips
+    function addConversionTooltip() {
+        if (weightKgInput.value && weightUnitSelect.value === 'kg') {
+            const lbs = (parseFloat(weightKgInput.value) * 2.205).toFixed(1);
+            const stones = Math.floor(lbs / 14);
+            const remainingLbs = (lbs % 14).toFixed(1);
+            weightKgInput.title = `${lbs} lbs (${stones} st ${remainingLbs} lbs)`;
+        }
+        
+        if (weightLbsInput.value && weightUnitSelect.value === 'lbs') {
+            const kg = (parseFloat(weightLbsInput.value) / 2.205).toFixed(1);
+            const stones = Math.floor(parseFloat(weightLbsInput.value) / 14);
+            const remainingLbs = (parseFloat(weightLbsInput.value) % 14).toFixed(1);
+            weightLbsInput.title = `${kg} kg (${stones} st ${remainingLbs} lbs)`;
+        }
+        
+        if (heightCmInput.value && heightUnitSelect.value === 'cm') {
+            const totalInches = parseFloat(heightCmInput.value) / 2.54;
+            const feet = Math.floor(totalInches / 12);
+            const inches = (totalInches % 12).toFixed(1);
+            heightCmInput.title = `${feet}' ${inches}"`;
+        }
+    }
+    
+    // Add event listeners for real-time conversion tooltips
+    [weightKgInput, weightLbsInput, heightCmInput, heightFeetInput, heightInchesInput].forEach(input => {
+        if (input) {
+            input.addEventListener('input', addConversionTooltip);
+        }
+    });
+    
+    // Form validation
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        let hasValidWeight = false;
+        let hasValidHeight = false;
+        
+        // Validate weight based on selected unit
+        switch(weightUnitSelect.value) {
+            case 'kg':
+                hasValidWeight = weightKgInput.value && parseFloat(weightKgInput.value) > 0;
+                break;
+            case 'lbs':
+                hasValidWeight = weightLbsInput.value && parseFloat(weightLbsInput.value) > 0;
+                break;
+            case 'st_lbs':
+                const stones = parseFloat(document.getElementById('weight_stones').value) || 0;
+                const pounds = parseFloat(document.getElementById('weight_pounds').value) || 0;
+                hasValidWeight = stones > 0 || pounds > 0;
+                break;
+        }
+        
+        // Validate height based on selected unit
+        switch(heightUnitSelect.value) {
+            case 'cm':
+                hasValidHeight = heightCmInput.value && parseFloat(heightCmInput.value) > 0;
+                break;
+            case 'ft_in':
+                const feet = parseFloat(heightFeetInput.value) || 0;
+                const inches = parseFloat(heightInchesInput.value) || 0;
+                hasValidHeight = feet > 0 || inches > 0;
+                break;
+        }
+        
+        if (!hasValidWeight) {
+            e.preventDefault();
+            alert('Please enter a valid weight.');
+            return false;
+        }
+        
+        if (!hasValidHeight) {
+            e.preventDefault();
+            alert('Please enter a valid height.');
+            return false;
+        }
+    });
+});
+</script>
+{% endblock %}

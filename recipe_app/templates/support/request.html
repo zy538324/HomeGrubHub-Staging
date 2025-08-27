@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}Support Request - Flavorio{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-life-ring"></i>
+                        Submit Support Request
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <strong>Need help?</strong> Please provide as much detail as possible to help us assist you quickly.
+                        For urgent issues, you can also contact us directly at <strong>support@flavorio.com</strong>.
+                    </div>
+
+                    <form method="POST" id="supportForm">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <input type="hidden" name="current_url" id="current_url">
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="subject" class="form-label">
+                                    Subject <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="subject" name="subject" 
+                                       placeholder="Brief description of your issue" required maxlength="200">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="category" class="form-label">
+                                    Category <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" id="category" name="category" required>
+                                    <option value="">Select a category...</option>
+                                    {% if categories %}
+                                        {% for category in categories %}
+                                            <option value="{{ category.name }}">
+                                                {{ category.name }} - {{ category.description }}
+                                            </option>
+                                        {% endfor %}
+                                    {% else %}
+                                        <option value="bug">Bug Report</option>
+                                        <option value="feature_request">Feature Request</option>
+                                        <option value="account">Account Issues</option>
+                                        <option value="billing">Billing & Subscription</option>
+                                        <option value="recipes">Recipe Problems</option>
+                                        <option value="meal_planning">Meal Planning</option>
+                                        <option value="general">General Support</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="priority" class="form-label">Priority</label>
+                                <select class="form-select" id="priority" name="priority">
+                                    <option value="low">Low - Minor issue</option>
+                                    <option value="normal" selected>Normal - Standard issue</option>
+                                    <option value="high">High - Important issue</option>
+                                    <option value="urgent">Urgent - Critical issue</option>
+                                </select>
+                            </div>
+                            {% if current_user.is_authenticated %}
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Contact Information</label>
+                                <div class="form-control-plaintext">
+                                    <strong>{{ current_user.username }}</strong><br>
+                                    <small class="text-muted">{{ current_user.email }}</small>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">
+                                Description <span class="text-danger">*</span>
+                            </label>
+                            <textarea class="form-control" id="description" name="description" rows="6" 
+                                      placeholder="Please describe your issue in detail. Include steps to reproduce if it's a bug, or specific requirements if it's a feature request." 
+                                      required></textarea>
+                            <div class="form-text">
+                                Please include:
+                                <ul class="mb-0 mt-1">
+                                    <li>What you were trying to do</li>
+                                    <li>What happened instead</li>
+                                    <li>Steps to reproduce the issue</li>
+                                    <li>Any error messages you saw</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="browser_info" name="include_browser_info" checked>
+                                <label class="form-check-label" for="browser_info">
+                                    Include browser and system information to help diagnose technical issues
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('support.help_center') }}" class="btn btn-outline-secondary me-md-2">
+                                <i class="fas fa-arrow-left"></i> Back to Help Center
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Submit Support Request
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-question-circle"></i>
+                        Quick Help
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Common Issues</h6>
+                            <ul class="list-unstyled">
+                                <li><a href="{{ url_for('support.faq') }}#password-reset" class="text-decoration-none">
+                                    <i class="fas fa-key fa-sm"></i> Password Reset</a></li>
+                                <li><a href="{{ url_for('support.faq') }}#recipe-upload" class="text-decoration-none">
+                                    <i class="fas fa-upload fa-sm"></i> Recipe Upload Issues</a></li>
+                                <li><a href="{{ url_for('support.faq') }}#subscription" class="text-decoration-none">
+                                    <i class="fas fa-credit-card fa-sm"></i> Subscription Questions</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Getting Started</h6>
+                            <ul class="list-unstyled">
+                                <li><a href="{{ url_for('support.getting_started') }}" class="text-decoration-none">
+                                    <i class="fas fa-play fa-sm"></i> Getting Started Guide</a></li>
+                                <li><a href="{{ url_for('support.faq') }}" class="text-decoration-none">
+                                    <i class="fas fa-question fa-sm"></i> Frequently Asked Questions</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Set current URL for debugging purposes
+document.getElementById('current_url').value = window.location.href;
+
+// Form validation and enhancement
+document.getElementById('supportForm').addEventListener('submit', function(e) {
+    const category = document.getElementById('category').value;
+    const description = document.getElementById('description').value;
+    
+    if (!category) {
+        e.preventDefault();
+        alert('Please select a category for your support request.');
+        document.getElementById('category').focus();
+        return;
+    }
+    
+    if (description.length < 10) {
+        e.preventDefault();
+        alert('Please provide a more detailed description (at least 10 characters).');
+        document.getElementById('description').focus();
+        return;
+    }
+});
+
+// Character counter for description
+const descriptionField = document.getElementById('description');
+const maxLength = 2000;
+const counter = document.createElement('div');
+counter.className = 'form-text text-end';
+counter.id = 'char-counter';
+descriptionField.parentNode.appendChild(counter);
+
+function updateCharCounter() {
+    const remaining = maxLength - descriptionField.value.length;
+    counter.textContent = `${descriptionField.value.length}/${maxLength} characters`;
+    counter.className = remaining < 100 ? 'form-text text-end text-warning' : 'form-text text-end text-muted';
+}
+
+descriptionField.addEventListener('input', updateCharCounter);
+updateCharCounter();
+</script>
+{% endblock %}

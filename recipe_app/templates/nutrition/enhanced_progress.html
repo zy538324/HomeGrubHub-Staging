@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Enhanced Progress Charts</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+</head>
+<body>
+    <!-- Navigation for Home+ tier features -->
+    <nav style="background: #f5f5f5; padding: 10px; margin-bottom: 20px; border-radius: 5px;">
+        <a href="/nutrition/recipe-search" style="margin-right: 15px;">📝 Recipe Search</a>
+        <a href="/nutrition/smart-shopping-list" style="margin-right: 15px;">🛒 Smart Shopping List</a>
+        <a href="/nutrition/recipe-analysis" style="margin-right: 15px;">📊 Recipe Analysis</a>
+        <a href="/nutrition/enhanced-progress" style="margin-right: 15px; font-weight: bold; color: #007bff;">📈 Progress Dashboard</a>
+        <a href="/nutrition/weekly-calendar" style="margin-right: 15px;">📅 Weekly Calendar</a>
+        <a href="/nutrition/barcode-scanner" style="margin-right: 15px;">📱 Barcode Scanner</a>
+    </nav>
+
+    <h1>📈 Enhanced Progress Dashboard</h1>
+    <p><em>Home+ Tier Feature: Advanced progress tracking with trends and insights!</em></p>
+    
+    <!-- Time Range Selector -->
+    <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+        <h3>📅 Time Range & Metrics</h3>
+        <form method="GET" action="/nutrition/enhanced-progress" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <div>
+                <label for="days">Time Period:</label>
+                <select name="days" id="days" onchange="this.form.submit()">
+                    <option value="7" {% if days == 7 %}selected{% endif %}>Last 7 Days</option>
+                    <option value="14" {% if days == 14 %}selected{% endif %}>Last 14 Days</option>
+                    <option value="30" {% if days == 30 %}selected{% endif %}>Last 30 Days</option>
+                    <option value="90" {% if days == 90 %}selected{% endif %}>Last 3 Months</option>
+                </select>
+            </div>
+            <div>
+                <label for="metrics">Primary Metric:</label>
+                <select name="primary_metric" id="metrics" onchange="this.form.submit()">
+                    <option value="calories" {% if primary_metric == 'calories' %}selected{% endif %}>Calories</option>
+                    <option value="weight" {% if primary_metric == 'weight' %}selected{% endif %}>Weight</option>
+                    <option value="water" {% if primary_metric == 'water' %}selected{% endif %}>Water Intake</option>
+                    <option value="steps" {% if primary_metric == 'steps' %}selected{% endif %}>Steps</option>
+                    <option value="protein" {% if primary_metric == 'protein' %}selected{% endif %}>Protein</option>
+                </select>
+            </div>
+        </form>
+    </div>
+
+    <!-- Key Metrics Summary Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
+        {% for metric in summary_metrics %}
+        <div style="background: {{ metric.color }}; color: white; padding: 20px; border-radius: 10px; text-align: center;">
+            <h3 style="margin: 0; font-size: 2em;">{{ metric.icon }}</h3>
+            <h4 style="margin: 5px 0;">{{ metric.label }}</h4>
+            <div style="font-size: 1.5em; font-weight: bold;">{{ metric.current }}</div>
+            <div style="font-size: 0.9em; opacity: 0.9;">
+                {% if metric.trend > 0 %}📈{% elif metric.trend < 0 %}📉{% else %}➡️{% endif %}
+                {{ metric.change }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Primary Chart -->
+    <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 30px;">
+        <h3>{{ primary_metric.title }} Trend ({{ days }} days)</h3>
+        <div style="position: relative; height: 400px;">
+            <canvas id="primaryChart"></canvas>
+        </div>
+        <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+            <strong>Insights:</strong>
+            <ul style="margin: 5px 0; padding-left: 20px;">
+                {% for insight in primary_insights %}
+                <li>{{ insight }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Multi-Metric Comparison -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+        <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <h3>🍽️ Nutrition Overview</h3>
+            <div style="position: relative; height: 300px;">
+                <canvas id="nutritionChart"></canvas>
+            </div>
+        </div>
+        <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <h3>🏃 Activity Overview</h3>
+            <div style="position: relative; height: 300px;">
+                <canvas id="activityChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weekly Patterns -->
+    <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 30px;">
+        <h3>📊 Weekly Patterns</h3>
+        <div style="position: relative; height: 300px;">
+            <canvas id="weeklyChart"></canvas>
+        </div>
+        <div style="margin-top: 15px; padding: 10px; background: #e8f5e8; border-radius: 5px;">
+            <strong>Pattern Analysis:</strong>
+            <ul style="margin: 5px 0; padding-left: 20px;">
+                {% for pattern in weekly_patterns %}
+                <li>{{ pattern }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Goals & Achievements -->
+    <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 30px;">
+        <h3>🎯 Goals & Achievements</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+            {% for goal in goals %}
+            <div style="border: 1px solid #ddd; padding: 15px; border-radius: 5px;">
+                <h4>{{ goal.name }} {{ goal.icon }}</h4>
+                <div style="background: #f0f0f0; border-radius: 10px; height: 20px; margin: 10px 0;">
+                    <div style="background: {{ goal.color }}; height: 100%; width: {{ goal.progress }}%; border-radius: 10px; transition: width 0.3s;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.9em;">
+                    <span>{{ goal.current }} / {{ goal.target }}</span>
+                    <span>{{ goal.progress }}%</span>
+                </div>
+                <div style="font-size: 0.8em; color: #666; margin-top: 5px;">
+                    {{ goal.status }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Export Options -->
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; text-align: center;">
+        <h4>📤 Export Your Progress</h4>
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+            <form method="POST" action="/nutrition/export-progress-pdf" style="display: inline;">
+                <input type="hidden" name="days" value="{{ days }}">
+                <input type="hidden" name="primary_metric" value="{{ primary_metric }}">
+                <button type="submit" style="background: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 5px;">📄 Export PDF Report</button>
+            </form>
+            <form method="POST" action="/nutrition/export-progress-csv" style="display: inline;">
+                <input type="hidden" name="days" value="{{ days }}">
+                <button type="submit" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px;">📊 Export CSV Data</button>
+            </form>
+            <form method="POST" action="/nutrition/share-progress" style="display: inline;">
+                <input type="hidden" name="days" value="{{ days }}">
+                <button type="submit" style="background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px;">📱 Share Progress</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    // Chart configurations
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    };
+
+    // Primary metric chart
+    const primaryCtx = document.getElementById('primaryChart').getContext('2d');
+    new Chart(primaryCtx, {
+        type: 'line',
+        data: {
+            labels: {{ chart_data.primary.labels|tojson }},
+            datasets: [{
+                label: '{{ primary_metric.title }}',
+                data: {{ chart_data.primary.data|tojson }},
+                borderColor: '{{ primary_metric.color }}',
+                backgroundColor: '{{ primary_metric.color }}33',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            ...chartOptions,
+            plugins: {
+                ...chartOptions.plugins,
+                title: {
+                    display: true,
+                    text: '{{ primary_metric.title }} Trend'
+                }
+            }
+        }
+    });
+
+    // Nutrition overview chart
+    const nutritionCtx = document.getElementById('nutritionChart').getContext('2d');
+    new Chart(nutritionCtx, {
+        type: 'line',
+        data: {
+            labels: {{ chart_data.nutrition.labels|tojson }},
+            datasets: [
+                {
+                    label: 'Calories',
+                    data: {{ chart_data.nutrition.calories|tojson }},
+                    borderColor: '#FF6384',
+                    backgroundColor: '#FF638433'
+                },
+                {
+                    label: 'Protein (g)',
+                    data: {{ chart_data.nutrition.protein|tojson }},
+                    borderColor: '#36A2EB',
+                    backgroundColor: '#36A2EB33'
+                }
+            ]
+        },
+        options: chartOptions
+    });
+
+    // Activity overview chart
+    const activityCtx = document.getElementById('activityChart').getContext('2d');
+    new Chart(activityCtx, {
+        type: 'line',
+        data: {
+            labels: {{ chart_data.activity.labels|tojson }},
+            datasets: [
+                {
+                    label: 'Steps',
+                    data: {{ chart_data.activity.steps|tojson }},
+                    borderColor: '#4BC0C0',
+                    backgroundColor: '#4BC0C033'
+                },
+                {
+                    label: 'Water (ml)',
+                    data: {{ chart_data.activity.water|tojson }},
+                    borderColor: '#9966FF',
+                    backgroundColor: '#9966FF33'
+                }
+            ]
+        },
+        options: chartOptions
+    });
+
+    // Weekly patterns chart
+    const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
+    new Chart(weeklyCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+            datasets: [{
+                label: 'Average {{ primary_metric.title }}',
+                data: {{ chart_data.weekly|tojson }},
+                backgroundColor: [
+                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
+                    '#9966FF', '#FF9F40', '#FF6384'
+                ]
+            }]
+        },
+        options: {
+            ...chartOptions,
+            plugins: {
+                ...chartOptions.plugins,
+                title: {
+                    display: true,
+                    text: 'Weekly {{ primary_metric.title }} Patterns'
+                }
+            }
+        }
+    });
+    </script>
+</body>
+</html>

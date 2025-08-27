@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <!-- Page Header -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="text-center">
+        <h1 class="display-4 mb-3">
+          <i class="fas fa-search me-3 text-success"></i>Find Recipes by Ingredients
+        </h1>
+        <p class="lead text-muted">Enter the ingredients you have and discover recipes you can make!</p>
+        <hr class="w-25 mx-auto">
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Form -->
+  <div class="row justify-content-center mb-5">
+    <div class="col-lg-8">
+      <div class="card shadow border-0">
+        <div class="card-body p-4">
+          <form method="POST" action="{{ url_for('main.search_by_ingredients') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <div class="mb-4">
+              <label for="ingredients" class="form-label h5">
+                <i class="fas fa-carrot me-2 text-success"></i>What ingredients do you have?
+              </label>
+              <textarea class="form-control form-control-lg" 
+                        id="ingredients" 
+                        name="ingredients" 
+                        rows="4" 
+                        placeholder="Enter ingredients separated by commas, e.g., chicken, tomatoes, onions, garlic, rice..."
+                        required></textarea>
+              <div class="form-text">
+                <i class="fas fa-lightbulb me-1 text-warning"></i>
+                <strong>Tip:</strong> Separate ingredients with commas. Be specific (e.g., "chicken breast" instead of just "chicken")
+              </div>
+            </div>
+            
+            <div class="d-grid">
+              <button type="submit" class="btn btn-success btn-lg">
+                <i class="fas fa-search me-2"></i>Find Matching Recipes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- How it Works Section -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <h3 class="text-center mb-4">
+        <i class="fas fa-question-circle me-2 text-info"></i>How it works
+      </h3>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="text-center">
+            <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                 style="width: 60px; height: 60px;">
+              <i class="fas fa-list text-white fa-lg"></i>
+            </div>
+            <h5>1. List Your Ingredients</h5>
+            <p class="text-muted">Enter the ingredients you have available in your kitchen, separated by commas.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="text-center">
+            <div class="bg-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                 style="width: 60px; height: 60px;">
+              <i class="fas fa-search text-white fa-lg"></i>
+            </div>
+            <h5>2. We Search & Match</h5>
+            <p class="text-muted">Our system searches through all recipes and finds the best matches based on your ingredients.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="text-center">
+            <div class="bg-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                 style="width: 60px; height: 60px;">
+              <i class="fas fa-utensils text-white fa-lg"></i>
+            </div>
+            <h5>3. Cook & Enjoy</h5>
+            <p class="text-muted">Choose from the matched recipes and start cooking with what you already have!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Ingredient Suggestions -->
+  <div class="row">
+    <div class="col-12">
+      <h4 class="mb-3">
+        <i class="fas fa-lightbulb me-2 text-warning"></i>Popular Ingredient Combinations
+      </h4>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="card border-0 bg-light h-100">
+            <div class="card-body">
+              <h6 class="card-title text-primary">
+                <i class="fas fa-drumstick-bite me-1"></i>Protein Base
+              </h6>
+              <div class="d-flex flex-wrap gap-1">
+                <span class="badge bg-primary suggestion-tag" data-ingredient="chicken">chicken</span>
+                <span class="badge bg-primary suggestion-tag" data-ingredient="beef">beef</span>
+                <span class="badge bg-primary suggestion-tag" data-ingredient="fish">fish</span>
+                <span class="badge bg-primary suggestion-tag" data-ingredient="eggs">eggs</span>
+                <span class="badge bg-primary suggestion-tag" data-ingredient="tofu">tofu</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card border-0 bg-light h-100">
+            <div class="card-body">
+              <h6 class="card-title text-success">
+                <i class="fas fa-leaf me-1"></i>Vegetables
+              </h6>
+              <div class="d-flex flex-wrap gap-1">
+                <span class="badge bg-success suggestion-tag" data-ingredient="onions">onions</span>
+                <span class="badge bg-success suggestion-tag" data-ingredient="garlic">garlic</span>
+                <span class="badge bg-success suggestion-tag" data-ingredient="tomatoes">tomatoes</span>
+                <span class="badge bg-success suggestion-tag" data-ingredient="peppers">peppers</span>
+                <span class="badge bg-success suggestion-tag" data-ingredient="mushrooms">mushrooms</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card border-0 bg-light h-100">
+            <div class="card-body">
+              <h6 class="card-title text-warning">
+                <i class="fas fa-seedling me-1"></i>Staples
+              </h6>
+              <div class="d-flex flex-wrap gap-1">
+                <span class="badge bg-warning suggestion-tag" data-ingredient="rice">rice</span>
+                <span class="badge bg-warning suggestion-tag" data-ingredient="pasta">pasta</span>
+                <span class="badge bg-warning suggestion-tag" data-ingredient="potatoes">potatoes</span>
+                <span class="badge bg-warning suggestion-tag" data-ingredient="bread">bread</span>
+                <span class="badge bg-warning suggestion-tag" data-ingredient="flour">flour</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.suggestion-tag {
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.suggestion-tag:hover {
+  transform: scale(1.05);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ingredientsTextarea = document.getElementById('ingredients');
+    const suggestionTags = document.querySelectorAll('.suggestion-tag');
+
+    // Handle suggestion tag clicks
+    suggestionTags.forEach(tag => {
+        tag.addEventListener('click', function() {
+            const ingredient = this.dataset.ingredient;
+            const currentValue = ingredientsTextarea.value.trim();
+            
+            // Check if ingredient is already in the list
+            const ingredients = currentValue.split(',').map(i => i.trim().toLowerCase());
+            if (!ingredients.includes(ingredient.toLowerCase())) {
+                if (currentValue) {
+                    ingredientsTextarea.value = currentValue + ', ' + ingredient;
+                } else {
+                    ingredientsTextarea.value = ingredient;
+                }
+                
+                // Add visual feedback
+                this.classList.add('opacity-50');
+                setTimeout(() => {
+                    this.classList.remove('opacity-50');
+                }, 200);
+            }
+        });
+    });
+
+    // Auto-resize textarea
+    ingredientsTextarea.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = this.scrollHeight + 'px';
+    });
+});
+</script>
+{% endblock %}

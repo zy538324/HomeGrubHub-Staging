@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}{{ challenge.title }} - Challenge Details{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h1 class="card-title">{{ challenge.title }}</h1>
+                        <span class="badge bg-{{ 'success' if challenge.is_ongoing else 'secondary' }}">
+                            {{ 'Ongoing' if challenge.is_ongoing else 'Completed' }}
+                        </span>
+                    </div>
+                    
+                    <p class="text-muted">
+                        <i class="fas fa-user"></i> Created by {{ challenge.creator.username }}
+                        | <i class="fas fa-calendar"></i> {{ challenge.start_date.strftime('%B %d, %Y') }} - {{ challenge.end_date.strftime('%B %d, %Y') }}
+                    </p>
+                    
+                    <div class="mb-3">
+                        <span class="badge bg-primary">{{ challenge.challenge_type.replace('_', ' ').title() }}</span>
+                        <span class="badge bg-info">{{ challenge.difficulty_level.title() }}</span>
+                        {% if challenge.is_featured %}
+                            <span class="badge bg-warning">Featured</span>
+                        {% endif %}
+                    </div>
+                    
+                    <p class="card-text">{{ challenge.description }}</p>
+                    
+                    <!-- Challenge Criteria -->
+                    {% if challenge.criteria %}
+                    <div class="mt-3">
+                        <h5>Challenge Criteria:</h5>
+                        <div class="alert alert-info">
+                            {% for key, value in challenge.criteria.items() %}
+                                <strong>{{ key.replace('_', ' ').title() }}:</strong> {{ value }}<br>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Participation Stats -->
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <h3 class="text-primary">{{ challenge.participant_count }}</h3>
+                                <small class="text-muted">Participants</small>
+                            </div>
+                        </div>
+                        {% if challenge.max_participants %}
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <h3 class="text-info">{{ challenge.max_participants }}</h3>
+                                <small class="text-muted">Max Participants</small>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <h3 class="text-success">
+                                    {{ challenge.participations | selectattr('is_completed') | list | length }}
+                                </h3>
+                                <small class="text-muted">Completed</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- User Actions -->
+            {% if challenge.is_ongoing %}
+            <div class="card mt-3">
+                <div class="card-body">
+                    {% if not user_participation %}
+                        {% if challenge.can_join(current_user) %}
+                        <form action="{{ url_for('community.join_challenge', challenge_id=challenge.id) }}" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-plus"></i> Join Challenge
+                            </button>
+                        </form>
+                        {% else %}
+                        <div class="alert alert-warning">
+                            {% if challenge.is_full %}
+                                This challenge is full.
+                            {% else %}
+                                You cannot join this challenge at this time.
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-success">
+                            <i class="fas fa-check"></i> You are participating in this challenge!
+                        </div>
+                        
+                        {% if not user_participation.is_completed %}
+                        <div class="mt-3">
+                            <h5>Submit Your Recipe</h5>
+                            <form action="{{ url_for('community.submit_to_challenge', challenge_id=challenge.id) }}" method="POST">
+                                <div class="mb-3">
+                                    <label for="recipe_id" class="form-label">Select Recipe</label>
+                                    <select name="recipe_id" id="recipe_id" class="form-select" required>
+                                        <option value="">Choose a recipe...</option>
+                                        {% for recipe in current_user.recipes %}
+                                            <option value="{{ recipe.id }}">{{ recipe.title }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="submission_notes" class="form-label">Submission Notes (Optional)</label>
+                                    <textarea name="submission_notes" id="submission_notes" class="form-control" rows="3"
+                                              placeholder="Tell us about your recipe and how it meets the challenge criteria..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-upload"></i> Submit Recipe
+                                </button>
+                            </form>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-info">
+                            <h5>Your Submission</h5>
+                            <strong>Recipe:</strong> {{ user_participation.submitted_recipe.title }}<br>
+                            <strong>Submitted:</strong> {{ user_participation.submission_date.strftime('%B %d, %Y at %I:%M %p') }}<br>
+                            {% if user_participation.submission_notes %}
+                                <strong>Notes:</strong> {{ user_participation.submission_notes }}
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Top Participants (for completed challenges) -->
+            {% if top_participants %}
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-trophy"></i> Top Participants</h5>
+                </div>
+                <div class="card-body">
+                    {% for participation in top_participants %}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <strong>{{ participation.user.username }}</strong>
+                            {% if participation.is_winner %}
+                                <i class="fas fa-crown text-warning"></i>
+                            {% endif %}
+                        </div>
+                        {% if participation.score %}
+                            <span class="badge bg-primary">{{ "%.1f"|format(participation.score) }}</span>
+                        {% endif %}
+                    </div>
+                    {% if participation.submitted_recipe %}
+                        <small class="text-muted">{{ participation.submitted_recipe.title }}</small>
+                    {% endif %}
+                    <hr>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Recent Participants -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5><i class="fas fa-users"></i> Recent Participants</h5>
+                </div>
+                <div class="card-body">
+                    {% for participation in challenge.participations[:5] %}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <strong>{{ participation.user.username }}</strong>
+                            {% if participation.is_completed %}
+                                <i class="fas fa-check text-success"></i>
+                            {% endif %}
+                        </div>
+                        <small class="text-muted">{{ participation.joined_at.strftime('%m/%d') }}</small>
+                    </div>
+                    {% endfor %}
+                    
+                    {% if challenge.participant_count > 5 %}
+                        <div class="text-center mt-2">
+                            <small class="text-muted">And {{ challenge.participant_count - 5 }} more...</small>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

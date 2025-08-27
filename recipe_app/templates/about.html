@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+
+{% block seo_title %}About HomeGrubHub | UK's Smart Meal Planning & Recipe Organization App{% endblock %}
+{% block seo_description %}Learn about HomeGrubHub - the UK's smart meal planning app helping families save money, eat healthier, and reduce food waste. Discover our story and mission.{% endblock %}
+{% block seo_keywords %}about HomeGrubHub, meal planning app UK, recipe organization, family cooking app, smart meal planning, food waste reduction{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "name": "About HomeGrubHub",
+  "description": "Learn about HomeGrubHub - the UK's smart meal planning and recipe organization application",
+  "url": "{{ request.url }}",
+  "mainEntity": {
+    "@type": "Organization",
+    "name": "HomeGrubHub",
+    "url": "{{ url_for('main.index', _external=True) }}",
+    "logo": "{{ url_for('static', filename='HomeGrubHub.png', _external=True) }}",
+    "description": "Smart meal planning and recipe organization for UK families",
+    "foundingDate": "2024",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "GB"
+    },
+    "sameAs": [
+      "https://facebook.com/homegrubhub",
+      "https://twitter.com/homegrubhub",
+      "https://instagram.com/homegrubhub"
+    ]
+  }
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <!-- Header Section -->
+  <div class="row mb-5">
+    <div class="col-12 text-center">
+      
+      
+      <h1 class="display-4 fw-bold mb-3">About HomeGrubHub</h1>
+      <p class="lead text-muted mb-4">Revolutionizing how UK families plan meals, organize recipes, and help save money on groceries</p>
+    </div>
+  </div>
+
+  <!-- Mission Section -->
+  <div class="row mb-5 align-items-center">
+    <div class="col-lg-6">
+      <h2 class="h3 mb-3">Our Mission</h2>
+      <p class="lead">We believe every family deserves to eat well without breaking the budget or spending hours planning meals.</p>
+      <p>HomeGrubHub was created to solve the daily challenge faced by millions of UK families: "What should we have for dinner?" Our intelligent meal planning system takes the stress out of meal preparation while helping you save money and reduce food waste.</p>
+      
+      <div class="row mt-4">
+        <div class="col-md-6 mb-3">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-clock fa-2x text-primary me-3"></i>
+            <div>
+              <h5 class="mb-1">Save Time</h5>
+              <small class="text-muted">5+ hours weekly, organise and simplify meal planning</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-leaf fa-2x text-success me-3"></i>
+            <div>
+              <h5 class="mb-1">Reduce Waste</h5>
+              <small class="text-muted">40% less food waste</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-heart fa-2x text-danger me-3"></i>
+            <div>
+              <h5 class="mb-1">Eat Better</h5>
+              <small class="text-muted">Nutritionally balanced</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="bg-primary bg-gradient rounded shadow p-5 text-white text-center">
+        <i class="fas fa-utensils fa-4x mb-3"></i>
+        <h3 class="mb-3">Smart Meal Planning</h3>
+        <p class="mb-0">Join the revolution of UK families who have transformed their meal planning experience with HomeGrubHub</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Story Section -->
+  <div class="row mb-5">
+    <div class="col-lg-8 mx-auto">
+      <div class="card border-0 bg-light">
+        <div class="card-body p-5">
+          <h2 class="h3 mb-4 text-center">Our Story</h2>
+          <p>I started HomeGrubHub because, like many parents, I was constantly stressed about meal planning. Every week, I'd spend hours browsing recipes, creating shopping lists, only to find myself throwing away unused ingredients and still asking "what's for dinner?"</p>
+          
+          <p>We at HomeGrubHub understand this struggle because we've lived it. As busy parents ourselves, we experienced firsthand the daily challenge of trying to feed our families well while managing tight budgets and hectic schedules.</p>
+          
+          <p>What began as my personal solution to organize our family recipes has evolved into a platform that helps families like yours take control of meal planning, reduce waste, and actually enjoy cooking again.</p>
+          
+          <blockquote class="blockquote text-center border-start border-4 border-primary ps-4 mt-4">
+            <p><em>"We wanted to create a tool that would make healthy, budget-friendly meal planning accessible to every UK family, regardless of their cooking experience or budget constraints."</em></p>
+            <footer class="blockquote-footer mt-2">HomeGrubHub Founding Team</footer>
+          </blockquote>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <h2 class="h3 mb-4 text-center">What Makes HomeGrubHub Special</h2>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <i class="fas fa-brain fa-3x text-primary mb-3"></i>
+              <h4 class="card-title">Smart AI Planning</h4>
+              <p class="card-text">Our intelligent system learns your preferences and suggests meals that fit your budget, dietary needs, and schedule.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <i class="fas fa-store fa-3x text-success mb-3"></i>
+              <h4 class="card-title">UK Price Comparison</h4>
+              <p class="card-text">Real-time price data from major UK supermarkets helps you find the best deals and optimize your shopping budget.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <i class="fas fa-users fa-3x text-warning mb-3"></i>
+              <h4 class="card-title">Family-Focused</h4>
+              <p class="card-text">Designed specifically for UK families with features for different dietary needs, portion adjustments, and kid-friendly options.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Section 
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="card bg-primary text-white">
+        <div class="card-body py-5">
+          <h2 class="h3 mb-4 text-center text-white">HomeGrubHub by the Numbers</h2>
+          <div class="row text-center">
+            <div class="col-md-3 mb-3">
+              <h3 class="display-6 fw-bold">10,000+</h3>
+              <p class="mb-0">Happy Families</p>
+            </div>
+            <div class="col-md-3 mb-3">
+              <h3 class="display-6 fw-bold">£2.4M</h3>
+              <p class="mb-0">Total Savings Generated</p>
+            </div>
+            <div class="col-md-3 mb-3">
+              <h3 class="display-6 fw-bold">50,000+</h3>
+              <p class="mb-0">Recipes Organized</p>
+            </div>
+            <div class="col-md-3 mb-3">
+              <h3 class="display-6 fw-bold">4.8★</h3>
+              <p class="mb-0">Average Rating</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>-->
+
+  <!-- Values Section -->
+  <div class="row mb-5">
+    <div class="col-lg-8 mx-auto">
+      <h2 class="h3 mb-4 text-center">Our Values</h2>
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="d-flex">
+            <i class="fas fa-heart fa-2x text-danger me-3 mt-1"></i>
+            <div>
+              <h4 class="h5">Family First</h4>
+              <p>Every feature we build is designed with real UK families in mind, solving actual problems faced in busy households.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="d-flex">
+            <i class="fas fa-shield-alt fa-2x text-success me-3 mt-1"></i>
+            <div>
+              <h4 class="h5">Privacy & Security</h4>
+              <p>Your data is protected with bank-level security. We never sell your information or compromise your privacy.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="d-flex">
+            <i class="fas fa-lightbulb fa-2x text-warning me-3 mt-1"></i>
+            <div>
+              <h4 class="h5">Continuous Innovation</h4>
+              <p>We're constantly improving our platform based on user feedback and the latest technology to serve you better.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="d-flex">
+            <i class="fas fa-handshake fa-2x text-primary me-3 mt-1"></i>
+            <div>
+              <h4 class="h5">Community Support</h4>
+              <p>We believe in the power of community and provide excellent support to help every family succeed.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Section -->
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <div class="card border-0 bg-light text-center">
+        <div class="card-body p-5">
+          <h2 class="h3 mb-3">Get in Touch</h2>
+          <p class="mb-4">Have questions, suggestions, or just want to say hello? We'd love to hear from you!</p>
+          
+          <div class="row justify-content-center">
+            <div class="col-md-8">
+              <div class="d-flex justify-content-center gap-3 mb-4">
+                <a href="{{ url_for('support.contact_form') }}" class="btn btn-primary btn-lg">
+                  <i class="fas fa-envelope me-2"></i>Contact Support
+                </a>
+                <a href="{{ url_for('community.community_home') }}" class="btn btn-outline-primary btn-lg">
+                  <i class="fas fa-users me-2"></i>Join Community
+                </a>
+              </div>
+              
+              <div class="d-flex justify-content-center gap-4">
+                <a href="https://facebook.com/homegrubhub" class="text-muted">
+                  <i class="fab fa-facebook fa-2x"></i>
+                </a>
+                <a href="https://twitter.com/homegrubhub" class="text-muted">
+                  <i class="fab fa-twitter fa-2x"></i>
+                </a>
+                <a href="https://instagram.com/homegrubhub" class="text-muted">
+                  <i class="fab fa-instagram fa-2x"></i>
+                </a>
+                <a href="https://linkedin.com/company/homegrubhub" class="text-muted">
+                  <i class="fab fa-linkedin fa-2x"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

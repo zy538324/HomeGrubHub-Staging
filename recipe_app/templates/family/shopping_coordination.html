@@ -1,0 +1,687 @@
+{% extends "base.html" %}
+{% block title %}Shopping Coordination - {{ family_account.family_name }} - HomeGrubHub{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Family Navigation Bar -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav class="navbar navbar-expand-lg navbar-light bg-gradient-secondary text-white rounded">
+                <div class="container-fluid">
+                    <span class="navbar-brand mb-0 h1 text-white">
+                        <i class="fas fa-shopping-cart me-2"></i>{{ family_account.family_name }} Shopping Center
+                    </span>
+                    <div class="navbar-nav ms-auto">
+                        <a class="nav-link text-white" href="{{ url_for('family.family_dashboard') }}">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                        <a class="nav-link text-white" href="{{ url_for('family_collab.cooking_assignments') }}">
+                            <i class="fas fa-user-friends me-1"></i>Cooking Assignments
+                        </a>
+                        <a class="nav-link text-white" href="{{ url_for('family_collab.family_messages') }}">
+                            <i class="fas fa-comments me-1"></i>Messages
+                        </a>
+                        <a class="nav-link text-white active" href="{{ url_for('family_collab.shopping_coordination') }}">
+                            <i class="fas fa-shopping-cart me-1"></i>Shopping
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Shopping Statistics -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-secondary text-white h-100">
+                <div class="card-body text-center">
+                    <div class="display-4 mb-2">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <h3 class="mb-1">{{ shopping_stats.total_requests }}</h3>
+                    <p class="card-text">Shopping Requests</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body text-center">
+                    <div class="display-4 mb-2">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                    <h3 class="mb-1">{{ shopping_stats.pending_requests }}</h3>
+                    <p class="card-text">Pending Approval</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body text-center">
+                    <div class="display-4 mb-2">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3 class="mb-1">{{ shopping_stats.approved_requests }}</h3>
+                    <p class="card-text">Ready to Shop</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body text-center">
+                    <div class="display-4 mb-2">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <h3 class="mb-1">${{ shopping_stats.weekly_budget|round(2) }}</h3>
+                    <p class="card-text">Weekly Budget</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Shopping Requests -->
+        <div class="col-lg-8 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <h5 class="mb-0 me-3">
+                            <i class="fas fa-shopping-cart me-2 text-secondary"></i>Shopping Requests
+                        </h5>
+                        <div class="btn-group" role="group" aria-label="Request filters">
+                            <input type="radio" class="btn-check" name="requestFilter" id="all-requests" value="all" checked>
+                            <label class="btn btn-outline-secondary btn-sm" for="all-requests">All</label>
+                            
+                            <input type="radio" class="btn-check" name="requestFilter" id="pending-requests" value="pending">
+                            <label class="btn btn-outline-warning btn-sm" for="pending-requests">Pending</label>
+                            
+                            <input type="radio" class="btn-check" name="requestFilter" id="approved-requests" value="approved">
+                            <label class="btn btn-outline-success btn-sm" for="approved-requests">Approved</label>
+                            
+                            <input type="radio" class="btn-check" name="requestFilter" id="purchased-requests" value="purchased">
+                            <label class="btn btn-outline-info btn-sm" for="purchased-requests">Purchased</label>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#newShoppingRequestModal">
+                        <i class="fas fa-plus me-1"></i>New Request
+                    </button>
+                </div>
+                <div class="card-body">
+                    {% if shopping_requests %}
+                        <div class="shopping-requests-list">
+                            {% for request in shopping_requests %}
+                                <div class="request-item mb-3 p-3 rounded border 
+                                    {% if request.status == 'pending' %}border-warning bg-warning bg-opacity-10
+                                    {% elif request.status == 'approved' %}border-success bg-success bg-opacity-10
+                                    {% elif request.status == 'rejected' %}border-danger bg-danger bg-opacity-10
+                                    {% elif request.status == 'purchased' %}border-info bg-info bg-opacity-10
+                                    {% endif %}" 
+                                    data-request-status="{{ request.status }}">
+                                    
+                                    <!-- Request Header -->
+                                    <div class="request-header d-flex justify-content-between align-items-start mb-2">
+                                        <div class="requester-info d-flex align-items-center">
+                                            <div class="requester-avatar me-2">
+                                                {% if request.requested_by_member.age_group == 'child' %}
+                                                    <i class="fas fa-child text-primary fa-lg"></i>
+                                                {% elif request.requested_by_member.age_group == 'teen' %}
+                                                    <i class="fas fa-user-graduate text-info fa-lg"></i>
+                                                {% else %}
+                                                    <i class="fas fa-user text-success fa-lg"></i>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <strong class="requester-name">{{ request.requested_by_member.display_name }}</strong>
+                                                <small class="text-muted ms-2">{{ request.requested_by_member.role.title() }}</small>
+                                            </div>
+                                        </div>
+                                        <div class="request-meta text-end">
+                                            <div class="request-time small text-muted">
+                                                {{ request.created_at.strftime('%m/%d at %H:%M') }}
+                                            </div>
+                                            <div class="request-status">
+                                                {% if request.status == 'pending' %}
+                                                    <span class="badge bg-warning text-dark">
+                                                        <i class="fas fa-hourglass-half me-1"></i>Pending
+                                                    </span>
+                                                {% elif request.status == 'approved' %}
+                                                    <span class="badge bg-success">
+                                                        <i class="fas fa-check me-1"></i>Approved
+                                                    </span>
+                                                {% elif request.status == 'rejected' %}
+                                                    <span class="badge bg-danger">
+                                                        <i class="fas fa-times me-1"></i>Rejected
+                                                    </span>
+                                                {% elif request.status == 'purchased' %}
+                                                    <span class="badge bg-info">
+                                                        <i class="fas fa-shopping-bag me-1"></i>Purchased
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Request Items -->
+                                    <div class="request-items mb-3">
+                                        <h6 class="mb-2">Shopping Items:</h6>
+                                        <div class="items-grid">
+                                            {% for item in request.get_items_list() %}
+                                                <div class="item-pill badge bg-light text-dark me-2 mb-2">
+                                                    <i class="fas fa-shopping-basket me-1"></i>{{ item }}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Request Details -->
+                                    <div class="request-details row mb-3">
+                                        <div class="col-md-6">
+                                            <strong>Needed By:</strong>
+                                            <span class="ms-2">
+                                                {{ request.needed_by_date.strftime('%A, %B %d, %Y') if request.needed_by_date else 'No deadline' }}
+                                                {% if request.needed_by_date and request.needed_by_date == today %}
+                                                    <span class="badge bg-warning text-dark ms-1">TODAY</span>
+                                                {% elif request.needed_by_date and (request.needed_by_date - today).days < 3 %}
+                                                    <span class="badge bg-info ms-1">SOON</span>
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>Priority:</strong>
+                                            <span class="ms-2">
+                                                {% if request.priority == 'urgent' %}
+                                                    <span class="badge bg-danger">Urgent</span>
+                                                {% elif request.priority == 'high' %}
+                                                    <span class="badge bg-warning text-dark">High</span>
+                                                {% elif request.priority == 'low' %}
+                                                    <span class="badge bg-secondary">Low</span>
+                                                {% else %}
+                                                    <span class="badge bg-primary">Normal</span>
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Request Notes -->
+                                    {% if request.notes %}
+                                        <div class="request-notes mb-3">
+                                            <strong>Notes:</strong>
+                                            <p class="mb-0 mt-1 text-muted">{{ request.notes }}</p>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <!-- Budget Information -->
+                                    {% if request.estimated_cost %}
+                                        <div class="budget-info mb-3">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <strong>Estimated Cost:</strong> ${{ request.estimated_cost }}
+                                                </div>
+                                                {% if request.actual_cost %}
+                                                    <div class="col-md-6">
+                                                        <strong>Actual Cost:</strong> ${{ request.actual_cost }}
+                                                        {% if request.actual_cost > request.estimated_cost %}
+                                                            <span class="badge bg-warning text-dark ms-1">Over Budget</span>
+                                                        {% elif request.actual_cost < request.estimated_cost %}
+                                                            <span class="badge bg-success ms-1">Under Budget</span>
+                                                        {% endif %}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <!-- Approval Information -->
+                                    {% if request.approved_by_member %}
+                                        <div class="approval-info mb-3">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-user-check text-success me-2"></i>
+                                                <span>
+                                                    {% if request.status == 'approved' %}
+                                                        Approved by {{ request.approved_by_member.display_name }}
+                                                    {% elif request.status == 'rejected' %}
+                                                        Rejected by {{ request.approved_by_member.display_name }}
+                                                    {% endif %}
+                                                    {% if request.approved_at %}
+                                                        <small class="text-muted ms-2">
+                                                            on {{ request.approved_at.strftime('%m/%d at %H:%M') }}
+                                                        </small>
+                                                    {% endif %}
+                                                </span>
+                                            </div>
+                                            {% if request.approval_notes %}
+                                                <p class="mb-0 mt-2 small text-muted">
+                                                    <em>"{{ request.approval_notes }}"</em>
+                                                </p>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <!-- Request Actions -->
+                                    <div class="request-actions d-flex justify-content-between align-items-center">
+                                        <div class="action-buttons">
+                                            {% if request.status == 'pending' and current_user.id != request.requested_by_member.user_id %}
+                                                {% if current_member.role in ['parent', 'guardian'] %}
+                                                    <button class="btn btn-success btn-sm me-2" onclick="approveRequest({{ request.id }})">
+                                                        <i class="fas fa-check me-1"></i>Approve
+                                                    </button>
+                                                    <button class="btn btn-danger btn-sm" onclick="rejectRequest({{ request.id }})">
+                                                        <i class="fas fa-times me-1"></i>Reject
+                                                    </button>
+                                                {% endif %}
+                                            {% elif request.status == 'approved' %}
+                                                <button class="btn btn-info btn-sm me-2" onclick="markAsPurchased({{ request.id }})">
+                                                    <i class="fas fa-shopping-bag me-1"></i>Mark as Purchased
+                                                </button>
+                                            {% endif %}
+                                        </div>
+                                        <div class="secondary-actions">
+                                            {% if current_user.id == request.requested_by_member.user_id and request.status == 'pending' %}
+                                                <button class="btn btn-outline-secondary btn-sm" onclick="editRequest({{ request.id }})">
+                                                    <i class="fas fa-edit me-1"></i>Edit
+                                                </button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted py-5">
+                            <i class="fas fa-shopping-cart fa-3x mb-3"></i>
+                            <h5>No Shopping Requests</h5>
+                            <p>Create a shopping request to coordinate family grocery shopping!</p>
+                            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#newShoppingRequestModal">
+                                <i class="fas fa-plus me-1"></i>Create First Request
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Shopping Sidebar -->
+        <div class="col-lg-4 mb-4">
+            <!-- Shopping Schedule -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-calendar me-2 text-info"></i>Shopping Schedule
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% if upcoming_shopping %}
+                        <div class="shopping-schedule">
+                            {% for day in upcoming_shopping %}
+                                <div class="schedule-day mb-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <strong>{{ day.date.strftime('%A, %m/%d') }}</strong>
+                                        <span class="badge bg-secondary">{{ day.items_count }} items</span>
+                                    </div>
+                                    <div class="schedule-items mt-1">
+                                        {% for item in day.urgent_items %}
+                                            <small class="text-danger">• {{ item }}</small><br>
+                                        {% endfor %}
+                                        {% if day.other_items %}
+                                            <small class="text-muted">and {{ day.other_items|length }} more...</small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted small">No upcoming shopping scheduled</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Family Budget Overview -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-wallet me-2 text-success"></i>Budget Overview
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="budget-overview">
+                        <div class="budget-item d-flex justify-content-between mb-2">
+                            <span>Weekly Budget:</span>
+                            <strong>${{ family_budget.weekly_limit|round(2) if family_budget else '0.00' }}</strong>
+                        </div>
+                        <div class="budget-item d-flex justify-content-between mb-2">
+                            <span>Spent This Week:</span>
+                            <span>${{ family_budget.weekly_spent|round(2) if family_budget else '0.00' }}</span>
+                        </div>
+                        <div class="budget-item d-flex justify-content-between mb-3">
+                            <span>Remaining:</span>
+                            <strong class="
+                                {% if family_budget and family_budget.weekly_remaining < 0 %}text-danger
+                                {% elif family_budget and family_budget.weekly_remaining < (family_budget.weekly_limit * 0.2) %}text-warning
+                                {% else %}text-success{% endif %}">
+                                ${{ family_budget.weekly_remaining|round(2) if family_budget else '0.00' }}
+                            </strong>
+                        </div>
+                        {% if family_budget %}
+                            <div class="progress mb-2">
+                                <div class="progress-bar 
+                                    {% if family_budget.budget_percentage > 100 %}bg-danger
+                                    {% elif family_budget.budget_percentage > 80 %}bg-warning
+                                    {% else %}bg-success{% endif %}" 
+                                    role="progressbar" 
+                                    style="width: {{ [family_budget.budget_percentage, 100]|min }}%"
+                                    aria-valuenow="{{ family_budget.budget_percentage }}" 
+                                    aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                            <small class="text-muted">{{ family_budget.budget_percentage|round(1) }}% of weekly budget used</small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shopping Tips -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-lightbulb me-2 text-warning"></i>Shopping Tips
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled small">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-1"></i>
+                            Include estimated costs for budget planning
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-1"></i>
+                            Set realistic deadlines for needed items
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-1"></i>
+                            Group similar items together
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-1"></i>
+                            Use priority levels to organize shopping
+                        </li>
+                        <li class="mb-0">
+                            <i class="fas fa-check text-success me-1"></i>
+                            Update actual costs after shopping
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- New Shopping Request Modal -->
+<div class="modal fade" id="newShoppingRequestModal" tabindex="-1" aria-labelledby="newShoppingRequestModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('family_collab.create_shopping_request') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newShoppingRequestModalLabel">
+                        <i class="fas fa-plus me-2"></i>New Shopping Request
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="shopping_items" class="form-label">Shopping Items</label>
+                        <textarea class="form-control" id="shopping_items" name="shopping_items" rows="3" 
+                                  placeholder="Enter items, one per line or separated by commas..." required></textarea>
+                        <div class="form-text">List all the items you need to buy</div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="needed_by_date" class="form-label">Needed By (Optional)</label>
+                                <input type="date" class="form-control" id="needed_by_date" name="needed_by_date">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="priority" class="form-label">Priority</label>
+                                <select class="form-select" id="priority" name="priority">
+                                    <option value="normal" selected>Normal</option>
+                                    <option value="high">High</option>
+                                    <option value="urgent">Urgent</option>
+                                    <option value="low">Low</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="estimated_cost" class="form-label">Estimated Cost ($)</label>
+                                <input type="number" class="form-control" id="estimated_cost" name="estimated_cost" 
+                                       step="0.01" min="0" placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="store_preference" class="form-label">Store Preference</label>
+                                <input type="text" class="form-control" id="store_preference" name="store_preference" 
+                                       placeholder="e.g., Walmart, Target, local grocery">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Notes</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="2" 
+                                  placeholder="Special instructions, brand preferences, dietary restrictions..."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="requires_approval" name="requires_approval" checked>
+                            <label class="form-check-label" for="requires_approval">
+                                Requires parent/guardian approval
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="fas fa-save me-1"></i>Create Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Approval Modal -->
+<div class="modal fade" id="approvalModal" tabindex="-1" aria-labelledby="approvalModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="approvalForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="approvalModalLabel">
+                        <i class="fas fa-check me-2"></i>Approve Shopping Request
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="approval_request_id" name="request_id">
+                    
+                    <div class="mb-3">
+                        <label for="approval_notes" class="form-label">Approval Notes (Optional)</label>
+                        <textarea class="form-control" id="approval_notes" name="approval_notes" rows="3" 
+                                  placeholder="Any conditions or notes about this approval..."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="adjusted_budget" class="form-label">Adjust Budget Limit ($)</label>
+                        <input type="number" class="form-control" id="adjusted_budget" name="adjusted_budget" 
+                               step="0.01" min="0" placeholder="Leave blank to use original estimate">
+                        <div class="form-text">You can adjust the spending limit for this request</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check me-1"></i>Approve Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Request filtering
+document.querySelectorAll('input[name="requestFilter"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const filterStatus = this.value;
+        const requestItems = document.querySelectorAll('.request-item');
+        
+        requestItems.forEach(item => {
+            if (filterStatus === 'all') {
+                item.style.display = 'block';
+            } else {
+                const requestStatus = item.getAttribute('data-request-status');
+                item.style.display = requestStatus === filterStatus ? 'block' : 'none';
+            }
+        });
+    });
+});
+
+// Set minimum date to today
+document.getElementById('needed_by_date').min = new Date().toISOString().split('T')[0];
+
+// Approval functions
+function approveRequest(requestId) {
+    document.getElementById('approval_request_id').value = requestId;
+    new bootstrap.Modal(document.getElementById('approvalModal')).show();
+}
+
+document.getElementById('approvalForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const requestId = formData.get('request_id');
+    
+    fetch(`/family/approve-shopping-request/${requestId}`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('meta[name=csrf-token]')?.content
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            bootstrap.Modal.getInstance(document.getElementById('approvalModal')).hide();
+            location.reload();
+        } else {
+            alert(data.message || 'Error approving request');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Network error. Please try again.');
+    });
+});
+
+function rejectRequest(requestId) {
+    const reason = prompt('Why are you rejecting this request? (Optional)');
+    
+    fetch(`/family/reject-shopping-request/${requestId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('meta[name=csrf-token]')?.content
+        },
+        body: JSON.stringify({ approval_notes: reason })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.message || 'Error rejecting request');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Network error. Please try again.');
+    });
+}
+
+function markAsPurchased(requestId) {
+    const actualCost = prompt('What was the actual cost? Enter amount in dollars:');
+    
+    if (actualCost !== null) {
+        fetch(`/family/mark-shopping-purchased/${requestId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('meta[name=csrf-token]')?.content
+            },
+            body: JSON.stringify({ actual_cost: parseFloat(actualCost) || null })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.message || 'Error marking as purchased');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Network error. Please try again.');
+        });
+    }
+}
+</script>
+
+<style>
+.request-item {
+    transition: all 0.2s ease-in-out;
+}
+
+.request-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.requester-avatar i {
+    transition: transform 0.2s;
+}
+
+.request-item:hover .requester-avatar i {
+    transform: scale(1.1);
+}
+
+.items-grid .item-pill {
+    transition: all 0.2s;
+}
+
+.items-grid .item-pill:hover {
+    transform: scale(1.05);
+    background-color: #e9ecef !important;
+}
+
+.schedule-day {
+    transition: background-color 0.2s;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.schedule-day:hover {
+    background-color: #f8f9fa;
+}
+
+.progress-bar {
+    transition: width 0.5s ease-in-out;
+}
+</style>
+
+{% endblock %}

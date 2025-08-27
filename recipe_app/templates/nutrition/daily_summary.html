@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Daily Nutrition Summary</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+    <h1>Daily Nutrition Summary for {{ summary_date }}</h1>
+    <div>
+        <h3>Totals</h3>
+        <p>Calories: <strong>{{ total_calories }}</strong></p>
+        <p>Protein: <strong>{{ total_protein }}</strong> g</p>
+        <p>Carbs: <strong>{{ total_carbs }}</strong> g</p>
+        <p>Fat: <strong>{{ total_fat }}</strong> g</p>
+    </div>
+    <h3>Meals</h3>
+    <ul>
+        {% for meal in meals %}
+        <li>
+            <strong>{{ meal.meal_type|capitalize }}</strong> ({{ meal.meal_date }})<br>
+            Foods:
+            <ul>
+                {% for food in meal.foods %}
+                <li>{{ food.name }} ({{ food.brand }}) - {{ food.calories }} kcal</li>
+                {% endfor %}
+            </ul>
+            <em>Meal Totals: {{ meal.total_calories }} kcal, {{ meal.total_protein }}g protein, {{ meal.total_carbs }}g carbs, {{ meal.total_fat }}g fat</em>
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="/nutrition/log-meal">Log Another Meal</a>
+</body>
+</html>

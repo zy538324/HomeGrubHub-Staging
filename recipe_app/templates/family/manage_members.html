@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+{% block title %}Manage Family Members - HomeGrubHub{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-1">
+                        <i class="fas fa-users-cog me-2 text-primary"></i>
+                        Manage Family Members
+                    </h1>
+                    <p class="text-muted">Manage roles, permissions, and family member settings for {{ family_account.family_name }}</p>
+                </div>
+                <div>
+                    <a href="{{ url_for('family.family_dashboard') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Family Info Card -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-home me-2"></i>{{ family_account.family_name }} Family
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Total Members:</strong> {{ family_members|length }}</p>
+                            <p><strong>Created:</strong> {{ family_account.created_at.strftime('%B %d, %Y') }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#inviteMemberModal">
+                                <i class="fas fa-user-plus me-1"></i>Invite Member
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Family Members List -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-users me-2"></i>Family Members
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if family_members %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Member</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for member in family_members %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm me-3">
+                                                <span class="avatar-title rounded-circle bg-soft-primary text-primary">
+                                                    {{ member.user.username[0]|upper }}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0">{{ member.user.username }}</h6>
+                                                <small class="text-muted">{{ member.user.email }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{% if member.role == 'parent' %}primary{% elif member.role == 'guardian' %}info{% elif member.role == 'teen' %}warning{% else %}secondary{% endif %}">
+                                            {% if member.role == 'parent' %}
+                                                <i class="fas fa-crown me-1"></i>Parent
+                                            {% elif member.role == 'guardian' %}
+                                                <i class="fas fa-shield-alt me-1"></i>Guardian
+                                            {% elif member.role == 'teen' %}
+                                                <i class="fas fa-user-graduate me-1"></i>Teen
+                                            {% elif member.role == 'child' %}
+                                                <i class="fas fa-child me-1"></i>Child
+                                            {% else %}
+                                                <i class="fas fa-user me-1"></i>Member
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if member.is_active %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check-circle me-1"></i>Active
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-warning">
+                                                <i class="fas fa-clock me-1"></i>Pending
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">
+                                            {{ member.joined_at.strftime('%b %d, %Y') if member.joined_at else 'Pending' }}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            {% if member.user.id != current_user.id %}
+                                            <button class="btn btn-sm btn-outline-primary" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#editMemberModal"
+                                                    data-member-id="{{ member.id }}"
+                                                    data-member-name="{{ member.user.username }}"
+                                                    data-member-role="{{ member.role }}">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#removeMemberModal"
+                                                    data-member-id="{{ member.id }}"
+                                                    data-member-name="{{ member.user.username }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                            {% else %}
+                                            <span class="badge bg-info">You</span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No family members found</h5>
+                        <p class="text-muted">Invite family members to get started with collaborative cooking!</p>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#inviteMemberModal">
+                            <i class="fas fa-user-plus me-1"></i>Invite First Member
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Invite Member Modal -->
+<div class="modal fade" id="inviteMemberModal" tabindex="-1" aria-labelledby="inviteMemberModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="inviteMemberModalLabel">
+                    <i class="fas fa-user-plus me-2"></i>Invite Family Member
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('family.invite_member') }}" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="inviteEmail" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="inviteEmail" name="email" required>
+                        <div class="form-text">Enter the email address of the person you want to invite.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inviteRole" class="form-label">Role</label>
+                        <select class="form-select" id="inviteRole" name="role" required>
+                            <option value="parent">Parent - Full access and management permissions</option>
+                            <option value="guardian">Guardian - Can manage children and teens</option>
+                            <option value="teen" selected>Teen - Limited management permissions</option>
+                            <option value="child">Child - Basic access only</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inviteMessage" class="form-label">Personal Message (Optional)</label>
+                        <textarea class="form-control" id="inviteMessage" name="message" rows="3" placeholder="Add a personal message to your invitation..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane me-1"></i>Send Invitation
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Member Modal -->
+<div class="modal fade" id="editMemberModal" tabindex="-1" aria-labelledby="editMemberModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editMemberModalLabel">
+                    <i class="fas fa-edit me-2"></i>Edit Member Role
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('family.update_member_role') }}" method="POST">
+                <input type="hidden" id="editMemberId" name="member_id">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Member</label>
+                        <p class="form-control-plaintext" id="editMemberName"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editRole" class="form-label">Role</label>
+                        <select class="form-select" id="editRole" name="role" required>
+                            <option value="parent">Parent - Full access and management permissions</option>
+                            <option value="guardian">Guardian - Can manage children and teens</option>
+                            <option value="teen">Teen - Limited management permissions</option>
+                            <option value="child">Child - Basic access only</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>Update Role
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Remove Member Modal -->
+<div class="modal fade" id="removeMemberModal" tabindex="-1" aria-labelledby="removeMemberModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="removeMemberModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2 text-danger"></i>Remove Family Member
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('family.remove_member') }}" method="POST">
+                <input type="hidden" id="removeMemberId" name="member_id">
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Warning:</strong> This action cannot be undone.
+                    </div>
+                    <p>Are you sure you want to remove <strong id="removeMemberName"></strong> from the family?</p>
+                    <p class="text-muted small">They will lose access to all family features and data.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i>Remove Member
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Handle modal data population
+document.addEventListener('DOMContentLoaded', function() {
+    // Edit member modal
+    $('#editMemberModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var memberId = button.data('member-id');
+        var memberName = button.data('member-name');
+        var memberRole = button.data('member-role');
+        
+        var modal = $(this);
+        modal.find('#editMemberId').val(memberId);
+        modal.find('#editMemberName').text(memberName);
+        modal.find('#editRole').val(memberRole);
+    });
+    
+    // Remove member modal
+    $('#removeMemberModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var memberId = button.data('member-id');
+        var memberName = button.data('member-name');
+        
+        var modal = $(this);
+        modal.find('#removeMemberId').val(memberId);
+        modal.find('#removeMemberName').text(memberName);
+    });
+});
+</script>
+
+<style>
+.avatar-sm {
+    width: 40px;
+    height: 40px;
+}
+
+.avatar-title {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.bg-soft-primary {
+    background-color: rgba(13, 110, 253, 0.1) !important;
+}
+</style>
+
+{% endblock %}

@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Help Center - HomeGrubHub{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="help-hero">
+    <div class="container text-center">
+        <h1 class="display-4 mb-3">
+            <i class="fas fa-life-ring me-3"></i>
+            How can we help you?
+        </h1>
+        <p class="lead mb-4">Find answers, get support, and learn how to make the most of HomeGrubHub</p>
+        
+        <!-- Search Box -->
+        <div class="search-box">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search for help articles, guides, or FAQs...">
+                <button class="btn" type="button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+
+<div class="container">
+    <div class="row g-4">
+        <!-- Contact Support -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card help-card">
+                <div class="help-card-body">
+                    <div class="help-card-icon icon-contact">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3 class="help-card-title">Contact Support</h3>
+                    <p class="help-card-text">
+                        Need personalized help? Send us a message and we'll get back to you within 24 hours.
+                    </p>
+                    <a href="{{ url_for('support.contact_form') }}" class="btn btn-help">
+                        <i class="fas fa-paper-plane me-2"></i>Contact Us
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- FAQ -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card help-card">
+                <div class="help-card-body">
+                    <div class="help-card-icon icon-faq">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <h3 class="help-card-title">Frequently Asked Questions</h3>
+                    <p class="help-card-text">
+                        Quick answers to the most common questions about HomeGrubHub features and billing.
+                    </p>
+                    <a href="{{ url_for('support.faq') }}" class="btn btn-help">
+                        <i class="fas fa-search me-2"></i>Browse FAQ
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Getting Started -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card help-card">
+                <div class="help-card-body">
+                    <div class="help-card-icon icon-guide">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3 class="help-card-title">Getting Started Guide</h3>
+                    <p class="help-card-text">
+                        New to HomeGrubHub? Learn the basics and discover all the amazing features we offer.
+                    </p>
+                    <a href="{{ url_for('support.getting_started') }}" class="btn btn-help">
+                        <i class="fas fa-play me-2"></i>Start Guide
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Live Chat (Future) -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card help-card">
+                <div class="help-card-body">
+                    <div class="help-card-icon icon-chat">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3 class="help-card-title">Live Chat</h3>
+                    <p class="help-card-text">
+                        Chat with our support team in real-time for immediate assistance with your questions.
+                    </p>
+                    <a href="{{ url_for('support.live_chat') }}" class="btn btn-help">
+                        <i class="fas fa-comment-dots me-2"></i>Start Chat
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Support Tickets -->
+        {% if current_user.is_authenticated %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card help-card">
+                <div class="help-card-body">
+                    <div class="help-card-icon icon-ticket">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <h3 class="help-card-title">Create Support Ticket</h3>
+                    <p class="help-card-text">
+                        Submit a detailed support request and track the progress of your inquiry.
+                    </p>
+                    <a href="{{ url_for('support.create_ticket') }}" class="btn btn-help">
+                        <i class="fas fa-plus me-2"></i>Create Ticket
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+                {% if current_user.is_authenticated %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card help-card">
+                <div class="help-card-body">
+                    <div class="help-card-icon icon-ticket">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <h3 class="help-card-title">My Support Tickets</h3>
+                    <p class="help-card-text">
+                        View and manage your existing support tickets.
+                    </p>
+                    <a href="{{ url_for('support.my_tickets') }}" class="btn btn-help">
+                        <i class="fas fa-list me-2"></i>View Tickets
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Community Help -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card help-card">
+                <div class="help-card-body">
+                    <div class="help-card-icon icon-community">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="help-card-title">Community Help</h3>
+                    <p class="help-card-text">
+                        Connect with other HomeGrubHub users and share tips, recipes, and cooking advice.
+                    </p>
+                    <a href="{{ url_for('community.community_home') }}" class="btn btn-help">
+                        <i class="fas fa-heart me-2"></i>Join Community
+                    </a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+</div>
+
+<script>
+// Add search functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.querySelector('.search-box input');
+    const searchBtn = document.querySelector('.search-box button');
+    
+    if (searchInput && searchBtn) {
+        searchBtn.addEventListener('click', function() {
+            const query = searchInput.value.trim();
+            if (query) {
+                // For now, just redirect to FAQ with a search parameter
+                window.location.href = `{{ url_for('support.faq') }}?search=${encodeURIComponent(query)}`;
+            }
+        });
+        
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchBtn.click();
+            }
+        });
+    }
+});
+</script>
+
+<br>
+<br></vr>
+{% endblock %}

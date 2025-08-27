@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <!-- Search Results Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h2>
+            <i class="fas fa-search-plus me-2 text-success"></i>Recipe Matches
+          </h2>
+          <p class="text-muted mb-0">
+            Found {{ results|length }} recipe{{ 's' if results|length != 1 else '' }} 
+            containing your ingredients: 
+            <strong>{{ search_ingredients|join(', ') }}</strong>
+          </p>
+        </div>
+        <div>
+          <a href="{{ url_for('main.ingredient_search') }}" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left me-1"></i>New Search
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if results %}
+  <!-- Match Quality Legend -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="alert alert-info border-0">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-info-circle me-2"></i>
+          <strong>Match Quality:</strong>
+          <span class="badge bg-success ms-2">90-100%</span>
+          <span class="badge bg-warning ms-1">60-89%</span>
+          <span class="badge bg-secondary ms-1">Below 60%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recipe Results -->
+  <div class="row g-4">
+    {% for result in results %}
+    <div class="col-lg-6">
+      <div class="card recipe-match-card h-100 shadow-sm border-0">
+        <!-- Match Quality Badge -->
+        <div class="position-absolute top-0 end-0 m-3" style="z-index: 10;">
+          {% if result.match_percentage >= 90 %}
+          <span class="badge bg-success fs-6">
+            <i class="fas fa-star me-1"></i>{{ "%.0f"|format(result.match_percentage) }}% Match
+          </span>
+          {% elif result.match_percentage >= 60 %}
+          <span class="badge bg-warning fs-6">
+            <i class="fas fa-thumbs-up me-1"></i>{{ "%.0f"|format(result.match_percentage) }}% Match
+          </span>
+          {% else %}
+          <span class="badge bg-secondary fs-6">
+            <i class="fas fa-check me-1"></i>{{ "%.0f"|format(result.match_percentage) }}% Match
+          </span>
+          {% endif %}
+        </div>
+
+        <div class="row g-0">
+          <!-- Recipe Image -->
+          <div class="col-md-4">
+            <div style="height: 200px; overflow: hidden;">
+              {% if result.recipe.image_file %}
+              {% if result.recipe.image_file.startswith('imported_') %}
+              <img src="{{ url_for('static', filename='uploads/imported_' + result.recipe.image_file[9:]) }}" 
+                   class="img-fluid w-100 h-100 rounded-start" style="object-fit: cover;" 
+                   alt="{{ result.recipe.title }}">
+              {% else %}
+              <img src="{{ url_for('static', filename='uploads/' + result.recipe.image_file) }}" 
+                   class="img-fluid w-100 h-100 rounded-start" style="object-fit: cover;" 
+                   alt="{{ result.recipe.title }}">
+              {% endif %}
+              {% else %}
+              <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center rounded-start">
+                <i class="fas fa-utensils fa-2x text-muted"></i>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Recipe Details -->
+          <div class="col-md-8">
+            <div class="card-body h-100 d-flex flex-column">
+              <h5 class="card-title mb-2">
+                <a href="{{ url_for('main.recipe', recipe_id=result.recipe.id) }}" 
+                   class="text-decoration-none text-dark">
+                  {{ result.recipe.title }}
+                </a>
+              </h5>
+
+              <!-- Ingredient Match Info -->
+              <div class="mb-3">
+                <small class="text-muted">
+                  <i class="fas fa-check-circle text-success me-1"></i>
+                  Matches <strong>{{ result.matches }}</strong> of your <strong>{{ result.total_ingredients }}</strong> ingredients
+                </small>
+                
+                <!-- Matched Ingredients -->
+                <div class="mt-2">
+                  {% for ingredient in result.matched_ingredients %}
+                  <span class="badge bg-success bg-opacity-25 text-success me-1">
+                    <i class="fas fa-check me-1"></i>{{ ingredient }}
+                  </span>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <!-- Recipe Info -->
+              <div class="row text-center mb-3 small">
+                {% if result.recipe.prep_time %}
+                <div class="col-4">
+                  <i class="fas fa-clock text-primary"></i>
+                  <div class="fw-bold">{{ result.recipe.prep_time }}m</div>
+                  <small class="text-muted">Prep</small>
+                </div>
+                {% endif %}
+                
+                {% if result.recipe.servings %}
+                <div class="col-4">
+                  <i class="fas fa-users text-success"></i>
+                  <div class="fw-bold">{{ result.recipe.servings }}</div>
+                  <small class="text-muted">Serves</small>
+                </div>
+                {% endif %}
+                
+                {% if result.recipe.difficulty %}
+                <div class="col-4">
+                  <i class="fas fa-chart-line text-warning"></i>
+                  <div class="fw-bold">{{ result.recipe.difficulty }}</div>
+                  <small class="text-muted">Level</small>
+                </div>
+                {% endif %}
+              </div>
+
+              <!-- Country and Cuisine -->
+              {% if result.recipe.country or result.recipe.cuisine_type %}
+              <div class="mb-3">
+                {% if result.recipe.country %}
+                <span class="badge bg-primary">
+                  <i class="fas fa-flag me-1"></i>{{ result.recipe.country }}
+                </span>
+                {% endif %}
+                {% if result.recipe.cuisine_type %}
+                <span class="badge bg-info">
+                  <i class="fas fa-utensils me-1"></i>{{ result.recipe.cuisine_type }}
+                </span>
+                {% endif %}
+              </div>
+              {% endif %}
+
+              <!-- Action Button -->
+              <div class="mt-auto">
+                <a href="{{ url_for('main.recipe', recipe_id=result.recipe.id) }}" 
+                   class="btn btn-primary w-100">
+                  <i class="fas fa-eye me-2"></i>View Full Recipe
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recipe Footer -->
+        <div class="card-footer bg-light border-0 small text-muted">
+          <div class="d-flex justify-content-between align-items-center">
+            <span>
+              <i class="fas fa-user me-1"></i>{{ result.recipe.user.username }}
+            </span>
+            <span>
+              <i class="fas fa-calendar me-1"></i>{{ result.recipe.created_at.strftime('%b %d, %Y') }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Additional Search Suggestions -->
+  <div class="row mt-5">
+    <div class="col-12">
+      <div class="card border-0 bg-light">
+        <div class="card-body text-center">
+          <h5 class="card-title">
+            <i class="fas fa-lightbulb me-2 text-warning"></i>Want more results?
+          </h5>
+          <p class="card-text">Try searching with fewer ingredients or more general terms.</p>
+          <div class="d-flex justify-content-center gap-2 flex-wrap">
+            <a href="{{ url_for('main.ingredient_search') }}" class="btn btn-outline-primary">
+              <i class="fas fa-search me-1"></i>Try New Search
+            </a>
+            <a href="{{ url_for('main.all_recipes') }}" class="btn btn-outline-secondary">
+              <i class="fas fa-th-large me-1"></i>Browse All Recipes
+            </a>
+            <a href="{{ url_for('main.add_recipe') }}" class="btn btn-outline-success">
+              <i class="fas fa-plus me-1"></i>Add Your Recipe
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+  <!-- No Results Found -->
+  <div class="row">
+    <div class="col-12">
+      <div class="text-center py-5">
+        <i class="fas fa-search fa-4x text-muted mb-4"></i>
+        <h3 class="text-muted">No matching recipes found</h3>
+        <p class="text-muted mb-4">
+          We couldn't find any recipes that contain <strong>{{ search_ingredients|join(', ') }}</strong>.
+        </p>
+        
+        <div class="d-flex justify-content-center gap-2 flex-wrap">
+          <a href="{{ url_for('main.ingredient_search') }}" class="btn btn-primary">
+            <i class="fas fa-search me-2"></i>Try Different Ingredients
+          </a>
+          <a href="{{ url_for('main.all_recipes') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-th-large me-2"></i>Browse All Recipes
+          </a>
+          <a href="{{ url_for('main.add_recipe') }}" class="btn btn-outline-success">
+            <i class="fas fa-plus me-2"></i>Add a Recipe
+          </a>
+        </div>
+
+        <!-- Suggestions -->
+        <div class="mt-4">
+          <h6 class="text-muted">Suggestions:</h6>
+          <ul class="list-unstyled text-muted">
+            <li><i class="fas fa-check text-success me-1"></i>Try more common ingredients</li>
+            <li><i class="fas fa-check text-success me-1"></i>Use fewer, broader terms</li>
+            <li><i class="fas fa-check text-success me-1"></i>Check your spelling</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+.recipe-match-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.recipe-match-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+
+.recipe-match-card .card-title a:hover {
+  color: var(--primary-color) !important;
+}
+
+.badge {
+  font-size: 0.75rem;
+}
+</style>
+{% endblock %}

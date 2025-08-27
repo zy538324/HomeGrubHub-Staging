@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow border-danger">
+        <div class="card-header bg-danger text-white">
+          <h4 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Delete Recipe</h4>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Warning!</strong> You are about to delete the recipe <strong>"{{ recipe.title }}"</strong>. This action cannot be undone.
+          </div>
+          
+          <div class="mb-3">
+            <h6>Recipe Details:</h6>
+            <ul class="list-unstyled">
+              <li><strong>Title:</strong> {{ recipe.title }}</li>
+              <li><strong>Author:</strong> {{ recipe.user.username }}</li>
+              <li><strong>Created:</strong> {{ recipe.created_at.strftime('%Y-%m-%d') }}</li>
+              <li><strong>Favorited by:</strong> {{ recipe.favorited_by|length }} users</li>
+            </ul>
+          </div>
+          
+          <form method="POST">
+            {{ form.hidden_tag() }}
+            
+            <div class="mb-3 form-check">
+              {{ form.confirm(class="form-check-input") }}
+              {{ form.confirm.label(class="form-check-label text-danger") }}
+              {% if form.confirm.errors %}
+                <div class="text-danger small">
+                  {% for error in form.confirm.errors %}
+                    <div>{{ error }}</div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+            
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <a href="{{ url_for('admin.recipes') }}" class="btn btn-secondary me-md-2">Cancel</a>
+              {{ form.submit(class="btn btn-danger") }}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

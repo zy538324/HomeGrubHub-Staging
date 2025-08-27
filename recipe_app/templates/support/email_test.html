@@ -1,0 +1,343 @@
+{% extends "base.html" %}
+
+{% block title %}Email Configuration Test - HomeGrubHub Admin{% endblock %}
+
+{% block head %}
+{{ super() }}
+<style>
+    .admin-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem 0;
+        border-radius: 0 0 20px 20px;
+        margin-bottom: 2rem;
+    }
+    
+    .test-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    
+    .status-success {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+    }
+    
+    .status-error {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        color: white;
+    }
+    
+    .status-warning {
+        background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
+        color: #333;
+    }
+    
+    .btn-test {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        border-radius: 25px;
+        padding: 1rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-test:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        color: white;
+    }
+    
+    .config-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+        border-left: 4px solid #667eea;
+    }
+    
+    .email-preview {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        padding: 1.5rem;
+        font-family: monospace;
+        font-size: 0.9rem;
+        margin-top: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <div class="container">
+        <h1><i class="fas fa-envelope-open-text me-3"></i>Email Configuration Test</h1>
+        <p class="mb-0">Test and verify Microsoft 365 email integration for HomeGrubHub support</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Configuration Status -->
+            <div class="card test-card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Configuration Status</h5>
+                </div>
+                <div class="card-body">
+                    <div id="config-status">
+                        <div class="text-center">
+                            <button class="btn btn-test" onclick="testConfiguration()">
+                                <i class="fas fa-play me-2"></i>Run Configuration Test
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Send Test Email -->
+            <div class="card test-card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-paper-plane me-2"></i>Send Test Email</h5>
+                </div>
+                <div class="card-body">
+                    <form id="test-email-form">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="test-email" class="form-label">Test Email Address</label>
+                                <input type="email" class="form-control" id="test-email" required 
+                                       placeholder="your-email@example.com">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="test-name" class="form-label">Test Name</label>
+                                <input type="text" class="form-control" id="test-name" required 
+                                       placeholder="John Doe">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="test-subject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" id="test-subject" 
+                                   value="Test Email from HomeGrubHub" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="test-message" class="form-label">Message</label>
+                            <textarea class="form-control" id="test-message" rows="4" required>This is a test email to verify the Microsoft 365 integration is working correctly. If you receive this email, the configuration is successful!</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-test">
+                            <i class="fas fa-envelope me-2"></i>Send Test Email
+                        </button>
+                    </form>
+                    <div id="test-email-result" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Setup Guide -->
+            <div class="card test-card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-book me-2"></i>Setup Guide</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Microsoft Graph API Setup (Recommended):</h6>
+                    <ol class="small">
+                        <li>Register app in <a href="https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade" target="_blank">Azure Portal</a></li>
+                        <li>Add "Mail.Send" Application permission</li>
+                        <li>Grant admin consent</li>
+                        <li>Create client secret</li>
+                        <li>Set environment variables:
+                            <div class="email-preview">
+OFFICE365_TENANT_ID=your_tenant_id
+OFFICE365_CLIENT_ID=your_client_id
+OFFICE365_CLIENT_SECRET=your_secret
+                            </div>
+                        </li>
+                        <li>Restart application and test</li>
+                    </ol>
+                    
+                    <hr>
+                    
+                    <h6>Current Email Flow:</h6>
+                    <div class="small">
+                        <div class="config-item">
+                            <strong>Method:</strong> Microsoft Graph API → SMTP Fallback
+                        </div>
+                        <div class="config-item">
+                            <strong>From:</strong> support@homegrubhub.co.uk
+                        </div>
+                        <div class="config-item">
+                            <strong>To:</strong> contact@homegrubhub.co.uk
+                        </div>
+                        <div class="config-item">
+                            <strong>Security:</strong> Application Permissions
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="card test-card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-tools me-2"></i>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <a href="{{ url_for('support.contact_form') }}" class="btn btn-outline-primary btn-sm w-100 mb-2">
+                        <i class="fas fa-comment me-2"></i>View Contact Form
+                    </a>
+                    <a href="{{ url_for('support.help_center') }}" class="btn btn-outline-secondary btn-sm w-100 mb-2">
+                        <i class="fas fa-life-ring me-2"></i>Support Center
+                    </a>
+                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-info btn-sm w-100">
+                        <i class="fas fa-home me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function testConfiguration() {
+    const statusDiv = document.getElementById('config-status');
+    statusDiv.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Testing configuration...</div>';
+    
+    fetch('/support/test-email')
+        .then(response => response.json())
+        .then(data => {
+            let html = '<div class="row">';
+            
+            // SMTP Configuration
+            html += '<div class="col-md-6 mb-3">';
+            html += '<h6><i class="fas fa-server me-2"></i>SMTP Configuration (Fallback)</h6>';
+            html += `<div class="config-item">
+                <span>Credentials Configured</span>
+                <span class="status-badge ${data.results.smtp_configured ? 'status-success' : 'status-error'}">
+                    ${data.results.smtp_configured ? 'Yes' : 'No'}
+                </span>
+            </div>`;
+            html += `<div class="config-item">
+                <span>Connection Test</span>
+                <span class="status-badge ${data.results.smtp_connection ? 'status-success' : 'status-error'}">
+                    ${data.results.smtp_connection ? 'Success' : 'Failed'}
+                </span>
+            </div>`;
+            if (data.results.smtp_error) {
+                html += `<div class="alert alert-danger mt-2 small">
+                    <strong>Error:</strong> ${data.results.smtp_error}
+                </div>`;
+            }
+            html += '</div>';
+            
+            // Graph API Configuration
+            html += '<div class="col-md-6 mb-3">';
+            html += '<h6><i class="fas fa-cloud me-2"></i>Microsoft Graph API (Preferred)</h6>';
+            html += `<div class="config-item">
+                <span>Dependencies Available</span>
+                <span class="status-badge ${data.results.graph_api_available ? 'status-success' : 'status-warning'}">
+                    ${data.results.graph_api_available ? 'Yes' : 'No'}
+                </span>
+            </div>`;
+            html += `<div class="config-item">
+                <span>Credentials Configured</span>
+                <span class="status-badge ${data.results.graph_api_configured ? 'status-success' : 'status-error'}">
+                    ${data.results.graph_api_configured ? 'Yes' : 'No'}
+                </span>
+            </div>`;
+            html += `<div class="config-item">
+                <span>Connection Test</span>
+                <span class="status-badge ${data.results.graph_api_connection ? 'status-success' : 'status-error'}">
+                    ${data.results.graph_api_connection ? 'Success' : 'Failed'}
+                </span>
+            </div>`;
+            if (data.results.graph_api_error) {
+                html += `<div class="alert alert-danger mt-2 small">
+                    <strong>Error:</strong> ${data.results.graph_api_error}
+                </div>`;
+            }
+            html += '</div>';
+            
+            html += '</div>';
+            
+            // Overall Status
+            const graphApiWorking = data.results.graph_api_configured && data.results.graph_api_connection;
+            const smtpWorking = data.results.smtp_configured && data.results.smtp_connection;
+            const overallSuccess = graphApiWorking || smtpWorking;
+            
+            let statusMessage = '';
+            if (graphApiWorking) {
+                statusMessage = 'Microsoft Graph API is configured and ready! This is the preferred method for security and reliability.';
+            } else if (smtpWorking) {
+                statusMessage = 'SMTP is working as fallback. Consider configuring Graph API for better security.';
+            } else {
+                statusMessage = 'Please configure either Graph API (recommended) or SMTP credentials to enable email functionality.';
+            }
+            
+            html += `<div class="alert alert-${overallSuccess ? 'success' : 'warning'} mt-3">
+                <h6 class="mb-2">
+                    <i class="fas fa-${overallSuccess ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+                    Overall Status: ${overallSuccess ? 'Ready' : 'Needs Configuration'}
+                </h6>
+                <p class="mb-1 small">${statusMessage}</p>
+                <p class="mb-0 small"><strong>Preferred Method:</strong> ${data.results.preferred_method === 'graph_api' ? 'Microsoft Graph API' : 'SMTP'}</p>
+            </div>`;
+            
+            statusDiv.innerHTML = html;
+        })
+        .catch(error => {
+            statusDiv.innerHTML = `<div class="alert alert-danger">
+                <h6><i class="fas fa-exclamation-triangle me-2"></i>Test Failed</h6>
+                <p class="mb-0 small">Error: ${error.message}</p>
+            </div>`;
+        });
+}
+
+document.getElementById('test-email-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const resultDiv = document.getElementById('test-email-result');
+    resultDiv.innerHTML = '<div class="alert alert-info"><i class="fas fa-spinner fa-spin me-2"></i>Sending test email...</div>';
+    
+    const formData = new FormData();
+    formData.append('name', document.getElementById('test-name').value);
+    formData.append('email', document.getElementById('test-email').value);
+    formData.append('subject', document.getElementById('test-subject').value);
+    formData.append('category', 'Test');
+    formData.append('message', document.getElementById('test-message').value);
+    formData.append('csrf_token', '{{ csrf_token() }}');  // Add CSRF token
+    
+    fetch('/support/contact', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            resultDiv.innerHTML = `<div class="alert alert-success">
+                <h6><i class="fas fa-check-circle me-2"></i>Test Email Sent!</h6>
+                <p class="mb-0 small">Check both email addresses for the test messages.</p>
+            </div>`;
+        } else {
+            throw new Error('Failed to send test email');
+        }
+    })
+    .catch(error => {
+        resultDiv.innerHTML = `<div class="alert alert-danger">
+            <h6><i class="fas fa-exclamation-triangle me-2"></i>Test Failed</h6>
+            <p class="mb-0 small">Error: ${error.message}</p>
+        </div>`;
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,581 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+  .photo-upload-container {
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    background: #f8f9fa;
+  }
+  
+  .upload-dropzone, .camera-capture {
+    padding: 30px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background: white;
+    margin-bottom: 15px;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  
+  .upload-dropzone:hover, .camera-capture:hover {
+    border-color: #007bff;
+    background: #f8f9fa;
+  }
+  
+  .upload-dropzone.dragover {
+    border-color: #28a745;
+    background: #d4edda;
+  }
+  
+  .photo-preview {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .barcode-data-notice {
+    background: #e7f3ff;
+    border: 1px solid #b8daff;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+          <h3 class="card-title mb-0">
+            <i class="fas fa-plus-circle me-2"></i>{{ title }}
+          </h3>
+        </div>
+        <div class="card-body">
+          <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+            
+            <!-- Recipe Title -->
+            <div class="mb-4">
+              {{ form.title.label(class="form-label fw-bold") }}
+              {{ form.title(class="form-control form-control-lg") }}
+              {% for error in form.title.errors %}
+                <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- Description -->
+            <div class="mb-4">
+              {{ form.description.label(class="form-label fw-bold") }}
+              {{ form.description(class="form-control") }}
+              {% for error in form.description.errors %}
+                <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- Recipe Details Row -->
+            <div class="row mb-4">
+              <div class="col-md-3">
+                {{ form.prep_time.label(class="form-label fw-bold") }}
+                <div class="input-group">
+                  {{ form.prep_time(class="form-control") }}
+                  <span class="input-group-text">min</span>
+                </div>
+                {% for error in form.prep_time.errors %}
+                  <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+              </div>
+              <div class="col-md-3">
+                {{ form.cook_time.label(class="form-label fw-bold") }}
+                <div class="input-group">
+                  {{ form.cook_time(class="form-control") }}
+                  <span class="input-group-text">min</span>
+                </div>
+                {% for error in form.cook_time.errors %}
+                  <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+              </div>
+              <div class="col-md-3">
+                {{ form.servings.label(class="form-label fw-bold") }}
+                {{ form.servings(class="form-control") }}
+                {% for error in form.servings.errors %}
+                  <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+              </div>
+              <div class="col-md-3">
+                {{ form.difficulty.label(class="form-label fw-bold") }}
+                {{ form.difficulty(class="form-select") }}
+                {% for error in form.difficulty.errors %}
+                  <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- Origin Information -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                {{ form.country.label(class="form-label fw-bold") }}
+                {{ form.country(class="form-control") }}
+                {% for error in form.country.errors %}
+                  <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+              </div>
+              <div class="col-md-6">
+                {{ form.cuisine_type.label(class="form-label fw-bold") }}
+                {{ form.cuisine_type(class="form-control") }}
+                {% for error in form.cuisine_type.errors %}
+                  <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- Ingredients -->
+            <div class="mb-4">
+              {{ form.ingredients.label(class="form-label fw-bold") }}
+              <small class="text-muted d-block mb-2">
+                <i class="fas fa-info-circle me-1"></i>
+                List each ingredient on a new line or separate with commas
+              </small>
+              {{ form.ingredients(class="form-control") }}
+              {% for error in form.ingredients.errors %}
+                <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- Cooking Method -->
+            <div class="mb-4">
+              {{ form.method.label(class="form-label fw-bold") }}
+              <small class="text-muted d-block mb-2">
+                <i class="fas fa-info-circle me-1"></i>
+                Provide step-by-step instructions
+              </small>
+              {{ form.method(class="form-control") }}
+              {% for error in form.method.errors %}
+                <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- Tags -->
+            <div class="mb-4">
+              {{ form.tags.label(class="form-label fw-bold") }}
+              <small class="text-muted d-block mb-2">
+                <i class="fas fa-info-circle me-1"></i>
+                Add tags to help others find your recipe (e.g., vegetarian, quick, dessert)
+              </small>
+              {{ form.tags(class="form-control") }}
+              {% for error in form.tags.errors %}
+                <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- Nutrition Information -->
+            <div class="mb-4">
+              <div class="card">
+                <div class="card-header bg-light">
+                  <h6 class="card-title mb-0">
+                    <i class="fas fa-apple-alt me-2"></i>Nutrition Information (Optional)
+                  </h6>
+                  <small class="text-muted">Per serving values - leave blank if unknown</small>
+                </div>
+                <div class="card-body">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      {{ form.calories.label(class="form-label") }}
+                      <div class="input-group">
+                        {{ form.calories(class="form-control") }}
+                        <span class="input-group-text">cal</span>
+                      </div>
+                      {% for error in form.calories.errors %}
+                        <div class="text-danger small mt-1">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                      {{ form.protein_g.label(class="form-label") }}
+                      <div class="input-group">
+                        {{ form.protein_g(class="form-control") }}
+                        <span class="input-group-text">g</span>
+                      </div>
+                      {% for error in form.protein_g.errors %}
+                        <div class="text-danger small mt-1">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                      {{ form.carbs_g.label(class="form-label") }}
+                      <div class="input-group">
+                        {{ form.carbs_g(class="form-control") }}
+                        <span class="input-group-text">g</span>
+                      </div>
+                      {% for error in form.carbs_g.errors %}
+                        <div class="text-danger small mt-1">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                      {{ form.fat_g.label(class="form-label") }}
+                      <div class="input-group">
+                        {{ form.fat_g(class="form-control") }}
+                        <span class="input-group-text">g</span>
+                      </div>
+                      {% for error in form.fat_g.errors %}
+                        <div class="text-danger small mt-1">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                      {{ form.fiber_g.label(class="form-label") }}
+                      <div class="input-group">
+                        {{ form.fiber_g(class="form-control") }}
+                        <span class="input-group-text">g</span>
+                      </div>
+                      {% for error in form.fiber_g.errors %}
+                        <div class="text-danger small mt-1">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                      {{ form.sugar_g.label(class="form-label") }}
+                      <div class="input-group">
+                        {{ form.sugar_g(class="form-control") }}
+                        <span class="input-group-text">g</span>
+                      </div>
+                      {% for error in form.sugar_g.errors %}
+                        <div class="text-danger small mt-1">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                      {{ form.sodium_mg.label(class="form-label") }}
+                      <div class="input-group">
+                        {{ form.sodium_mg(class="form-control") }}
+                        <span class="input-group-text">mg</span>
+                      </div>
+                      {% for error in form.sodium_mg.errors %}
+                        <div class="text-danger small mt-1">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recipe Photo Upload -->
+            <div class="mb-4">
+              <label class="form-label fw-bold">
+                <i class="fas fa-camera me-2"></i>Recipe Photo
+              </label>
+              <small class="text-muted d-block mb-2">
+                <i class="fas fa-info-circle me-1"></i>
+                Add a photo to make your recipe more appealing
+              </small>
+              
+              <div class="photo-upload-container">
+                <div class="photo-preview" id="photo-preview" style="display: none;">
+                  <img id="preview-image" src="" alt="Recipe photo preview" style="max-width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">
+                  <button type="button" class="btn btn-sm btn-danger mt-2" onclick="removePhoto()">
+                    <i class="fas fa-trash"></i> Remove Photo
+                  </button>
+                </div>
+                
+                <div class="photo-upload-options" id="upload-options">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="upload-dropzone" id="upload-dropzone">
+                        <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
+                        <p>Drag & drop photo here or click to browse</p>
+                        <input type="file" id="photo-file" accept="image/*" style="display: none;">
+                        <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('photo-file').click()">
+                          <i class="fas fa-folder-open"></i> Browse Files
+                        </button>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="camera-capture" id="camera-capture">
+                        <i class="fas fa-camera fa-2x mb-2"></i>
+                        <p>Take photo with camera</p>
+                        <button type="button" class="btn btn-outline-success" onclick="startCamera()">
+                          <i class="fas fa-camera"></i> Open Camera
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Camera modal -->
+                <div class="modal fade" id="camera-modal" tabindex="-1">
+                  <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">Take Recipe Photo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-center">
+                        <video id="camera-video" autoplay playsinline style="max-width: 100%; height: 300px; background: #000;"></video>
+                        <canvas id="photo-canvas" style="display: none;"></canvas>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" onclick="capturePhoto()">
+                          <i class="fas fa-camera"></i> Capture Photo
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Privacy Setting -->
+            <div class="mb-4">
+              {% if current_user.current_plan == 'Free' %}
+                <!-- Free users: Always private, inform them -->
+                <div class="alert alert-info">
+                  <i class="fas fa-info-circle me-2"></i>
+                  <strong>Free Plan:</strong> Your recipes have limited access - visible to you and paid subscribers. 
+                  <a href="{{ url_for('billing.pricing') }}" class="alert-link">Upgrade to make recipes fully public or private.</a>
+                </div>
+              {% elif current_user.can_access_feature('private_recipes') %}
+                <!-- Paid users: Can choose privacy (default private) -->
+                <div class="form-check">
+                  {{ form.is_public(class="form-check-input") }}
+                  {{ form.is_public.label(class="form-check-label") }}
+                  <div class="text-muted small mt-1">
+                    <i class="fas fa-shield-alt me-1"></i>Recipes are private by default. Check this box to make your recipe visible to everyone.
+                  </div>
+                </div>
+              {% else %}
+                <!-- Fallback: No privacy control -->
+                <div class="text-muted small">
+                  <i class="fas fa-shield-alt me-1"></i>This recipe will be private by default.
+                </div>
+              {% endif %}
+              {% for error in form.is_public.errors %}
+                <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary me-md-2">
+                <i class="fas fa-arrow-left me-2"></i>Cancel
+              </a>
+              {{ form.submit(class="btn btn-primary btn-lg") }}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-resize textareas
+    const textareas = document.querySelectorAll('textarea');
+    textareas.forEach(textarea => {
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+    });
+    
+    // Check if we have barcode data from scanner
+    const barcodeData = sessionStorage.getItem('barcode_recipe_data');
+    if (barcodeData && window.location.search.includes('from_barcode=true')) {
+        loadBarcodeData(JSON.parse(barcodeData));
+        sessionStorage.removeItem('barcode_recipe_data');
+    }
+    
+    // Photo upload functionality
+    setupPhotoUpload();
+});
+
+function loadBarcodeData(data) {
+    // Show notice
+    const form = document.querySelector('.card-body form');
+    const notice = document.createElement('div');
+    notice.className = 'barcode-data-notice';
+    notice.innerHTML = `
+        <h5><i class="fas fa-barcode me-2"></i>Recipe Created from Barcode Scan</h5>
+        <p class="mb-0">This recipe was created from a scanned product. You can edit any information below.</p>
+        ${data.product_data ? `<small class="text-muted">Product: ${data.product_data.name}</small>` : ''}
+    `;
+    form.insertBefore(notice, form.firstChild);
+    
+    // Fill form fields
+    if (data.title) document.querySelector('#title').value = data.title;
+    if (data.description) document.querySelector('#description').value = data.description;
+    if (data.ingredients) document.querySelector('#ingredients').value = data.ingredients;
+    if (data.instructions) document.querySelector('#method').value = data.instructions;
+    if (data.prep_time) document.querySelector('#prep_time').value = data.prep_time;
+    if (data.cook_time) document.querySelector('#cook_time').value = data.cook_time;
+    if (data.servings) document.querySelector('#servings').value = data.servings;
+    if (data.difficulty) document.querySelector('#difficulty').value = data.difficulty;
+    if (data.category) document.querySelector('#category').value = data.category;
+}
+
+function setupPhotoUpload() {
+    const dropzone = document.getElementById('upload-dropzone');
+    const fileInput = document.getElementById('photo-file');
+    
+    // Drag and drop functionality
+    dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+    });
+    
+    dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('dragover');
+    });
+    
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleFileUpload(files[0]);
+        }
+    });
+    
+    dropzone.addEventListener('click', () => {
+        fileInput.click();
+    });
+    
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            handleFileUpload(e.target.files[0]);
+        }
+    });
+}
+
+function handleFileUpload(file) {
+    if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        showPhotoPreview(e.target.result);
+    };
+    reader.readAsDataURL(file);
+}
+
+function showPhotoPreview(imageSrc) {
+    document.getElementById('preview-image').src = imageSrc;
+    document.getElementById('photo-preview').style.display = 'block';
+    document.getElementById('upload-options').style.display = 'none';
+    
+    // Store image data for form submission
+    window.recipePhotoData = imageSrc;
+}
+
+function removePhoto() {
+    document.getElementById('photo-preview').style.display = 'none';
+    document.getElementById('upload-options').style.display = 'block';
+    document.getElementById('photo-file').value = '';
+    window.recipePhotoData = null;
+}
+
+let cameraStream = null;
+
+function startCamera() {
+    const modal = new bootstrap.Modal(document.getElementById('camera-modal'));
+    const video = document.getElementById('camera-video');
+    
+    navigator.mediaDevices.getUserMedia({
+        video: { 
+            facingMode: 'environment', // Prefer back camera
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+        }
+    })
+    .then(stream => {
+        cameraStream = stream;
+        video.srcObject = stream;
+        modal.show();
+    })
+    .catch(err => {
+        console.error('Camera access failed:', err);
+        alert('Could not access camera. Please try uploading a file instead.');
+    });
+    
+    // Stop camera when modal is closed
+    document.getElementById('camera-modal').addEventListener('hidden.bs.modal', () => {
+        if (cameraStream) {
+            cameraStream.getTracks().forEach(track => track.stop());
+            cameraStream = null;
+        }
+    });
+}
+
+function capturePhoto() {
+    const video = document.getElementById('camera-video');
+    const canvas = document.getElementById('photo-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0);
+    
+    const imageData = canvas.toDataURL('image/jpeg', 0.8);
+    showPhotoPreview(imageData);
+    
+    // Close modal and stop camera
+    const modal = bootstrap.Modal.getInstance(document.getElementById('camera-modal'));
+    modal.hide();
+}
+
+// Intercept form submission to handle photo upload
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    form.addEventListener('submit', async function(e) {
+        if (window.recipePhotoData) {
+            e.preventDefault();
+            await submitRecipeWithPhoto();
+        }
+    });
+});
+
+async function submitRecipeWithPhoto() {
+    const form = document.querySelector('form');
+    const formData = new FormData(form);
+    
+    try {
+        // Submit the recipe first
+        const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (response.ok) {
+            // Get the recipe ID from response or redirect URL
+            const result = await response.text();
+            const recipeIdMatch = result.match(/recipe\/(\d+)/);
+            
+            if (recipeIdMatch && window.recipePhotoData) {
+                const recipeId = recipeIdMatch[1];
+                
+                // Upload the photo
+                await fetch(`/api/upload-recipe-photo/${recipeId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        image_data: window.recipePhotoData
+                    })
+                });
+            }
+            
+            // Redirect to success page
+            window.location.href = response.url || '/dashboard';
+        } else {
+            alert('Failed to create recipe. Please try again.');
+        }
+    } catch (error) {
+        console.error('Recipe submission failed:', error);
+        alert('Failed to create recipe. Please try again.');
+    }
+}
+</script>
+{% endblock %}

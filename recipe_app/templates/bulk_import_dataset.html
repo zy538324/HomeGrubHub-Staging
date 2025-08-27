@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+          <h2 class="card-title mb-0">
+            <i class="fas fa-database me-2"></i>Bulk Recipe Import
+          </h2>
+          <p class="card-text mb-0">Import hundreds of recipes from datasets and CSV files</p>
+        </div>
+        <div class="card-body">
+          
+          <!-- Kaggle Dataset Import -->
+          <div class="import-section mb-5">
+            <h4 class="text-success">
+              <i class="fab fa-kaggle me-2"></i>Import from Kaggle Dataset
+            </h4>
+            <p class="text-muted">Import recipes from public Kaggle datasets</p>
+            
+            <form method="POST">
+              <input type="hidden" name="import_type" value="kaggle">
+              
+              <div class="mb-3">
+                <label for="dataset_path" class="form-label">Kaggle Dataset Path</label>
+                <input type="text" class="form-control" id="dataset_path" name="dataset_path" 
+                       placeholder="e.g., shuyangli94/food-com-recipes-and-user-interactions" required>
+                <div class="form-text">
+                  Format: username/dataset-name (copy from Kaggle dataset URL)
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="file_path" class="form-label">File Path (Optional)</label>
+                <input type="text" class="form-control" id="file_path" name="file_path" 
+                       placeholder="e.g., recipes.csv">
+                <div class="form-text">
+                  Leave blank to load the main file, or specify a particular file within the dataset
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="max_recipes_kaggle" class="form-label">Maximum Recipes</label>
+                <select class="form-select" id="max_recipes_kaggle" name="max_recipes">
+                  <option value="50">50 recipes</option>
+                  <option value="100" selected>100 recipes</option>
+                  <option value="250">250 recipes</option>
+                  <option value="500">500 recipes</option>
+                  <option value="1000">1000 recipes</option>
+                </select>
+                <div class="form-text">
+                  Start with a smaller number to test the import process
+                </div>
+              </div>
+              
+              <button type="submit" class="btn btn-success">
+                <i class="fab fa-kaggle me-2"></i>Import from Kaggle
+              </button>
+            </form>
+          </div>
+          
+          <hr>
+          
+          <!-- CSV File Upload -->
+          <div class="import-section">
+            <h4 class="text-info">
+              <i class="fas fa-file-csv me-2"></i>Upload CSV File
+            </h4>
+            <p class="text-muted">Upload your own CSV file with recipe data</p>
+            
+            <form method="POST" enctype="multipart/form-data">
+              <input type="hidden" name="import_type" value="csv_upload">
+              
+              <div class="mb-3">
+                <label for="csv_file" class="form-label">CSV File</label>
+                <input type="file" class="form-control" id="csv_file" name="csv_file" 
+                       accept=".csv" required>
+                <div class="form-text">
+                  Upload a CSV file with recipe data. Common column names are automatically detected.
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="max_recipes_csv" class="form-label">Maximum Recipes</label>
+                <select class="form-select" id="max_recipes_csv" name="max_recipes">
+                  <option value="50">50 recipes</option>
+                  <option value="100" selected>100 recipes</option>
+                  <option value="250">250 recipes</option>
+                  <option value="500">500 recipes</option>
+                  <option value="1000">1000 recipes (max per batch)</option>
+                </select>
+                <div class="form-text">
+                  <strong>Large files:</strong> Import in smaller batches for better performance. You can repeat the process multiple times.
+                </div>
+              </div>
+              
+              <button type="submit" class="btn btn-info">
+                <i class="fas fa-upload me-2"></i>Upload CSV File
+              </button>
+            </form>
+          </div>
+          
+        </div>
+      </div>
+      
+      <!-- Help Section -->
+      <div class="card mt-4">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-question-circle me-2"></i>Supported Data Formats
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <h6>Expected CSV Columns:</h6>
+              <ul class="list-unstyled">
+                <li><i class="fas fa-check text-success me-1"></i> <strong>Title/Name</strong> - Recipe name</li>
+                <li><i class="fas fa-check text-success me-1"></i> <strong>Ingredients</strong> - List of ingredients</li>
+                <li><i class="fas fa-check text-success me-1"></i> <strong>Method/Instructions</strong> - Cooking steps</li>
+                <li><i class="fas fa-check text-muted me-1"></i> <strong>Prep Time</strong> - Preparation time (minutes)</li>
+                <li><i class="fas fa-check text-muted me-1"></i> <strong>Cook Time</strong> - Cooking time (minutes)</li>
+                <li><i class="fas fa-check text-muted me-1"></i> <strong>Servings</strong> - Number of servings</li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <h6>Popular Kaggle Datasets:</h6>
+              <ul class="list-unstyled">
+                <li><i class="fab fa-kaggle text-primary me-1"></i> <code>shuyangli94/food-com-recipes-and-user-interactions</code></li>
+                <li><i class="fab fa-kaggle text-primary me-1"></i> <code>irkaal/foodcom-recipes-and-reviews</code></li>
+                <li><i class="fab fa-kaggle text-primary me-1"></i> <code>sterby/lazy-keto-dataset</code></li>
+                <li><i class="fab fa-kaggle text-primary me-1"></i> <code>hugodarwood/epirecipes</code></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="alert alert-info mt-3">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Note:</strong> All imported recipes will be marked as private by default. 
+            You can make them public after reviewing and editing them.
+          </div>
+          
+          <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Large Files:</strong> If you have a very large CSV file (100k+ recipes), 
+            import in batches of 1,000 or less for optimal performance. You can repeat the import process multiple times to gradually add all your recipes.
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+{% endblock %}

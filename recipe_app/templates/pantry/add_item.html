@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+          <h2 class="card-title mb-0">
+            <i class="fas fa-plus me-2"></i>Add Pantry Item
+          </h2>
+          <p class="card-text mb-0">Add a new item to your pantry inventory</p>
+        </div>
+        <div class="card-body">
+          
+          <form method="POST">
+            {{ form.hidden_tag() }}
+            
+            <!-- Basic Information -->
+            <div class="row mb-4">
+              <div class="col-md-8">
+                <div class="mb-3">
+                  {{ form.name.label(class="form-label") }}
+                  {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else "")) }}
+                  {% if form.name.errors %}
+                    <div class="invalid-feedback">{{ form.name.errors[0] }}</div>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  {{ form.brand.label(class="form-label") }}
+                  {{ form.brand(class="form-control") }}
+                </div>
+              </div>
+            </div>
+            
+            <!-- Quantity Information -->
+            <div class="row mb-4">
+              <div class="col-md-4">
+                <div class="mb-3">
+                  {{ form.current_quantity.label(class="form-label") }}
+                  {{ form.current_quantity(class="form-control" + (" is-invalid" if form.current_quantity.errors else "")) }}
+                  {% if form.current_quantity.errors %}
+                    <div class="invalid-feedback">{{ form.current_quantity.errors[0] }}</div>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  {{ form.unit.label(class="form-label") }}
+                  {{ form.unit(class="form-select") }}
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  {{ form.minimum_quantity.label(class="form-label") }}
+                  {{ form.minimum_quantity(class="form-control") }}
+                  <div class="form-text">Alert when stock reaches this level</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  {{ form.ideal_quantity.label(class="form-label") }}
+                  {{ form.ideal_quantity(class="form-control") }}
+                  <div class="form-text">Target stock level for shopping lists</div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  {{ form.cost_per_unit.label(class="form-label") }}
+                  {{ form.cost_per_unit(class="form-control") }}
+                  <div class="form-text">Optional: for cost tracking</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Organization -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  {{ form.category_id.label(class="form-label") }}
+                  {{ form.category_id(class="form-select") }}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  {{ form.storage_location.label(class="form-label") }}
+                  {{ form.storage_location(class="form-select") }}
+                </div>
+              </div>
+            </div>
+            
+            <!-- Dates -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  {{ form.expiry_date.label(class="form-label") }}
+                  {{ form.expiry_date(class="form-control") }}
+                  <div class="form-text">Optional: for expiry tracking</div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  {{ form.last_purchased.label(class="form-label") }}
+                  {{ form.last_purchased(class="form-control") }}
+                </div>
+              </div>
+            </div>
+            
+            <!-- Notes -->
+            <div class="mb-4">
+              {{ form.notes.label(class="form-label") }}
+              {{ form.notes(class="form-control", rows="3") }}
+              <div class="form-text">Optional notes about this item</div>
+            </div>
+            
+            <!-- Submit Buttons -->
+            <div class="d-flex justify-content-between">
+              <a href="{{ url_for('pantry.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Cancel
+              </a>
+              {{ form.submit(class="btn btn-primary") }}
+            </div>
+          </form>
+          
+        </div>
+      </div>
+      
+      <!-- Help Card -->
+      <div class="card mt-4">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-lightbulb me-2"></i>Tips for Adding Pantry Items
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <h6>Quantity Management:</h6>
+              <ul class="list-unstyled">
+                <li><i class="fas fa-check text-success me-1"></i> Set realistic minimum quantities</li>
+                <li><i class="fas fa-check text-success me-1"></i> Use consistent units for similar items</li>
+                <li><i class="fas fa-check text-success me-1"></i> Consider your usage patterns</li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <h6>Organization:</h6>
+              <ul class="list-unstyled">
+                <li><i class="fas fa-check text-success me-1"></i> Categorize items for easy browsing</li>
+                <li><i class="fas fa-check text-success me-1"></i> Specify storage locations</li>
+                <li><i class="fas fa-check text-success me-1"></i> Track expiry dates for perishables</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+{% endblock %}

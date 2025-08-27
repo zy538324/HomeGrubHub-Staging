@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Live Chat Support{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-comments me-2"></i>
+                        Live Chat Support
+                    </h4>
+                    <small>Get instant help from our support team</small>
+                </div>
+                
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-comment-dots fa-4x text-success mb-4"></i>
+                    <h3 class="mb-3">Chat with us now!</h3>
+                    <p class="lead mb-4">Look for the chat widget in the bottom right corner of your screen</p>
+                    
+                    <div class="row text-start">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start mb-3">
+                                <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                                <div>
+                                    <strong>Instant Responses</strong>
+                                    <p class="text-muted small mb-0">Get help immediately during business hours</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start mb-3">
+                                <i class="fas fa-mobile-alt text-success me-3 mt-1"></i>
+                                <div>
+                                    <strong>Mobile Friendly</strong>
+                                    <p class="text-muted small mb-0">Chat works perfectly on all devices</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start mb-3">
+                                <i class="fas fa-file-upload text-success me-3 mt-1"></i>
+                                <div>
+                                    <strong>File Sharing</strong>
+                                    <p class="text-muted small mb-0">Send screenshots or documents easily</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start mb-3">
+                                <i class="fas fa-history text-success me-3 mt-1"></i>
+                                <div>
+                                    <strong>Chat History</strong>
+                                    <p class="text-muted small mb-0">Access your previous conversations anytime</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info mt-4">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Can't see the chat widget?</strong> Try refreshing the page or disabling ad blockers.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Help Sidebar -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clock me-2"></i>
+                        Support Hours
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold">Monday - Friday</span>
+                            <span class="badge bg-success">9 AM - 6 PM GMT</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold">Saturday</span>
+                            <span class="badge bg-warning">10 AM - 4 PM GMT</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">Sunday</span>
+                            <span class="badge bg-secondary">Closed</span>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="mb-3">
+                        <h6><i class="fas fa-question-circle me-2"></i>Quick Help</h6>
+                        <div class="list-group list-group-flush">
+                            <a href="/support" class="list-group-item list-group-item-action py-2">
+                                <i class="fas fa-user-cog me-2 text-muted"></i>Account Settings
+                            </a>
+                            <a href="/support" class="list-group-item list-group-item-action py-2">
+                                <i class="fas fa-utensils me-2 text-muted"></i>Recipe Issues
+                            </a>
+                            <a href="/support" class="list-group-item list-group-item-action py-2">
+                                <i class="fas fa-credit-card me-2 text-muted"></i>Billing Questions
+                            </a>
+                            <a href="/support" class="list-group-item list-group-item-action py-2">
+                                <i class="fas fa-bug me-2 text-muted"></i>Technical Problems
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div>
+                        <h6><i class="fas fa-envelope me-2"></i>Email Support</h6>
+                        <p class="small mb-2">
+                            For non-urgent matters or detailed queries:
+                        </p>
+                        <a href="mailto:support@homegrubhub.co.uk" class="btn btn-outline-primary btn-sm w-100">
+                            <i class="fas fa-envelope me-2"></i>
+                            support@homegrubhub.co.uk
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Status Card -->
+            <div class="card mt-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">
+                        <i class="fas fa-heartbeat me-2"></i>
+                        System Status
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="status-dot bg-success me-2"></div>
+                        <span class="small">All systems operational</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.status-dot.bg-success {
+    animation: pulse 2s infinite;
+}
+</style>
+{% endblock %}

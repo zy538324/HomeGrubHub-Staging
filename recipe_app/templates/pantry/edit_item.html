@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow">
+        <div class="card-header bg-warning text-dark">
+          <h2 class="card-title mb-0">
+            <i class="fas fa-edit me-2"></i>Edit Pantry Item
+          </h2>
+          <p class="card-text mb-0">Update "{{ item.name }}" in your pantry</p>
+        </div>
+        <div class="card-body">
+          
+          <form method="POST">
+            {{ form.hidden_tag() }}
+            
+            <!-- Basic Information -->
+            <div class="row mb-4">
+              <div class="col-md-8">
+                <div class="mb-3">
+                  {{ form.name.label(class="form-label") }}
+                  {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else "")) }}
+                  {% if form.name.errors %}
+                    <div class="invalid-feedback">{{ form.name.errors[0] }}</div>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  {{ form.brand.label(class="form-label") }}
+                  {{ form.brand(class="form-control") }}
+                </div>
+              </div>
+            </div>
+            
+            <!-- Current Status -->
+            <div class="alert alert-info mb-4">
+              <div class="row text-center">
+                <div class="col-md-3">
+                  <strong>Current Stock</strong><br>
+                  <span class="fs-4">{{ item.current_quantity }} {{ item.unit }}</span>
+                </div>
+                <div class="col-md-3">
+                  <strong>Status</strong><br>
+                  {% if item.stock_status == 'out_of_stock' %}
+                    <span class="badge bg-danger">Out of Stock</span>
+                  {% elif item.stock_status == 'low_stock' %}
+                    <span class="badge bg-warning">Low Stock</span>
+                  {% elif item.stock_status == 'well_stocked' %}
+                    <span class="badge bg-success">Well Stocked</span>
+                  {% else %}
+                    <span class="badge bg-info">Adequate</span>
+                  {% endif %}
+                </div>
+                <div class="col-md-3">
+                  <strong>Last Updated</strong><br>
+                  <small>{{ item.updated_at.strftime('%m/%d/%Y') if item.updated_at else 'Never' }}</small>
+                </div>
+                <div class="col-md-3">
+                  <strong>Total Value</strong><br>
+                  <span>${{ "%.2f"|format(item.total_cost) if item.total_cost else "0.00" }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Quantity Information -->
+            <div class="row mb-4">
+              <div class="col-md-4">
+                <div class="mb-3">
+                  {{ form.current_quantity.label(class="form-label") }}
+                  {{ form.current_quantity(class="form-control" + (" is-invalid" if form.current_quantity.errors else "")) }}
+                  {% if form.current_quantity.errors %}
+                    <div class="invalid-feedback">{{ form.current_quantity.errors[0] }}</div>
+                  {% endif %}
+                  <div class="form-text">Previous: {{ item.current_quantity }} {{ item.unit }}</div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  {{ form.unit.label(class="form-label") }}
+                  {{ form.unit(class="form-select") }}
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  {{ form.minimum_quantity.label(class="form-label") }}
+                  {{ form.minimum_quantity(class="form-control") }}
+                  <div class="form-text">Alert when stock reaches this level</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  {{ form.ideal_quantity.label(class="form-label") }}
+                  {{ form.ideal_quantity(class="form-control") }}
+                  <div class="form-text">Target stock level for shopping lists</div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  {{ form.cost_per_unit.label(class="form-label") }}
+                  {{ form.cost_per_unit(class="form-control") }}
+                  <div class="form-text">Cost tracking (optional)</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Organization -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  {{ form.category_id.label(class="form-label") }}
+                  {{ form.category_id(class="form-select") }}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  {{ form.storage_location.label(class="form-label") }}
+                  {{ form.storage_location(class="form-select") }}
+                </div>
+              </div>
+            </div>
+            
+            <!-- Dates -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  {{ form.expiry_date.label(class="form-label") }}
+                  {{ form.expiry_date(class="form-control") }}
+                  {% if item.is_expiring_soon %}
+                  <div class="form-text text-warning">
+                    <i class="fas fa-exclamation-triangle me-1"></i>
+                    {% if item.days_until_expiry > 0 %}
+                      Expires in {{ item.days_until_expiry }} days
+                    {% else %}
+                      Expired {{ item.days_until_expiry|abs }} days ago
+                    {% endif %}
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  {{ form.last_purchased.label(class="form-label") }}
+                  {{ form.last_purchased(class="form-control") }}
+                </div>
+              </div>
+            </div>
+            
+            <!-- Notes -->
+            <div class="mb-4">
+              {{ form.notes.label(class="form-label") }}
+              {{ form.notes(class="form-control", rows="3") }}
+            </div>
+            
+            <!-- Submit Buttons -->
+            <div class="d-flex justify-content-between">
+              <div>
+                <a href="{{ url_for('pantry.index') }}" class="btn btn-secondary">
+                  <i class="fas fa-arrow-left me-2"></i>Back to Pantry
+                </a>
+              </div>
+              <div>
+                <button type="button" class="btn btn-danger me-2" onclick="deleteItem({{ item.id }})">
+                  <i class="fas fa-trash me-2"></i>Delete Item
+                </button>
+                {{ form.submit(class="btn btn-warning") }}
+              </div>
+            </div>
+          </form>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function deleteItem(itemId) {
+    if (confirm('Are you sure you want to delete this item from your pantry? This action cannot be undone.')) {
+        fetch(`/pantry/delete_item/${itemId}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('meta[name=csrf-token]')?.getAttribute('content')
+            }
+        })
+        .then(() => {
+            window.location.href = "{{ url_for('pantry.index') }}";
+        })
+        .catch(error => {
+            alert('Error deleting item. Please try again.');
+            console.error('Error:', error);
+        });
+    }
+}
+</script>
+{% endblock %}

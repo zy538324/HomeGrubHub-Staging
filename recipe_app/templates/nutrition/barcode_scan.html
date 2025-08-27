@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scan Barcode</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+</head>
+<body>
+    <h1>Scan Food Barcode</h1>
+    <div id="reader" style="width:300px;"></div>
+    <form id="barcodeForm" method="POST" action="/nutrition/barcode-lookup">
+        <input type="hidden" name="barcode" id="barcodeInput">
+        <button type="submit" id="lookupBtn" disabled>Lookup Food</button>
+    </form>
+    <div id="foodResult"></div>
+    <script>
+    function onScanSuccess(decodedText, decodedResult) {
+        document.getElementById('barcodeInput').value = decodedText;
+        document.getElementById('lookupBtn').disabled = false;
+    }
+    let html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader", { fps: 10, qrbox: 250 });
+    html5QrcodeScanner.render(onScanSuccess);
+    </script>
+</body>
+</html>

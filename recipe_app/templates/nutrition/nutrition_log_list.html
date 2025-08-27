@@ -1,0 +1,413 @@
+{% extends "base.html" %}
+
+{% block title %}Nutrition Dashboard{% endblock %}
+
+{% block page_styles %}
+<style>
+    .nutrition-hero {
+        background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        color: white;
+        padding: 3rem 0;
+        border-radius: 0 0 30px 30px;
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .nutrition-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+        opacity: 0.1;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        border-left: 5px solid;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+        border-radius: 50%;
+        transform: translate(50%, -50%);
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+    
+    .stat-card.calories { border-left-color: #e74c3c; }
+    .stat-card.protein { border-left-color: #3498db; }
+    .stat-card.carbs { border-left-color: #f39c12; }
+    .stat-card.fat { border-left-color: #9b59b6; }
+    .stat-card.fiber { border-left-color: #27ae60; }
+    .stat-card.weight { border-left-color: #34495e; }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+    }
+    
+    .stat-label {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 1rem;
+    }
+    
+    .progress-ring {
+        width: 80px;
+        height: 80px;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+    }
+    
+    .progress-ring-circle {
+        transition: stroke-dasharray 0.5s ease;
+    }
+    
+    .nutrition-table {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .table-header {
+        background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+        color: white;
+        padding: 1.5rem 2rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+    
+    .nutrition-table table {
+        width: 100%;
+        margin: 0;
+    }
+    
+    .nutrition-table th {
+        background: #f8f9fa;
+        padding: 1rem;
+        font-weight: 600;
+        color: #2c3e50;
+        border: none;
+        text-align: center;
+    }
+    
+    .nutrition-table td {
+        padding: 1rem;
+        border: none;
+        text-align: center;
+        border-bottom: 1px solid #ecf0f1;
+        vertical-align: middle;
+    }
+    
+    .nutrition-table tbody tr:hover {
+        background: #f8f9fa;
+        transform: scale(1.01);
+        transition: all 0.3s ease;
+    }
+    
+    .date-link {
+        color: #3498db;
+        text-decoration: none;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        display: inline-block;
+    }
+    
+    .date-link:hover {
+        background: #3498db;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+    
+    .macro-badge {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin: 0.2rem;
+        color: white;
+    }
+    
+    .macro-badge.calories { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+    .macro-badge.protein { background: linear-gradient(135deg, #3498db, #2980b9); }
+    .macro-badge.carbs { background: linear-gradient(135deg, #f39c12, #e67e22); }
+    .macro-badge.fat { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+    
+    .meal-count {
+        background: linear-gradient(135deg, #27ae60, #2ecc71);
+        color: white;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+    
+    .quick-stats {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    
+    .quick-stats h3 {
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+    }
+    
+    .btn-nutrition {
+        background: linear-gradient(135deg, #27ae60, #2ecc71);
+        border: none;
+        color: white;
+        padding: 0.8rem 2rem;
+        border-radius: 25px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+    }
+    
+    .btn-nutrition:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .chart-container {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #7f8c8d;
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        color: #bdc3c7;
+    }
+    
+    @media (max-width: 768px) {
+        .nutrition-hero {
+            padding: 2rem 0;
+        }
+        
+        .stat-card {
+            margin-bottom: 1rem;
+            padding: 1.5rem;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+        }
+        
+        .progress-ring {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="nutrition-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 mb-3">
+                    <i class="fas fa-chart-line me-3"></i>
+                    Nutrition Dashboard
+                </h1>
+                <p class="lead mb-4">Track your daily nutrition, monitor your goals, and achieve optimal health with our comprehensive nutrition tracking system.</p>
+                <a href="{{ url_for('nutrition.nutrition_tracker') }}" class="btn-nutrition">
+                    <i class="fas fa-plus me-2"></i>Log New Entry
+                </a>
+            </div>
+            <div class="col-lg-4 text-center">
+                <i class="fas fa-apple-alt" style="font-size: 6rem; opacity: 0.3;"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Quick Stats Row -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card calories">
+                <div class="stat-label">Total Calories Today</div>
+                <div class="stat-number">{{ today_summary.total_calories|default(0)|round|int if today_summary else 0 }}</div>
+                <small class="text-muted">Goal: {{ goals.daily_calories|default(2000)|round|int if goals else 2000 }}</small>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card protein">
+                <div class="stat-label">Protein (g)</div>
+                <div class="stat-number">{{ today_summary.total_protein|default(0)|round|int if today_summary else 0 }}</div>
+                <small class="text-muted">Goal: {{ goals.daily_protein|default(150)|round|int if goals else 150 }}g</small>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card carbs">
+                <div class="stat-label">Carbs (g)</div>
+                <div class="stat-number">{{ today_summary.total_carbs|default(0)|round|int if today_summary else 0 }}</div>
+                <small class="text-muted">Goal: {{ goals.daily_carbs|default(250)|round|int if goals else 250 }}g</small>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card fat">
+                <div class="stat-label">Fat (g)</div>
+                <div class="stat-number">{{ today_summary.total_fat|default(0)|round|int if today_summary else 0 }}</div>
+                <small class="text-muted">Goal: {{ goals.daily_fat|default(65)|round|int if goals else 65 }}g</small>
+            </div>
+        </div>
+    </div>
+
+    {% if logs %}
+    <!-- Nutrition Logs Table -->
+    <div class="nutrition-table">
+        <div class="table-header">
+            <i class="fas fa-history me-2"></i>
+            Nutrition History
+        </div>
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th><i class="fas fa-calendar me-2"></i>Date</th>
+                    <th><i class="fas fa-fire me-2"></i>Calories</th>
+                    <th><i class="fas fa-drumstick-bite me-2"></i>Protein</th>
+                    <th><i class="fas fa-bread-slice me-2"></i>Carbs</th>
+                    <th><i class="fas fa-cheese me-2"></i>Fat</th>
+                    <th><i class="fas fa-leaf me-2"></i>Fiber</th>
+                    <th><i class="fas fa-utensils me-2"></i>Meals</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>
+                        <a href="/nutrition/daily-summary?date={{ log.summary_date }}" class="date-link">
+                            {{ log.summary_date.strftime('%B %d, %Y') }}
+                        </a>
+                    </td>
+                    <td>
+                        <span class="macro-badge calories">
+                            {{ log.total_calories|default(0)|round|int }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="macro-badge protein">
+                            {{ log.total_protein|default(0)|round|int }}g
+                        </span>
+                    </td>
+                    <td>
+                        <span class="macro-badge carbs">
+                            {{ log.total_carbs|default(0)|round|int }}g
+                        </span>
+                    </td>
+                    <td>
+                        <span class="macro-badge fat">
+                            {{ log.total_fat|default(0)|round|int }}g
+                        </span>
+                    </td>
+                    <td>
+                        <span class="text-success fw-bold">
+                            {{ log.total_fiber|default(0)|round(1) }}g
+                        </span>
+                    </td>
+                    <td>
+                        <div class="meal-count">
+                            {{ log.total_entries|default(0) }}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <!-- Empty State -->
+    <div class="empty-state">
+        <i class="fas fa-chart-line"></i>
+        <h3>No Nutrition Data Yet</h3>
+        <p class="mb-4">Start tracking your nutrition today to see your progress and achieve your health goals.</p>
+        <a href="{{ url_for('nutrition.nutrition_tracker') }}" class="btn-nutrition">
+            <i class="fas fa-plus me-2"></i>Start Tracking
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Chart Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Add any JavaScript for charts or interactions here
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate stat cards on scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+    
+    document.querySelectorAll('.stat-card').forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'all 0.6s ease';
+        observer.observe(card);
+    });
+});
+</script>
+{% endblock %}

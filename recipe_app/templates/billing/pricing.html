@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+  <!-- Header Section -->
+  <div class="text-center mb-5">
+    <h1 class="display-4 fw-bold text-primary m          <tr>
+                 <i class="fas fa-utensils me-3"></i>Choose Your Flavorio Plan
+    </h1>
+    <p class="lead text-muted">Start your culinary journey with the perfect plan for your needs</p>
+    <div class="badge bg-success fs-6 px-3 py-2">
+      <i class="fas fa-gift me-2"></i>14-day free trial on all paid plans
+    </div>
+  </div>
+
+  <!-- Pricing Cards -->
+  <div class="row g-4 justify-content-center">
+    {% for tier in pricing_tiers %}
+    <div class="col-lg-4 col-md-6">
+      <div class="card h-100 {{ 'border-primary shadow-lg' if tier.popular else 'border-light' }} position-relative">
+        {% if tier.popular %}
+        <div class="badge bg-primary position-absolute top-0 start-50 translate-middle px-3 py-2">
+          <i class="fas fa-star me-1"></i>Most Popular
+        </div>
+        {% endif %}
+        
+        <div class="card-header text-center py-4 bg-light">
+          <h4 class="card-title mb-0 {{ 'text-primary' if tier.popular else 'text-dark' }}">{{ tier.name }}</h4>
+          <p class="text-muted small mb-3">{{ tier.description }}</p>
+          <div class="display-6 fw-bold {{ 'text-primary' if tier.popular else 'text-dark' }}">
+            {{ tier.price }}
+            {% if tier.period != 'forever' %}
+              <small class="fs-6 text-muted">/ {{ tier.period }}</small>
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="card-body">
+          <ul class="list-unstyled">
+            {% for feature in tier.features %}
+            <li class="mb-2">
+              <i class="fas fa-check text-success me-2"></i>{{ feature }}
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        
+        <div class="card-footer text-center py-3">
+          {% if tier.name == 'Free' %}
+            {% if current_user.is_authenticated and current_user.current_plan == 'Free' %}
+              <button class="btn btn-outline-secondary w-100" disabled>Current Plan</button>
+            {% else %}
+              <a href="{{ url_for('main.register') }}" class="btn btn-outline-primary w-100">Get Started Free</a>
+            {% endif %}
+          {% else %}
+            {% if current_user.is_authenticated %}
+              {% if current_user.current_plan == tier.name %}
+                <button class="btn btn-success w-100" disabled>
+                  <i class="fas fa-check me-2"></i>Current Plan
+                </button>
+              {% else %}
+                <a href="{{ url_for('billing.subscribe', plan=tier.name) }}" 
+                   class="btn {{ 'btn-primary' if tier.popular else 'btn-outline-primary' }} w-100 subscribe-btn"
+                   data-plan="{{ tier.name }}">
+                  {% if tier.name == 'Home' %}
+                    Start Free Trial
+                  {% else %}
+                    Upgrade to {{ tier.name }}
+                  {% endif %}
+                </a>
+              {% endif %}
+            {% else %}
+              <a href="{{ url_for('main.register') }}" class="btn {{ 'btn-primary' if tier.popular else 'btn-outline-primary' }} w-100">
+                Sign Up for {{ tier.name }}
+              </a>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Features Comparison -->
+  <div class="mt-5">
+    <h3 class="text-center mb-4">Complete Feature Comparison</h3>
+    <div class="table-responsive">
+      <table class="table table-hover table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th class="fw-bold">Feature</th>
+            <th class="text-center fw-bold">Free</th>
+            <th class="text-center fw-bold">Home<br><small class="text-light">(£4.99/mo)</small></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="fw-semibold">Recipe Storage</td>
+            <td class="text-center">10 public</td>
+            <td class="text-center"><i class="fas fa-infinity text-success"></i> private</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold">Privacy Settings</td>
+            <td class="text-center">Public only</td>
+            <td class="text-center"><i class="fas fa-lock text-success"></i> Private allowed</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold">Users per Account</td>
+            <td class="text-center">1</td>
+            <td class="text-center">1</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold">Advanced Filtering</td>
+            <td class="text-center">Basic</td>
+            <td class="text-center">Full (equipment, macros, seasonal)</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold">Nutrition Breakdown</td>
+            <td class="text-center"><i class="fas fa-times text-muted"></i></td>
+            <td class="text-center"><i class="fas fa-check text-success"></i> Macros & flags</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold">Smart Substitutions</td>
+            <td class="text-center"><i class="fas fa-times text-muted"></i></td>
+            <td class="text-center"><i class="fas fa-check text-success"></i></td>
+          </tr>
+          <tr>
+            <td class="fw-semibold">Ingredient Price Comparison</td>
+            <td class="text-center"><i class="fas fa-times text-muted"></i></td>
+            <td class="text-center"><i class="fas fa-check text-success"></i> Multi-store + Trend insights</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold">Budget Suggestions</td>
+            <td class="text-center"><i class="fas fa-times text-muted"></i></td>
+            <td class="text-center"><i class="fas fa-check text-success"></i> Dynamic alerts</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold">Meal Planning Tools</td>
+            <td class="text-center"><i class="fas fa-times text-muted"></i></td>
+            <td class="text-center"><i class="fas fa-check text-success"></i> Scaling + leftovers</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold">Personal Pantry Tracker</td>
+            <td class="text-center"><i class="fas fa-times text-muted"></i></td>
+            <td class="text-center"><i class="fas fa-check text-success"></i> + Predictive suggestions</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold">Barcode Scanning</td>
+            <td class="text-center"><i class="fas fa-times text-muted"></i></td>
+            <td class="text-center"><i class="fas fa-check text-success"></i></td>
+          </tr><tr>
+            <td class="fw-semibold">Offline Recipes</td>
+            <td class="text-center"><i class="fas fa-times text-muted"></i></td>
+            <td class="text-center"><i class="fas fa-check text-success"></i> + Themed packs</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold">Upload Custom Recipes</td>
+            <td class="text-center"><i class="fas fa-check text-success"></i></td>
+            <td class="text-center"><i class="fas fa-check text-success"></i></td>
+          </tr>
+          <tr>
+            <td class="fw-semibold">Recipe Reviews & Comments</td>
+            <td class="text-center"><i class="fas fa-eye text-muted"></i> Read only</td>
+            <td class="text-center"><i class="fas fa-check text-success"></i></td>
+          </tr>
+          <tr>
+            <td class="fw-semibold">Community Photo Uploads</td>
+            <td class="text-center"><i class="fas fa-times text-muted"></i></td>
+            <td class="text-center"><i class="fas fa-check text-success"></i></td>
+          </tr>
+          <tr>
+            <td class="fw-semibold">External Feeds</td>
+            <td class="text-center"><i class="fas fa-times text-muted"></i></td>
+            <td class="text-center"><i class="fas fa-check text-success"></i></td>
+          </tr>
+          <td class="fw-semibold">Mobile App (PWA)</td>
+            <td class="text-center"><i class="fas fa-check text-success"></i> Install & offline access</td>
+            <td class="text-center"><i class="fas fa-check text-success"></i> Install & offline access</td>
+          </tr>
+          <tr class="table-light">
+            <td class="fw-bold">Customer Support</td>
+            <td class="text-center">Community forum only</td>
+            <td class="text-center">Priority email + chat</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- FAQ Section -->
+  <div class="mt-5">
+    <h3 class="text-center mb-4">Frequently Asked Questions</h3>
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="accordion" id="pricingFAQ">
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                Can I change my plan anytime?
+              </button>
+            </h2>
+            <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+              <div class="accordion-body">
+                Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately, and we'll prorate any billing adjustments.
+              </div>
+            </div>
+          </div>
+          
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                What happens to my recipes if I cancel?
+              </button>
+            </h2>
+            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+              <div class="accordion-body">
+                Your recipes are always yours! Even if you downgrade to the Free plan, you'll retain access to all your recipes. You'll just be limited to the Free plan features going forward.
+              </div>
+            </div>
+          </div>
+          
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                Is there a free trial?
+              </button>
+            </h2>
+            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+              <div class="accordion-body">
+                Yes! All paid plans come with a 14-day free trial. No credit card required to start, and you can cancel anytime during the trial period.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Enhanced subscription button handling
+    const subscribeButtons = document.querySelectorAll('.subscribe-btn');
+    
+    subscribeButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const plan = this.dataset.plan;
+            const subscribeUrl = this.href;
+            
+            // Add loading state
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Redirecting to Stripe...';
+            this.disabled = true;
+            
+            // Try to redirect - use window.location as fallback
+            fetch(subscribeUrl + '?json=1')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.redirect_url) {
+                        console.log('Redirecting to Stripe:', data.redirect_url);
+                        window.location.href = data.redirect_url;
+                    } else {
+                        throw new Error('No redirect URL received');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error getting checkout URL:', error);
+                    // Fallback to direct navigation
+                    console.log('Falling back to direct navigation');
+                    window.location.href = subscribeUrl;
+                })
+                .finally(() => {
+                    // Reset button state after a delay
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.disabled = false;
+                    }, 3000);
+                });
+        });
+    });
+});
+</script>
+{% endblock %}

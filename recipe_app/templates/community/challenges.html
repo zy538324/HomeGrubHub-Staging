@@ -1,0 +1,430 @@
+{% extends "base.html" %}
+
+{% block title %}Community Challenges{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="display-6 mb-2">
+                        <i class="fas fa-trophy text-warning me-3"></i>Community Challenges
+                    </h1>
+                    <p class="text-muted lead">Compete, create, and connect with fellow food enthusiasts!</p>
+                </div>
+                <div class="text-end">
+                    <div class="badge bg-primary fs-6 p-2">
+                        {{ (ongoing_challenges|length + upcoming_challenges|length) }} Active Challenges
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ongoing Challenges -->
+    {% if ongoing_challenges %}
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="h4 mb-3">
+                <i class="fas fa-fire text-danger me-2"></i>Live Challenges
+                <small class="text-muted">({{ ongoing_challenges|length }})</small>
+            </h2>
+        </div>
+        {% for challenge in ongoing_challenges %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm border-0 challenge-card">
+                <div class="card-header bg-gradient-danger text-white position-relative">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="card-title mb-1 fw-bold">{{ challenge.title }}</h5>
+                            <small class="opacity-75">
+                                <i class="fas fa-clock me-1"></i>
+                                Ends {{ challenge.end_date.strftime('%b %d, %Y') }}
+                            </small>
+                        </div>
+                        {% if challenge.is_featured %}
+                            <span class="badge bg-warning text-dark">
+                                <i class="fas fa-star me-1"></i>Featured
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div class="position-absolute top-0 end-0 p-2">
+                        <span class="badge bg-white text-danger pulse-animation">LIVE</span>
+                    </div>
+                </div>
+                
+                <div class="card-body d-flex flex-column">
+                    <p class="card-text flex-grow-1">{{ challenge.description }}</p>
+                    
+                    <!-- Challenge Badges -->
+                    <div class="mb-3">
+                        <!-- Challenge Type Badge -->
+                        {% set type_color = 'primary' %}
+                        {% set type_icon = 'fas fa-upload' %}
+                        {% if challenge.challenge_type == 'most_favorited' %}
+                            {% set type_color = 'danger' %}
+                            {% set type_icon = 'fas fa-heart' %}
+                        {% elif challenge.challenge_type == 'most_followed' %}
+                            {% set type_color = 'success' %}
+                            {% set type_icon = 'fas fa-users' %}
+                        {% elif challenge.challenge_type == 'cuisine_diversity' %}
+                            {% set type_color = 'info' %}
+                            {% set type_icon = 'fas fa-globe' %}
+                        {% elif challenge.challenge_type == 'seasonal_cooking' %}
+                            {% set type_color = 'warning' %}
+                            {% set type_icon = 'fas fa-leaf' %}
+                        {% elif challenge.challenge_type == 'cooking_technique' %}
+                            {% set type_color = 'secondary' %}
+                            {% set type_icon = 'fas fa-fire' %}
+                        {% elif challenge.challenge_type == 'budget_cooking' %}
+                            {% set type_color = 'success' %}
+                            {% set type_icon = 'fas fa-dollar-sign' %}
+                        {% elif challenge.challenge_type == 'speed_cooking' %}
+                            {% set type_color = 'warning' %}
+                            {% set type_icon = 'fas fa-stopwatch' %}
+                        {% endif %}
+                        
+                        <span class="badge bg-{{ type_color }} me-2">
+                            <i class="{{ type_icon }} me-1"></i>
+                            {{ challenge.challenge_type.replace('_', ' ').title() }}
+                        </span>
+                        
+                        <!-- Timeframe Badge -->
+                        {% set timeframe = challenge.criteria.get('timeframe', 'week') if challenge.criteria else 'week' %}
+                        {% set tf_color = 'primary' %}
+                        {% set tf_icon = 'fas fa-clock' %}
+                        {% set tf_text = '24H' %}
+                        {% if timeframe == 'week' %}
+                            {% set tf_color = 'success' %}
+                            {% set tf_icon = 'fas fa-calendar-week' %}
+                            {% set tf_text = '7D' %}
+                        {% elif timeframe == 'month' %}
+                            {% set tf_color = 'info' %}
+                            {% set tf_icon = 'fas fa-calendar-alt' %}
+                            {% set tf_text = '30D' %}
+                        {% elif timeframe == 'year' %}
+                            {% set tf_color = 'warning' %}
+                            {% set tf_icon = 'fas fa-calendar' %}
+                            {% set tf_text = '365D' %}
+                        {% elif timeframe == 'two_weeks' %}
+                            {% set tf_color = 'secondary' %}
+                            {% set tf_icon = 'fas fa-calendar-week' %}
+                            {% set tf_text = '14D' %}
+                        {% endif %}
+                        
+                        <span class="badge bg-{{ tf_color }} me-2">
+                            <i class="{{ tf_icon }} me-1"></i>
+                            {{ tf_text }}
+                        </span>
+                        
+                        <!-- Difficulty Badge -->
+                        {% set diff_color = 'success' %}
+                        {% set diff_icon = 'fas fa-star' %}
+                        {% if challenge.difficulty_level == 'intermediate' %}
+                            {% set diff_color = 'warning' %}
+                            {% set diff_icon = 'fas fa-star-half-alt' %}
+                        {% elif challenge.difficulty_level == 'advanced' %}
+                            {% set diff_color = 'danger' %}
+                            {% set diff_icon = 'fas fa-fire' %}
+                        {% endif %}
+                        
+                        <span class="badge bg-{{ diff_color }}">
+                            <i class="{{ diff_icon }} me-1"></i>
+                            {{ challenge.difficulty_level.title() }}
+                        </span>
+                    </div>
+                    
+                    <!-- Challenge Stats -->
+                    <div class="row text-center small mb-3">
+                        <div class="col-4">
+                            <div class="border rounded p-2">
+                                <div class="fw-bold text-primary">{{ challenge.participant_count }}</div>
+                                <div class="text-muted">Participants</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border rounded p-2">
+                                {% if challenge.max_participants %}
+                                    <div class="fw-bold text-info">{{ challenge.max_participants }}</div>
+                                    <div class="text-muted">Max</div>
+                                {% else %}
+                                    <div class="fw-bold text-secondary">∞</div>
+                                    <div class="text-muted">Unlimited</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border rounded p-2">
+                                <div class="fw-bold text-success">
+                                    {{ challenge.participations | selectattr('is_completed') | list | length }}
+                                </div>
+                                <div class="text-muted">Completed</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Button -->
+                    <a href="{{ url_for('community.challenge_detail', challenge_id=challenge.id) }}" 
+                       class="btn btn-danger w-100">
+                        <i class="fas fa-bolt me-1"></i>Join Challenge
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Upcoming Challenges -->
+    {% if upcoming_challenges %}
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="h4 mb-3">
+                <i class="fas fa-calendar-plus text-info me-2"></i>Upcoming Challenges
+                <small class="text-muted">({{ upcoming_challenges|length }})</small>
+            </h2>
+        </div>
+        {% for challenge in upcoming_challenges %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm border-0 challenge-card">
+                <div class="card-header bg-gradient-info text-white">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="card-title mb-1 fw-bold">{{ challenge.title }}</h5>
+                            <small class="opacity-75">
+                                <i class="fas fa-calendar-alt me-1"></i>
+                                Starts {{ challenge.start_date.strftime('%b %d, %Y') }}
+                            </small>
+                        </div>
+                        {% if challenge.is_featured %}
+                            <span class="badge bg-warning text-dark">
+                                <i class="fas fa-star me-1"></i>Featured
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="card-body d-flex flex-column">
+                    <p class="card-text flex-grow-1">{{ challenge.description }}</p>
+                    
+                    <!-- Challenge Badges -->
+                    <div class="mb-3">
+                        {% set type_color = 'primary' %}
+                        {% set type_icon = 'fas fa-upload' %}
+                        {% if challenge.challenge_type == 'most_favorited' %}
+                            {% set type_color = 'danger' %}
+                            {% set type_icon = 'fas fa-heart' %}
+                        {% elif challenge.challenge_type == 'most_followed' %}
+                            {% set type_color = 'success' %}
+                            {% set type_icon = 'fas fa-users' %}
+                        {% elif challenge.challenge_type == 'cuisine_diversity' %}
+                            {% set type_color = 'info' %}
+                            {% set type_icon = 'fas fa-globe' %}
+                        {% elif challenge.challenge_type == 'seasonal_cooking' %}
+                            {% set type_color = 'warning' %}
+                            {% set type_icon = 'fas fa-leaf' %}
+                        {% elif challenge.challenge_type == 'cooking_technique' %}
+                            {% set type_color = 'secondary' %}
+                            {% set type_icon = 'fas fa-fire' %}
+                        {% elif challenge.challenge_type == 'budget_cooking' %}
+                            {% set type_color = 'success' %}
+                            {% set type_icon = 'fas fa-dollar-sign' %}
+                        {% elif challenge.challenge_type == 'speed_cooking' %}
+                            {% set type_color = 'warning' %}
+                            {% set type_icon = 'fas fa-stopwatch' %}
+                        {% endif %}
+                        
+                        <span class="badge bg-{{ type_color }} me-2">
+                            <i class="{{ type_icon }} me-1"></i>
+                            {{ challenge.challenge_type.replace('_', ' ').title() }}
+                        </span>
+                        
+                        {% set timeframe = challenge.criteria.get('timeframe', 'week') if challenge.criteria else 'week' %}
+                        {% set tf_color = 'primary' %}
+                        {% set tf_icon = 'fas fa-clock' %}
+                        {% set tf_text = '24H' %}
+                        {% if timeframe == 'week' %}
+                            {% set tf_color = 'success' %}
+                            {% set tf_icon = 'fas fa-calendar-week' %}
+                            {% set tf_text = '7D' %}
+                        {% elif timeframe == 'month' %}
+                            {% set tf_color = 'info' %}
+                            {% set tf_icon = 'fas fa-calendar-alt' %}
+                            {% set tf_text = '30D' %}
+                        {% elif timeframe == 'year' %}
+                            {% set tf_color = 'warning' %}
+                            {% set tf_icon = 'fas fa-calendar' %}
+                            {% set tf_text = '365D' %}
+                        {% elif timeframe == 'two_weeks' %}
+                            {% set tf_color = 'secondary' %}
+                            {% set tf_icon = 'fas fa-calendar-week' %}
+                            {% set tf_text = '14D' %}
+                        {% endif %}
+                        
+                        <span class="badge bg-{{ tf_color }} me-2">
+                            <i class="{{ tf_icon }} me-1"></i>
+                            {{ tf_text }}
+                        </span>
+                        
+                        {% set diff_color = 'success' %}
+                        {% set diff_icon = 'fas fa-star' %}
+                        {% if challenge.difficulty_level == 'intermediate' %}
+                            {% set diff_color = 'warning' %}
+                            {% set diff_icon = 'fas fa-star-half-alt' %}
+                        {% elif challenge.difficulty_level == 'advanced' %}
+                            {% set diff_color = 'danger' %}
+                            {% set diff_icon = 'fas fa-fire' %}
+                        {% endif %}
+                        
+                        <span class="badge bg-{{ diff_color }}">
+                            <i class="{{ diff_icon }} me-1"></i>
+                            {{ challenge.difficulty_level.title() }}
+                        </span>
+                    </div>
+                    
+                    <!-- Challenge Criteria Preview -->
+                    {% if challenge.criteria %}
+                    <div class="alert alert-light py-2 mb-3">
+                        <small>
+                            <strong>Goal:</strong> 
+                            {% if challenge.criteria.get('metric') == 'recipes_uploaded' %}
+                                Upload {{ challenge.criteria.get('min_recipes', 'multiple') }} recipes
+                            {% elif challenge.criteria.get('metric') == 'recipe_favorites' %}
+                                Get {{ challenge.criteria.get('min_favorites', 'many') }} favorites
+                            {% elif challenge.criteria.get('metric') == 'new_followers' %}
+                                Gain {{ challenge.criteria.get('min_followers', 'new') }} followers
+                            {% elif challenge.criteria.get('metric') == 'unique_cuisines' %}
+                                Try {{ challenge.criteria.get('min_cuisines', 'different') }} cuisines
+                            {% else %}
+                                Complete challenge requirements
+                            {% endif %}
+                        </small>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Action Button -->
+                    <a href="{{ url_for('community.challenge_detail', challenge_id=challenge.id) }}" 
+                       class="btn btn-outline-info w-100">
+                        <i class="fas fa-eye me-1"></i>View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Completed Challenges -->
+    {% if completed_challenges %}
+    <div class="row">
+        <div class="col-12">
+            <h2 class="h4 mb-3">
+                <i class="fas fa-medal text-warning me-2"></i>Recently Completed
+                <small class="text-muted">({{ completed_challenges|length }})</small>
+            </h2>
+        </div>
+        {% for challenge in completed_challenges %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm border-0 challenge-card opacity-75">
+                <div class="card-header bg-gradient-secondary text-white">
+                    <h5 class="card-title mb-1 fw-bold">{{ challenge.title }}</h5>
+                    <small class="opacity-75">
+                        <i class="fas fa-flag-checkered me-1"></i>
+                        Completed {{ challenge.end_date.strftime('%b %d, %Y') }}
+                    </small>
+                </div>
+                
+                <div class="card-body d-flex flex-column">
+                    <p class="card-text flex-grow-1">{{ challenge.description }}</p>
+                    
+                    <div class="mb-3">
+                        {% set type_icon = 'fas fa-upload' %}
+                        {% if challenge.challenge_type == 'most_favorited' %}
+                            {% set type_icon = 'fas fa-heart' %}
+                        {% elif challenge.challenge_type == 'most_followed' %}
+                            {% set type_icon = 'fas fa-users' %}
+                        {% elif challenge.challenge_type == 'cuisine_diversity' %}
+                            {% set type_icon = 'fas fa-globe' %}
+                        {% elif challenge.challenge_type == 'seasonal_cooking' %}
+                            {% set type_icon = 'fas fa-leaf' %}
+                        {% elif challenge.challenge_type == 'cooking_technique' %}
+                            {% set type_icon = 'fas fa-fire' %}
+                        {% elif challenge.challenge_type == 'budget_cooking' %}
+                            {% set type_icon = 'fas fa-dollar-sign' %}
+                        {% elif challenge.challenge_type == 'speed_cooking' %}
+                            {% set type_icon = 'fas fa-stopwatch' %}
+                        {% endif %}
+                        
+                        <span class="badge bg-secondary me-2">
+                            <i class="{{ type_icon }} me-1"></i>
+                            {{ challenge.challenge_type.replace('_', ' ').title() }}
+                        </span>
+                        <span class="badge bg-dark">
+                            <i class="fas fa-trophy me-1"></i>Completed
+                        </span>
+                    </div>
+                    
+                    <a href="{{ url_for('community.challenge_detail', challenge_id=challenge.id) }}" 
+                       class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-history me-1"></i>View Results
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- No Challenges Message -->
+    {% if not ongoing_challenges and not upcoming_challenges and not completed_challenges %}
+    <div class="row">
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-trophy fa-4x text-muted mb-4"></i>
+                <h3 class="text-muted">No Challenges Available</h3>
+                <p class="text-muted">Check back later for exciting cooking challenges!</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.challenge-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.challenge-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+
+.bg-gradient-danger {
+    background: linear-gradient(45deg, #dc3545, #e74c3c) !important;
+}
+
+.bg-gradient-info {
+    background: linear-gradient(45deg, #17a2b8, #3498db) !important;
+}
+
+.bg-gradient-secondary {
+    background: linear-gradient(45deg, #6c757d, #95a5a6) !important;
+}
+
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.badge {
+    font-size: 0.75em;
+}
+</style>
+
+{% endblock %}

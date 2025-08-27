@@ -1,0 +1,355 @@
+{% extends "base.html" %}
+
+{% block seo_title %}Ultimate Beginner's Guide to Meal Planning UK 2025 | Save £200+ Monthly{% endblock %}
+{% block seo_description %}Learn meal planning for beginners with our complete UK guide. Save £200+ monthly on groceries, eat healthier, and reduce food waste. Free meal planning templates included.{% endblock %}
+{% block seo_keywords %}meal planning for beginners UK, how to meal plan, meal planning guide, save money groceries UK, weekly meal planning, family meal planning, budget meal planning{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Ultimate Beginner's Guide to Meal Planning UK 2025",
+  "description": "Complete guide to meal planning for UK families - save money, eat healthier, and reduce stress with our proven meal planning system.",
+  "image": "{{ url_for('static', filename='images/meal-planning-guide.jpg', _external=True) }}",
+  "author": {
+    "@type": "Organization",
+    "name": "HomeGrubHub"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "HomeGrubHub",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ url_for('static', filename='images/logo.png', _external=True) }}"
+    }
+  },
+  "datePublished": "2025-08-01",
+  "dateModified": "2025-08-01",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ request.url }}"
+  }
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <!-- Article Header -->
+  <div class="row mb-5">
+    <div class="col-lg-8 mx-auto">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Home</a></li>
+          <li class="breadcrumb-item"><a href="{{ url_for('main.blog') }}">Blog</a></li>
+          <li class="breadcrumb-item active">Meal Planning Guide</li>
+        </ol>
+      </nav>
+      
+      <h1 class="display-4 fw-bold mb-3">Ultimate Beginner's Guide to Meal Planning UK 2025</h1>
+      <p class="lead text-muted mb-4">Learn how UK families are saving £200+ monthly with smart meal planning. Complete step-by-step guide with free templates.</p>
+      
+      <div class="d-flex align-items-center text-muted mb-4">
+        <small><i class="fas fa-calendar me-1"></i> Published August 1, 2025</small>
+        <small class="ms-3"><i class="fas fa-clock me-1"></i> 12 min read</small>
+        <small class="ms-3"><i class="fas fa-user me-1"></i> HomeGrubHub Team</small>
+      </div>
+      
+      <img src="{{ url_for('static', filename='images/meal-planning-hero.jpg') }}" 
+           alt="Family meal planning with HomeGrubHub app" 
+           class="img-fluid rounded shadow-sm mb-4">
+    </div>
+  </div>
+
+  <!-- Article Content -->
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <!-- Table of Contents -->
+      <div class="card bg-light border-0 mb-5">
+        <div class="card-body">
+          <h3 class="h5 mb-3"><i class="fas fa-list me-2"></i>Quick Navigation</h3>
+          <div class="row">
+            <div class="col-md-6">
+              <ul class="list-unstyled mb-0">
+                <li><a href="#what-is-meal-planning" class="text-decoration-none">What is Meal Planning?</a></li>
+                <li><a href="#benefits" class="text-decoration-none">Benefits for UK Families</a></li>
+                <li><a href="#getting-started" class="text-decoration-none">Getting Started</a></li>
+                <li><a href="#step-by-step" class="text-decoration-none">Step-by-Step Process</a></li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <ul class="list-unstyled mb-0">
+                <li><a href="#budget-tips" class="text-decoration-none">Money-Saving Tips</a></li>
+                <li><a href="#common-mistakes" class="text-decoration-none">Common Mistakes</a></li>
+                <li><a href="#tools" class="text-decoration-none">Best Tools & Apps</a></li>
+                <li><a href="#templates" class="text-decoration-none">Free Templates</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Article Sections -->
+      <section id="what-is-meal-planning" class="mb-5">
+        <h2 class="h3 mb-3">What is Meal Planning?</h2>
+        <p><strong>Meal planning is the simple practice of deciding your meals in advance</strong> - typically for a week at a time. Instead of asking "what's for dinner?" every evening, you already know exactly what you're cooking.</p>
+        
+        <p>For UK families, meal planning typically involves:</p>
+        <ul>
+          <li><strong>Planning 7 days of meals</strong> (breakfast, lunch, dinner, snacks)</li>
+          <li><strong>Creating a shopping list</strong> based on planned meals</li>
+          <li><strong>Shopping once per week</strong> with your list</li>
+          <li><strong>Prepping ingredients</strong> where possible</li>
+        </ul>
+
+        <div class="alert alert-success border-0 my-4">
+          <h4 class="alert-heading"><i class="fas fa-lightbulb me-2"></i>Quick Fact</h4>
+          <p class="mb-0">UK families who meal plan save an average of £2,400 annually compared to those who don't. That's enough for a family holiday!</p>
+        </div>
+      </section>
+
+      <section id="benefits" class="mb-5">
+        <h2 class="h3 mb-3">Why UK Families Love Meal Planning</h2>
+        
+        <div class="row g-4 mb-4">
+          <div class="col-md-6">
+            <div class="card border-success h-100">
+              <div class="card-body">
+                <h4 class="card-title text-success"><i class="fas fa-pound-sign me-2"></i>Save Money</h4>
+                <ul class="mb-0">
+                  <li>Reduce food waste by 40%</li>
+                  <li>Avoid expensive takeaways</li>
+                  <li>Buy ingredients strategically</li>
+                  <li>Take advantage of supermarket deals</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card border-primary h-100">
+              <div class="card-body">
+                <h4 class="card-title text-primary"><i class="fas fa-clock me-2"></i>Save Time</h4>
+                <ul class="mb-0">
+                  <li>No daily "what's for dinner?" stress</li>
+                  <li>Shop once per week efficiently</li>
+                  <li>Batch prep ingredients</li>
+                  <li>Less time wandering supermarket aisles</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      <section id="getting-started" class="mb-5">
+        <h2 class="h3 mb-3">Getting Started: Your First Week</h2>
+        
+        <div class="card border-warning mb-4">
+          <div class="card-header bg-warning text-dark">
+            <h4 class="mb-0"><i class="fas fa-star me-2"></i>Start Simple</h4>
+          </div>
+          <div class="card-body">
+            <p><strong>Don't try to plan every meal perfectly in your first week.</strong> Start with just planning dinners, and add breakfast/lunch later once you're comfortable.</p>
+          </div>
+        </div>
+
+        <h3 class="h4 mb-3">What You'll Need:</h3>
+        <ul>
+          <li><strong>30 minutes of planning time</strong> (usually Sunday works best)</li>
+          <li><strong>A meal planning template</strong> (get our free one below)</li>
+          <li><strong>Access to recipes</strong> (cookbooks, websites, or apps like HomeGrubHub)</li>
+          <li><strong>Your family's schedule</strong> for the week</li>
+        </ul>
+      </section>
+
+      <section id="step-by-step" class="mb-5">
+        <h2 class="h3 mb-3">Step-by-Step Meal Planning Process</h2>
+        
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                  <span class="badge bg-primary rounded-circle p-2 me-3">1</span>
+                  <h4 class="mb-0">Check Your Schedule</h4>
+                </div>
+                <p>Look at your week ahead. When will you be home for dinner? Any late meetings? Kids' activities? Plan easier meals for busy days.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                  <span class="badge bg-primary rounded-circle p-2 me-3">2</span>
+                  <h4 class="mb-0">Choose Your Recipes</h4>
+                </div>
+                <p>Select 7 dinner recipes. Mix familiar favorites with 1-2 new dishes. Consider prep time, ingredients you already have, and family preferences.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                  <span class="badge bg-primary rounded-circle p-2 me-3">3</span>
+                  <h4 class="mb-0">Create Shopping List</h4>
+                </div>
+                <p>List all ingredients needed. Check what you already have at home. Organize by supermarket sections to shop efficiently.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                  <span class="badge bg-primary rounded-circle p-2 me-3">4</span>
+                  <h4 class="mb-0">Shop Smart</h4>
+                </div>
+                <p>Stick to your list! Check for deals on your planned ingredients. Consider buying extra of non-perishables when on offer.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="budget-tips" class="mb-5">
+        <h2 class="h3 mb-3">Money-Saving Meal Planning Tips for UK Families</h2>
+        
+        <div class="accordion" id="budgetTipsAccordion">
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#tip1">
+                <strong>1. Shop Seasonal Produce</strong>
+              </button>
+            </h3>
+            <div id="tip1" class="accordion-collapse collapse show">
+              <div class="accordion-body">
+                <strong>Plan meals around what's in season.</strong> August means cheap tomatoes, courgettes, and sweetcorn. Winter calls for root vegetables and hearty stews. Seasonal produce is always cheaper and tastes better.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#tip2">
+                <strong>2. Use Store Loyalty Schemes</strong>
+              </button>
+            </h3>
+            <div id="tip2" class="accordion-collapse collapse">
+              <div class="accordion-body">
+                Tesco Clubcard, Sainsbury's Nectar, ASDA Rewards - they all offer genuine savings. Plan meals around your store's weekly offers and earn points on your regular shopping.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#tip3">
+                <strong>3. Batch Cook and Freeze</strong>
+              </button>
+            </h3>
+            <div id="tip3" class="accordion-collapse collapse">
+              <div class="accordion-body">
+                Make double portions of soups, casseroles, and curries. Freeze half for later weeks. This saves money on ingredients and gives you ready meals for busy nights.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tools" class="mb-5">
+        <h2 class="h3 mb-3">Best Meal Planning Tools & Apps</h2>
+        
+        <div class="card border-primary mb-4">
+          <div class="card-header bg-primary text-white">
+            <h4 class="mb-0"><i class="fas fa-star me-2"></i>Recommended: HomeGrubHub</h4>
+          </div>
+          <div class="card-body">
+            <p><strong>Why UK families choose HomeGrubHub:</strong></p>
+            <ul class="mb-3">
+              <li>Drag-and-drop meal planning calendar</li>
+              <li>Automatic shopping list generation</li>
+              <li>UK supermarket price comparison</li>
+              <li>Nutrition tracking with UK food database</li>
+              <li>Family meal planning for different dietary needs</li>
+            </ul>
+            <a href="{{ url_for('main.register') }}" class="btn btn-primary">Start Free Trial</a>
+          </div>
+        </div>
+
+        <h3 class="h5">Other Options:</h3>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <h5>Pen & Paper</h5>
+                <p class="small">Free, flexible, but manual shopping list creation.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <h5>Spreadsheets</h5>
+                <p class="small">Customizable but time-consuming to set up properly.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <h5>Other Apps</h5>
+                <p class="small">Many options but few designed specifically for UK families.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      
+
+      <!-- Call to Action -->
+      <div class="card bg-primary text-white text-center">
+        <div class="card-body">
+          <h3>Ready to Start Saving Money with Meal Planning?</h3>
+          <p class="mb-4">Join thousands of UK families already using HomeGrubHub to save time and money every week.</p>
+          <a href="{{ url_for('main.register') }}" class="btn btn-light btn-lg">Start Your Free Trial</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-3 offset-lg-1">
+      <div class="sticky-top" style="top: 2rem;">
+        <!-- Related Articles -->
+        <div class="card border-0 shadow-sm mb-4">
+          <div class="card-header bg-light border-0">
+            <h5 class="mb-0">Related Guides</h5>
+          </div>
+          <div class="card-body">
+            <ul class="list-unstyled mb-0">
+              <li class="mb-2"><a href="#" class="text-decoration-none">Budget Meal Planning UK</a></li>
+              <li class="mb-2"><a href="#" class="text-decoration-none">Healthy Family Meals</a></li>
+              <li class="mb-2"><a href="#" class="text-decoration-none">Quick Dinner Ideas</a></li>
+              <li class="mb-2"><a href="#" class="text-decoration-none">Nutrition Tracking Guide</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Newsletter Signup -->
+        <div class="card border-primary">
+          <div class="card-body text-center">
+            <h5>Weekly Meal Planning Tips</h5>
+            <p class="small">Get our best meal planning tips delivered to your inbox every Sunday.</p>
+            <form>
+              <div class="mb-3">
+                <input type="email" class="form-control" placeholder="Your email">
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Subscribe Free</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

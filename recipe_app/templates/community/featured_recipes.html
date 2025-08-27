@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 mb-4">
+                <i class="fas fa-star text-warning me-2"></i>Featured Recipes
+            </h1>
+            <p class="text-muted mb-4">Discover the best recipes handpicked by our community and editors.</p>
+        </div>
+    </div>
+
+    {% if recipes %}
+    <div class="row">
+        {% for recipe in recipes %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                {% if recipe.photos %}
+                <img src="{{ recipe.photos[0].photo_url }}" class="card-img-top" alt="{{ recipe.title }}" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{{ url_for('main.recipe', recipe_id=recipe.id) }}" 
+                           class="text-decoration-none">{{ recipe.title }}</a>
+                    </h5>
+                    
+                    <p class="card-text text-muted">{{ recipe.description[:120] }}{% if recipe.description|length > 120 %}...{% endif %}</p>
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">By {{ recipe.author.username }}</small>
+                        {% if recipe.avg_rating %}
+                        <div class="small">
+                            {% for i in range(5) %}
+                                {% if i < recipe.avg_rating %}
+                                    <i class="fas fa-star text-warning"></i>
+                                {% else %}
+                                    <i class="far fa-star text-muted"></i>
+                                {% endif %}
+                            {% endfor %}
+                            <span class="ms-1">{{ "%.1f"|format(recipe.avg_rating) }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if recipe.featured_date %}
+                    <div class="mt-2">
+                        <span class="badge bg-warning text-dark">
+                            <i class="fas fa-star me-1"></i>Featured {{ recipe.featured_date.strftime('%b %d, %Y') }}
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex justify-content-between">
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>{{ recipe.prep_time + recipe.cook_time }} min
+                        </small>
+                        <small class="text-muted">
+                            <i class="fas fa-users me-1"></i>{{ recipe.servings }} servings
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-star fa-3x text-muted mb-3"></i>
+                    <h4>No Featured Recipes Yet</h4>
+                    <p class="text-muted">Featured recipes will appear here once our editors have selected the best community contributions.</p>
+                    <a href="{{ url_for('main.add_recipe') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Share Your Recipe
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

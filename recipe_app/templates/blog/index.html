@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+
+{% block seo_title %}HomeGrubHub Blog | Meal Planning Tips & Healthy Cooking Guides{% endblock %}
+{% block seo_description %}Discover meal planning tips, budget cooking guides, and healthy family recipes. Expert advice to help UK families save money and eat better with HomeGrubHub.{% endblock %}
+{% block seo_keywords %}meal planning blog, cooking tips UK, budget recipes, healthy family meals, kitchen tips, meal prep guides, food planning advice{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "HomeGrubHub Blog",
+  "description": "Meal planning tips, cooking guides, and healthy family recipes for UK families",
+  "url": "{{ request.url }}",
+  "publisher": {
+    "@type": "Organization",
+    "name": "HomeGrubHub",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ url_for('static', filename='HomeGrubHub.png', _external=True) }}"
+    }
+  },
+  "blogPost": [
+    {
+      "@type": "BlogPosting",
+      "headline": "Ultimate Beginner's Guide to Meal Planning UK 2025",
+      "url": "{{ url_for('main.blog_post', slug='meal-planning-guide', _external=True) }}",
+      "datePublished": "2025-08-01",
+      "author": {
+        "@type": "Organization",
+        "name": "HomeGrubHub Team"
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <!-- Header Section -->
+  <div class="row mb-5">
+    <div class="col-12 text-center">
+      
+      <h1 class="display-4 fw-bold mb-3">HomeGrubHub Blog</h1>
+      <p class="lead text-muted mb-4">Expert tips, guides, and inspiration for smarter meal planning and healthier family cooking</p>
+    </div>
+  </div>
+
+  <!-- Featured Article -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="card border-0 shadow-lg overflow-hidden">
+        <div class="row g-0">
+          <div class="col-md-5">
+            <img src="{{ url_for('static', filename='images/blog/meal-planning-featured.jpg') }}" 
+                 class="img-fluid h-100 w-100" style="object-fit: cover;" 
+                 alt="Ultimate meal planning guide for UK families">
+          </div>
+          <div class="col-md-7">
+            <div class="card-body p-5">
+              <span class="badge bg-primary mb-2">Featured</span>
+              <h2 class="card-title h3 mb-3">Ultimate Beginner's Guide to Meal Planning UK 2025</h2>
+              <p class="card-text text-muted mb-4">Learn how UK families are saving £200+ monthly with smart meal planning. Complete step-by-step guide with free templates and proven strategies.</p>
+              
+              <div class="d-flex align-items-center text-muted mb-4">
+                <small><i class="fas fa-calendar me-1"></i> August 1, 2025</small>
+                <small class="ms-3"><i class="fas fa-clock me-1"></i> 12 min read</small>
+                <small class="ms-3"><i class="fas fa-eye me-1"></i> 2,847 views</small>
+              </div>
+              
+              <a href="{{ url_for('main.blog_post', slug='meal-planning-guide') }}" class="btn btn-primary btn-lg">
+                Read Full Guide <i class="fas fa-arrow-right ms-2"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Latest Articles -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <h2 class="h3 mb-4">Latest Articles</h2>
+      <div class="row g-4">
+        
+        <!-- Article 1 -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm h-100">
+            <img src="{{ url_for('static', filename='images/blog/budget-meals.jpg') }}" 
+                 class="card-img-top" style="height: 200px; object-fit: cover;" 
+                 alt="Budget meal planning tips">
+            <div class="card-body d-flex flex-column">
+              <span class="badge bg-success align-self-start mb-2">Money Saving</span>
+              <h5 class="card-title">10 Budget-Friendly Meals Under £2 Per Serving</h5>
+              <p class="card-text text-muted flex-grow-1">Discover delicious, nutritious meals that won't break the bank. Perfect for families looking to reduce grocery costs without sacrificing taste.</p>
+              
+              <div class="d-flex align-items-center text-muted mb-3">
+                <small><i class="fas fa-calendar me-1"></i> July 28, 2025</small>
+                <small class="ms-3"><i class="fas fa-clock me-1"></i> 8 min read</small>
+              </div>
+              
+              <a href="{{ url_for('main.blog_post', slug='budget-meal-planning') }}" class="btn btn-outline-primary">Read More</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Article 2 -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm h-100">
+            <img src="{{ url_for('static', filename='images/blog/healthy-family.jpg') }}" 
+                 class="card-img-top" style="height: 200px; object-fit: cover;" 
+                 alt="Healthy family meal ideas">
+            <div class="card-body d-flex flex-column">
+              <span class="badge bg-warning align-self-start mb-2">Health & Nutrition</span>
+              <h5 class="card-title">Getting Kids to Eat Vegetables: 15 Proven Strategies</h5>
+              <p class="card-text text-muted flex-grow-1">Transform picky eaters into veggie lovers with these parent-tested techniques. Includes recipe modifications and presentation tips.</p>
+              
+              <div class="d-flex align-items-center text-muted mb-3">
+                <small><i class="fas fa-calendar me-1"></i> July 25, 2025</small>
+                <small class="ms-3"><i class="fas fa-clock me-1"></i> 10 min read</small>
+              </div>
+              
+              <a href="{{ url_for('main.blog_post', slug='healthy-family-meals') }}" class="btn btn-outline-primary">Read More</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Article 3 -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm h-100">
+            <img src="{{ url_for('static', filename='images/blog/meal-prep.jpg') }}" 
+                 class="card-img-top" style="height: 200px; object-fit: cover;" 
+                 alt="Meal prep containers and tips">
+            <div class="card-body d-flex flex-column">
+              <span class="badge bg-info align-self-start mb-2">Time Saving</span>
+              <h5 class="card-title">Sunday Meal Prep: Save 5+ Hours Every Week</h5>
+              <p class="card-text text-muted flex-grow-1">Master the art of meal prep with our step-by-step guide. Includes container recommendations and batch cooking strategies.</p>
+              
+              <div class="d-flex align-items-center text-muted mb-3">
+                <small><i class="fas fa-calendar me-1"></i> July 22, 2025</small>
+                <small class="ms-3"><i class="fas fa-clock me-1"></i> 12 min read</small>
+              </div>
+              
+              <a href="#" class="btn btn-outline-primary">Read More</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Article 4 -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm h-100">
+            <img src="{{ url_for('static', filename='images/blog/seasonal-cooking.jpg') }}" 
+                 class="card-img-top" style="height: 200px; object-fit: cover;" 
+                 alt="Seasonal cooking with fresh ingredients">
+            <div class="card-body d-flex flex-column">
+              <span class="badge bg-success align-self-start mb-2">Seasonal</span>
+              <h5 class="card-title">August Seasonal Cooking: Summer's Best Ingredients</h5>
+              <p class="card-text text-muted flex-grow-1">Make the most of summer produce with these seasonal recipes. Fresh, local, and budget-friendly meal ideas for August.</p>
+              
+              <div class="d-flex align-items-center text-muted mb-3">
+                <small><i class="fas fa-calendar me-1"></i> July 20, 2025</small>
+                <small class="ms-3"><i class="fas fa-clock me-1"></i> 9 min read</small>
+              </div>
+              
+              <a href="#" class="btn btn-outline-primary">Read More</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Article 5 -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm h-100">
+            <img src="{{ url_for('static', filename='images/blog/kitchen-tools.jpg') }}" 
+                 class="card-img-top" style="height: 200px; object-fit: cover;" 
+                 alt="Essential kitchen tools for meal planning">
+            <div class="card-body d-flex flex-column">
+              <span class="badge bg-secondary align-self-start mb-2">Kitchen Tips</span>
+              <h5 class="card-title">10 Essential Tools for Efficient Meal Planning</h5>
+              <p class="card-text text-muted flex-grow-1">Upgrade your kitchen with these must-have tools that make meal planning and prep faster, easier, and more enjoyable.</p>
+              
+              <div class="d-flex align-items-center text-muted mb-3">
+                <small><i class="fas fa-calendar me-1"></i> July 18, 2025</small>
+                <small class="ms-3"><i class="fas fa-clock me-1"></i> 7 min read</small>
+              </div>
+              
+              <a href="#" class="btn btn-outline-primary">Read More</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Article 6 -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card border-0 shadow-sm h-100">
+            <img src="{{ url_for('static', filename='images/blog/food-waste.jpg') }}" 
+                 class="card-img-top" style="height: 200px; object-fit: cover;" 
+                 alt="Reducing food waste tips">
+            <div class="card-body d-flex flex-column">
+              <span class="badge bg-success align-self-start mb-2">Sustainability</span>
+              <h5 class="card-title">Zero Waste Kitchen: Reduce Food Waste by 40%</h5>
+              <p class="card-text text-muted flex-grow-1">Learn practical strategies to minimize food waste and save money. Includes storage tips and creative leftover recipes.</p>
+              
+              <div class="d-flex align-items-center text-muted mb-3">
+                <small><i class="fas fa-calendar me-1"></i> July 15, 2025</small>
+                <small class="ms-3"><i class="fas fa-clock me-1"></i> 11 min read</small>
+              </div>
+              
+              <a href="#" class="btn btn-outline-primary">Read More</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Categories Section -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <h2 class="h3 mb-4">Browse by Category</h2>
+      <div class="row g-3">
+        <div class="col-md-6 col-lg-3">
+          <a href="#" class="text-decoration-none">
+            <div class="card border-primary h-100">
+              <div class="card-body text-center">
+                <i class="fas fa-pound-sign fa-2x text-primary mb-3"></i>
+                <h5 class="card-title">Money Saving</h5>
+                <p class="card-text small text-muted">Budget recipes and cost-cutting tips</p>
+                <span class="badge bg-primary">12 articles</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+          <a href="#" class="text-decoration-none">
+            <div class="card border-success h-100">
+              <div class="card-body text-center">
+                <i class="fas fa-heart fa-2x text-success mb-3"></i>
+                <h5 class="card-title">Health & Nutrition</h5>
+                <p class="card-text small text-muted">Healthy family meal ideas</p>
+                <span class="badge bg-success">18 articles</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+          <a href="#" class="text-decoration-none">
+            <div class="card border-warning h-100">
+              <div class="card-body text-center">
+                <i class="fas fa-clock fa-2x text-warning mb-3"></i>
+                <h5 class="card-title">Time Saving</h5>
+                <p class="card-text small text-muted">Quick meals and prep strategies</p>
+                <span class="badge bg-warning">15 articles</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+          <a href="#" class="text-decoration-none">
+            <div class="card border-info h-100">
+              <div class="card-body text-center">
+                <i class="fas fa-utensils fa-2x text-info mb-3"></i>
+                <h5 class="card-title">Kitchen Tips</h5>
+                <p class="card-text small text-muted">Cooking techniques and tools</p>
+                <span class="badge bg-info">9 articles</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Newsletter Signup -->
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <div class="card bg-primary text-white text-center">
+        <div class="card-body p-5">
+          <h2 class="h3 mb-3 text-white">Stay Updated with Our Latest Tips</h2>
+          <p class="mb-4">Get weekly meal planning tips, new recipes, and money-saving strategies delivered to your inbox every Sunday.</p>
+          
+          <form class="row justify-content-center">
+            <div class="col-md-8">
+              <div class="input-group input-group-lg">
+                <input type="email" class="form-control" placeholder="Enter your email address" required>
+                <button class="btn btn-light" type="submit">
+                  <i class="fas fa-paper-plane me-2"></i>Subscribe Free
+                </button>
+              </div>
+              <small class="text-light mt-2 d-block">
+                <i class="fas fa-lock me-1"></i>We respect your privacy. Unsubscribe anytime.
+              </small>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

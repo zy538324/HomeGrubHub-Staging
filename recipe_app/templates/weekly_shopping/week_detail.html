@@ -1,0 +1,814 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2>
+            <i class="fas fa-calendar-week me-2"></i>{{ weekly_list.week_label }}
+          </h2>
+          <p class="text-muted mb-0">
+            {{ weekly_list.week_start_date.strftime('%A, %B %d') }} - {{ weekly_list.week_end_date.strftime('%A, %B %d, %Y') }}
+          </p>
+        </div>
+        <div>
+          <a href="{{ url_for('weekly_shopping.index') }}" class="btn btn-outline-secondary me-2">
+            <i class="fas fa-arrow-left me-1"></i>All Weeks
+          </a>
+          <button class="btn btn-success" onclick="addItemModal()">
+            <i class="fas fa-plus me-1"></i>Add Item
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card bg-primary text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h4 class="mb-0">{{ weekly_list.items.count() }}</h4>
+              <p class="mb-0">Total Items</p>
+            </div>
+            <i class="fas fa-list fa-2x opacity-75"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-success text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h4 class="mb-0">{{ weekly_list.items.filter_by(is_purchased=True).count() }}</h4>
+              <p class="mb-0">Purchased</p>
+            </div>
+            <i class="fas fa-check fa-2x opacity-75"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-info text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h4 class="mb-0">£{{ "%.2f"|format(weekly_list.total_estimated_cost) }}</h4>
+              <p class="mb-0">Estimated</p>
+            </div>
+            <i class="fas fa-dollar-sign fa-2x opacity-75"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-warning text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h4 class="mb-0">£{{ "%.2f"|format(weekly_list.total_actual_cost) }}</h4>
+              <p class="mb-0">Actual Spent</p>
+            </div>
+            <i class="fas fa-receipt fa-2x opacity-75"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shopping List by Categories -->
+  <div class="row">
+    <div class="col-md-8">
+      {% if categories %}
+        {% for category, items in categories.items() %}
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-light">
+            <h5 class="mb-0">
+              <i class="fas fa-folder me-2"></i>{{ category }}
+              <span class="badge bg-secondary ms-2">{{ items|length }}</span>
+            </h5>
+          </div>
+          <div class="card-body">
+            {% for item in items %}
+            <div class="shopping-item d-flex align-items-center mb-2 p-2 border rounded {{ 'bg-light text-muted' if item.is_purchased else '' }}">
+              <div class="form-check me-3">
+                <input type="checkbox" class="form-check-input" 
+                       id="item-{{ item.id }}" 
+                       {{ 'checked' if item.is_purchased else '' }}
+                       onchange="toggleItem({{ item.id }})">
+              </div>
+              
+              <div class="flex-grow-1">
+                <div class="{{ 'text-decoration-line-through' if item.is_purchased else '' }}">
+                  <strong>{{ item.item_name }}</strong>
+                  {% if item.quantity_needed and item.quantity_needed != 1 %}
+                    <small class="text-muted">
+                      - {{ "%.1f"|format(item.quantity_needed) }} {{ item.unit }}
+                    </small>
+                  {% endif %}
+                </div>
+                
+                <div class="mt-1">
+                  {% if item.source %}
+                    <small class="badge bg-info">{{ item.source.replace('_', ' ').title() }}</small>
+                  {% endif %}
+                  
+                  {% if item.meal_date %}
+                    <small class="badge bg-secondary">{{ item.meal_date.strftime('%a %m/%d') }}</small>
+                  {% endif %}
+                  
+                  {% if item.priority and item.priority != 3 %}
+                    {% if item.priority <= 2 %}
+                      <small class="badge bg-danger">High Priority</small>
+                    {% elif item.priority >= 4 %}
+                      <small class="badge bg-secondary">Low Priority</small>
+                    {% endif %}
+                  {% endif %}
+                </div>
+                
+                {% if item.notes %}
+                <small class="text-muted d-block mt-1">{{ item.notes }}</small>
+                {% endif %}
+              </div>
+              
+              <div class="item-actions">
+                {% if item.estimated_cost %}
+                <small class="text-muted me-2">Est: £{{ "%.2f"|format(item.estimated_cost) }}</small>
+                {% endif %}
+                {% if item.actual_cost %}
+                <small class="text-success me-2">Paid: £{{ "%.2f"|format(item.actual_cost) }}</small>
+                {% endif %}
+                
+                <div class="btn-group" role="group">
+                  <button class="btn btn-sm btn-outline-info" onclick="showPriceSuggestions({{ item.id }})" title="Price Suggestions">
+                    <i class="fas fa-pound-sign"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-secondary" onclick="editItem({{ item.id }})">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" onclick="deleteItem({{ item.id }})">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+      <div class="card shadow-sm">
+        <div class="card-body text-center py-5">
+          <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+          <h5 class="text-muted">No items in this week's shopping list</h5>
+          <p class="text-muted">Add some items to get started with your weekly planning.</p>
+          <button class="btn btn-primary" onclick="addItemModal()">
+            <i class="fas fa-plus me-1"></i>Add First Item
+          </button>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    
+    <div class="col-md-4">
+      <!-- Week Actions -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header">
+          <h6 class="mb-0">
+            <i class="fas fa-cog me-2"></i>Week Actions
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-2">
+            <button class="btn btn-outline-primary" onclick="addItemModal()">
+              <i class="fas fa-plus me-2"></i>Add Manual Item
+            </button>
+            <a href="/barcode-scanner" class="btn btn-outline-info">
+              <i class="fas fa-camera me-2"></i>Scan Barcode
+            </a>
+            <button class="btn btn-outline-success" onclick="clearPurchased()">
+              <i class="fas fa-check-double me-2"></i>Clear Purchased
+            </button>
+            <button class="btn btn-outline-secondary" onclick="copyToNext()">
+              <i class="fas fa-copy me-2"></i>Copy to Next Week
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Week Statistics -->
+      {% if weekly_list.items.count() > 0 %}
+      <div class="card shadow-sm mb-4">
+        <div class="card-header">
+          <h6 class="mb-0">
+            <i class="fas fa-chart-pie me-2"></i>Progress
+          </h6>
+        </div>
+        <div class="card-body">
+          {% set total_items = weekly_list.items.count() %}
+          {% set purchased_items = weekly_list.items.filter_by(is_purchased=True).count() %}
+          {% set progress = (purchased_items / total_items * 100) if total_items > 0 else 0 %}
+          
+          <div class="mb-3">
+            <div class="d-flex justify-content-between mb-1">
+              <small>Shopping Progress</small>
+              <small>{{ progress|round }}%</small>
+            </div>
+            <div class="progress" style="height: 10px;">
+              <div class="progress-bar bg-success" style="width: {{ progress }}%"></div>
+            </div>
+          </div>
+          
+          <div class="row text-center">
+            <div class="col-6">
+              <div class="border-end">
+                <h5 class="text-success mb-0">{{ purchased_items }}</h5>
+                <small class="text-muted">Done</small>
+              </div>
+            </div>
+            <div class="col-6">
+              <h5 class="text-primary mb-0">{{ total_items - purchased_items }}</h5>
+              <small class="text-muted">Remaining</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      
+      <!-- Budget Tracking -->
+      {% if weekly_list.total_estimated_cost > 0 or weekly_list.total_actual_cost > 0 %}
+      <div class="card shadow-sm">
+        <div class="card-header">
+          <h6 class="mb-0">
+            <i class="fas fa-wallet me-2"></i>Budget
+          </h6>
+        </div>
+        <div class="card-body">
+          {% if weekly_list.budget_target %}
+          <div class="d-flex justify-content-between mb-2">
+            <span>Budget Target:</span>
+            <span class="text-info">£{{ "%.2f"|format(weekly_list.budget_target) }}</span>
+          </div>
+          {% endif %}
+          
+          <div class="d-flex justify-content-between mb-2">
+            <span>Estimated:</span>
+            <span class="text-primary">£{{ "%.2f"|format(weekly_list.total_estimated_cost) }}</span>
+          </div>
+          
+          <div class="d-flex justify-content-between mb-3">
+            <span>Actual Spent:</span>
+            <span class="text-success">£{{ "%.2f"|format(weekly_list.total_actual_cost) }}</span>
+          </div>
+          
+          {% if weekly_list.budget_target and weekly_list.total_actual_cost > 0 %}
+          {% set budget_usage = (weekly_list.total_actual_cost / weekly_list.budget_target * 100) %}
+          <div class="mb-2">
+            <div class="d-flex justify-content-between mb-1">
+              <small>Budget Usage</small>
+              <small>{{ budget_usage|round }}%</small>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar {% if budget_usage > 100 %}bg-danger{% elif budget_usage > 80 %}bg-warning{% else %}bg-success{% endif %}" 
+                   style="width: {{ [budget_usage, 100]|min }}%"></div>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Add Item Modal -->
+<div class="modal fade" id="addItemModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Item to {{ weekly_list.week_label }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addItemForm">
+          <div class="mb-3">
+            <label for="itemName" class="form-label">Item Name</label>
+            <input type="text" class="form-control" id="itemName" required>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="itemQuantity" class="form-label">Quantity</label>
+              <input type="number" class="form-control" id="itemQuantity" value="1" min="1" step="0.1">
+            </div>
+            <div class="col-md-6">
+              <label for="itemUnit" class="form-label">Unit</label>
+              <select class="form-select" id="itemUnit">
+                <option value="item">item</option>
+                <option value="lbs">lbs</option>
+                <option value="oz">oz</option>
+                <option value="cups">cups</option>
+                <option value="tbsp">tbsp</option>
+                <option value="tsp">tsp</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="itemCategory" class="form-label">Category</label>
+            <select class="form-select" id="itemCategory">
+              <option value="Other">Other</option>
+              <option value="Dairy & Eggs">Dairy & Eggs</option>
+              <option value="Meat & Seafood">Meat & Seafood</option>
+              <option value="Fresh Produce">Fresh Produce</option>
+              <option value="Pantry Staples">Pantry Staples</option>
+              <option value="Frozen Foods">Frozen Foods</option>
+              <option value="Beverages">Beverages</option>
+              <option value="Snacks">Snacks</option>
+            </select>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="estimatedCost" class="form-label">Estimated Cost</label>
+              <input type="number" class="form-control" id="estimatedCost" step="0.01" placeholder="0.00">
+            </div>
+            <div class="col-md-6">
+              <label for="priority" class="form-label">Priority</label>
+              <select class="form-select" id="priority">
+                <option value="1">High (1)</option>
+                <option value="2">Medium-High (2)</option>
+                <option value="3" selected>Normal (3)</option>
+                <option value="4">Medium-Low (4)</option>
+                <option value="5">Low (5)</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="mealDate" class="form-label">For Date (optional)</label>
+            <input type="date" class="form-control" id="mealDate" 
+                   min="{{ weekly_list.week_start_date }}" 
+                   max="{{ weekly_list.week_end_date }}">
+          </div>
+          <div class="mb-3">
+            <label for="notes" class="form-label">Notes</label>
+            <textarea class="form-control" id="notes" rows="2" placeholder="Brand preference, store location, etc."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="saveItem()">Add Item</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Item Modal -->
+<div class="modal fade" id="editItemModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Item</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editItemForm">
+          <input type="hidden" id="editItemId">
+          <div class="mb-3">
+            <label for="editItemName" class="form-label">Item Name</label>
+            <input type="text" class="form-control" id="editItemName" required>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="editItemQuantity" class="form-label">Quantity</label>
+              <input type="number" class="form-control" id="editItemQuantity" min="0.1" step="0.1">
+            </div>
+            <div class="col-md-6">
+              <label for="editItemUnit" class="form-label">Unit</label>
+              <select class="form-select" id="editItemUnit">
+                <option value="item">item</option>
+                <option value="lbs">lbs</option>
+                <option value="oz">oz</option>
+                <option value="cups">cups</option>
+                <option value="tbsp">tbsp</option>
+                <option value="tsp">tsp</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="editItemCategory" class="form-label">Category</label>
+            <select class="form-select" id="editItemCategory">
+              <option value="Other">Other</option>
+              <option value="Dairy & Eggs">Dairy & Eggs</option>
+              <option value="Meat & Seafood">Meat & Seafood</option>
+              <option value="Fresh Produce">Fresh Produce</option>
+              <option value="Pantry Staples">Pantry Staples</option>
+              <option value="Frozen Foods">Frozen Foods</option>
+              <option value="Beverages">Beverages</option>
+              <option value="Snacks">Snacks</option>
+            </select>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="editEstimatedCost" class="form-label">Estimated Cost</label>
+              <input type="number" class="form-control" id="editEstimatedCost" step="0.01" placeholder="0.00">
+            </div>
+            <div class="col-md-6">
+              <label for="editActualCost" class="form-label">Actual Cost (if purchased)</label>
+              <input type="number" class="form-control" id="editActualCost" step="0.01" placeholder="0.00">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="editPriority" class="form-label">Priority</label>
+            <select class="form-select" id="editPriority">
+              <option value="1">High (1)</option>
+              <option value="2">Medium-High (2)</option>
+              <option value="3">Normal (3)</option>
+              <option value="4">Medium-Low (4)</option>
+              <option value="5">Low (5)</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="editMealDate" class="form-label">For Date (optional)</label>
+            <input type="date" class="form-control" id="editMealDate" 
+                   min="{{ weekly_list.week_start_date }}" 
+                   max="{{ weekly_list.week_end_date }}">
+          </div>
+          <div class="mb-3">
+            <label for="editNotes" class="form-label">Notes</label>
+            <textarea class="form-control" id="editNotes" rows="2" placeholder="Brand preference, store location, etc."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="saveEditedItem()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Price Suggestions Modal -->
+<div class="modal fade" id="priceSuggestionsModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Price Suggestions from Community</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="priceSuggestionsContent">
+          <div class="text-center">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading price suggestions...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentEditingItemId = null;
+
+function addItemModal() {
+  const modal = new bootstrap.Modal(document.getElementById('addItemModal'));
+  modal.show();
+}
+
+function saveItem() {
+  const formData = {
+    name: document.getElementById('itemName').value,
+    quantity: document.getElementById('itemQuantity').value,
+    unit: document.getElementById('itemUnit').value,
+    category: document.getElementById('itemCategory').value,
+    estimated_cost: document.getElementById('estimatedCost').value || null,
+    priority: document.getElementById('priority').value,
+    meal_date: document.getElementById('mealDate').value || null,
+    notes: document.getElementById('notes').value
+  };
+  
+  if (!formData.name.trim()) {
+    alert('Please enter an item name');
+    return;
+  }
+  
+  fetch(`/weekly-shopping/api/week/{{ weekly_list.id }}/add-item`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': '{{ csrf_token() }}'
+    },
+    body: JSON.stringify(formData)
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      location.reload();
+    } else {
+      alert(data.error || 'Failed to add item');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Failed to add item');
+  });
+}
+
+function toggleItem(itemId) {
+  fetch(`/weekly-shopping/api/item/${itemId}/toggle`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': '{{ csrf_token() }}'
+    },
+    body: JSON.stringify({})
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      location.reload();
+    } else {
+      console.error('Toggle failed:', data.error);
+      alert('Failed to toggle item: ' + (data.error || 'Unknown error'));
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Failed to toggle item');
+  });
+}
+
+function editItem(itemId) {
+  currentEditingItemId = itemId;
+  
+  // Get current item data from the page (we could also fetch from API)
+  const itemElement = document.querySelector(`#item-${itemId}`).closest('.shopping-item');
+  const itemName = itemElement.querySelector('strong').textContent;
+  
+  // Reset form
+  document.getElementById('editItemId').value = itemId;
+  document.getElementById('editItemName').value = itemName;
+  
+  // Show modal
+  const modal = new bootstrap.Modal(document.getElementById('editItemModal'));
+  modal.show();
+}
+
+function saveEditedItem() {
+  const itemId = document.getElementById('editItemId').value;
+  
+  const formData = {
+    item_name: document.getElementById('editItemName').value,
+    quantity_needed: document.getElementById('editItemQuantity').value || 1,
+    unit: document.getElementById('editItemUnit').value,
+    category: document.getElementById('editItemCategory').value,
+    estimated_cost: document.getElementById('editEstimatedCost').value || null,
+    actual_cost: document.getElementById('editActualCost').value || null,
+    priority: document.getElementById('editPriority').value,
+    meal_date: document.getElementById('editMealDate').value || null,
+    notes: document.getElementById('editNotes').value
+  };
+  
+  if (!formData.item_name.trim()) {
+    alert('Please enter an item name');
+    return;
+  }
+  
+  fetch(`/weekly-shopping/api/item/${itemId}/edit`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': '{{ csrf_token() }}'
+    },
+    body: JSON.stringify(formData)
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      bootstrap.Modal.getInstance(document.getElementById('editItemModal')).hide();
+      location.reload();
+    } else {
+      alert(data.error || 'Failed to update item');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Failed to update item');
+  });
+}
+
+function deleteItem(itemId) {
+  if (confirm('Delete this item? This action cannot be undone.')) {
+    fetch(`/weekly-shopping/api/item/${itemId}/delete`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token() }}'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        location.reload();
+      } else {
+        alert(data.error || 'Failed to delete item');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Failed to delete item');
+    });
+  }
+}
+
+function clearPurchased() {
+  if (confirm('Clear all purchased items from this week? This will also contribute pricing data to help the community!')) {
+    fetch(`/weekly-shopping/api/week/{{ weekly_list.id }}/clear-purchased`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token() }}'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert(data.message);
+        location.reload();
+      } else {
+        alert(data.error || 'Failed to clear purchased items');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Failed to clear purchased items');
+    });
+  }
+}
+
+function copyToNext() {
+  if (confirm('Copy unpurchased items to next week?')) {
+    fetch(`/weekly-shopping/api/week/{{ weekly_list.id }}/copy-to-next`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token() }}'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert(data.message);
+        // Optionally redirect to next week
+        if (data.new_week_id) {
+          window.location.href = `/weekly-shopping/week/${data.new_week_id}`;
+        }
+      } else {
+        alert(data.error || 'Failed to copy items');
+      }
+    });
+  }
+}
+
+function showPriceSuggestions(itemId) {
+  const modal = new bootstrap.Modal(document.getElementById('priceSuggestionsModal'));
+  modal.show();
+  
+  // Reset content
+  document.getElementById('priceSuggestionsContent').innerHTML = `
+    <div class="text-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2">Loading price suggestions...</p>
+    </div>
+  `;
+  
+  // Fetch price suggestions
+  fetch(`/weekly-shopping/api/item/${itemId}/price-suggestions`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        displayPriceSuggestions(data, itemId);
+      } else {
+        document.getElementById('priceSuggestionsContent').innerHTML = `
+          <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            No price suggestions found for this item yet.
+          </div>
+          <p class="text-muted">Be the first to contribute pricing data by purchasing this item and entering the cost!</p>
+        `;
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      document.getElementById('priceSuggestionsContent').innerHTML = `
+        <div class="alert alert-danger">
+          <i class="fas fa-exclamation-circle me-2"></i>
+          Failed to load price suggestions.
+        </div>
+      `;
+    });
+}
+
+function displayPriceSuggestions(data, itemId) {
+  let html = '';
+  
+  if (data.average_price) {
+    html += `
+      <div class="alert alert-info">
+        <h6><i class="fas fa-chart-line me-2"></i>Community Average: £${data.average_price}</h6>
+        <small>Based on ${data.suggestion_count} recent contributions</small>
+      </div>
+    `;
+  }
+  
+  if (data.suggestions && data.suggestions.length > 0) {
+    html += '<h6>Recent Community Prices:</h6>';
+    html += '<div class="row">';
+    
+    data.suggestions.forEach(suggestion => {
+      const verifiedBadge = suggestion.is_verified ? 
+        '<span class="badge bg-success ms-1">Verified</span>' : '';
+      
+      html += `
+        <div class="col-md-6 mb-3">
+          <div class="card border-light">
+            <div class="card-body p-3">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <h6 class="card-title mb-1">£${suggestion.price}</h6>
+                  <p class="card-text small text-muted mb-1">${suggestion.shop_name}</p>
+                  ${suggestion.size ? `<small class="text-muted">${suggestion.size}</small>` : ''}
+                </div>
+                <div class="text-end">
+                  <small class="text-muted">${suggestion.submitted_at}</small>
+                  ${verifiedBadge}
+                  ${suggestion.verification_count > 0 ? 
+                    `<br><small class="text-success">${suggestion.verification_count} confirmations</small>` : ''}
+                </div>
+              </div>
+              <button class="btn btn-sm btn-outline-primary mt-2" 
+                      onclick="usePrice(${itemId}, ${suggestion.price})">
+                Use This Price
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+  }
+  
+  document.getElementById('priceSuggestionsContent').innerHTML = html;
+}
+
+function usePrice(itemId, price) {
+  // Update the item with the selected price
+  fetch(`/weekly-shopping/api/item/${itemId}/edit`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': '{{ csrf_token() }}'
+    },
+    body: JSON.stringify({
+      estimated_cost: price
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      bootstrap.Modal.getInstance(document.getElementById('priceSuggestionsModal')).hide();
+      location.reload();
+    } else {
+      alert('Failed to update price: ' + (data.error || 'Unknown error'));
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Failed to update price');
+  });
+}
+</script>
+
+<style>
+.shopping-item {
+  transition: all 0.2s ease;
+}
+
+.shopping-item:hover {
+  background-color: #f8f9fa !important;
+}
+
+.opacity-75 {
+  opacity: 0.75;
+}
+</style>
+{% endblock %}

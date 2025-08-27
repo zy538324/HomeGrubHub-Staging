@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Budget Meal Planning - HomeGrubHub{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <article class="blog-post">
+                <header class="text-center mb-5">
+                    <h1 class="display-4 mb-3">Budget-Friendly Meal Planning</h1>
+                    <p class="lead text-muted">Eat well without breaking the bank</p>
+                    <small class="text-muted">Published on <time>August 6, 2025</time></small>
+                </header>
+
+                <div class="blog-content">
+                    <p class="lead">Eating healthy on a budget is absolutely possible with smart planning and strategic shopping.</p>
+
+                    <h2>Budget Meal Planning Strategies</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Shopping Tips</h4>
+                            <ul>
+                                <li>Buy in-season produce</li>
+                                <li>Purchase generic brands</li>
+                                <li>Shop sales and use coupons</li>
+                                <li>Buy in bulk for staples</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Cooking Tips</h4>
+                            <ul>
+                                <li>Cook large batches</li>
+                                <li>Use cheaper cuts of meat</li>
+                                <li>Incorporate beans and lentils</li>
+                                <li>Minimize food waste</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h2>Budget-Friendly Ingredients</h2>
+                    <p>Base your meals around these affordable, nutritious ingredients:</p>
+                    <ul>
+                        <li><strong>Grains:</strong> Rice, oats, pasta, bread</li>
+                        <li><strong>Proteins:</strong> Eggs, beans, lentils, chicken thighs</li>
+                        <li><strong>Vegetables:</strong> Carrots, onions, potatoes, frozen vegetables</li>
+                        <li><strong>Pantry Staples:</strong> Canned tomatoes, olive oil, spices</li>
+                    </ul>
+
+                    <div class="bg-success bg-opacity-10 p-4 rounded my-4">
+                        <h3>Weekly Budget Challenge</h3>
+                        <p class="mb-0">Try to feed your family for £50-75 per week by focusing on these affordable, nutritious ingredients and planning your meals in advance.</p>
+                    </div>
+                </div>
+
+                <footer class="border-top pt-4 mt-5">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="{{ url_for('main.blog') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Blog
+                            </a>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <small class="text-muted">Start saving money on groceries today!</small>
+                        </div>
+                    </div>
+                </footer>
+            </article>
+        </div>
+    </div>
+</div>
+{% endblock %}

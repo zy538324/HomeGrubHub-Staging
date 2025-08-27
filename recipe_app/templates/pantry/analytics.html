@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block title %}Pantry Analytics{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Pantry Analytics</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">Stock Overview</div>
+                <div class="card-body">
+                    <!-- Example: Pie chart for stock status -->
+                    <canvas id="stockStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">Expiry Overview</div>
+                <div class="card-body">
+                    <!-- Example: Bar chart for expiring items -->
+                    <canvas id="expiryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">Recent Pantry Activity</div>
+                <div class="card-body">
+                    <!-- Example: Table for recent pantry usage -->
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Item</th>
+                                <th>Change</th>
+                                <th>Reason</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in usage_logs %}
+                            <tr>
+                                <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>{{ log.item.name }}</td>
+                                <td>{{ log.quantity_change }}</td>
+                                <td>{{ log.reason }}</td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="4" class="text-center">No recent activity.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js for analytics -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Example data - replace with real data from Flask context
+const stockStatusData = {{ stock_status_data|tojson|safe }};
+const expiryData = {{ expiry_data|tojson|safe }};
+
+// Stock Status Pie Chart
+const ctxStock = document.getElementById('stockStatusChart').getContext('2d');
+new Chart(ctxStock, {
+    type: 'pie',
+    data: {
+        labels: stockStatusData.labels,
+        datasets: [{
+            data: stockStatusData.values,
+            backgroundColor: ['#28a745', '#ffc107', '#dc3545', '#6c757d'],
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom' } }
+    }
+});
+
+// Expiry Bar Chart
+const ctxExpiry = document.getElementById('expiryChart').getContext('2d');
+new Chart(ctxExpiry, {
+    type: 'bar',
+    data: {
+        labels: expiryData.labels,
+        datasets: [{
+            label: 'Items Expiring',
+            data: expiryData.values,
+            backgroundColor: '#17a2b8',
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } }
+    }
+});
+</script>
+{% endblock %}

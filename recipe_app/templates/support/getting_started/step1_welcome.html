@@ -1,0 +1,51 @@
+{% extends "support/getting_started/base_getting_started.html" %}
+
+{% block step_content %}
+<div class="feature-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2.5rem; margin: 2rem 0;">
+    <div class="feature-card" style="background: linear-gradient(145deg, #ffffff, #f8f9fa); border-radius: 20px; padding: 3rem 2rem; text-align: center; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); border: 1px solid rgba(0, 0, 0, 0.05); position: relative; overflow: hidden;">
+        <div class="feature-icon" style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; color: white; font-size: 2rem; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);">
+            <i class="fas fa-book-open"></i>
+        </div>
+        <h4 style="color: #2c3e50; margin-bottom: 1.5rem; font-weight: 700; font-size: 1.3rem;">Smart Recipe Management</h4>
+        <p style="color: #6c757d; margin: 0; line-height: 1.6;">Store, organize, and search through all your favorite recipes with intelligent categorization and advanced filtering.</p>
+    </div>
+    
+    <div class="feature-card" style="background: linear-gradient(145deg, #ffffff, #f8f9fa); border-radius: 20px; padding: 3rem 2rem; text-align: center; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); border: 1px solid rgba(0, 0, 0, 0.05); position: relative; overflow: hidden;">
+        <div class="feature-icon" style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; color: white; font-size: 2rem; box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);">
+            <i class="fas fa-calendar-check"></i>
+        </div>
+        <h4 style="color: #2c3e50; margin-bottom: 1.5rem; font-weight: 700; font-size: 1.3rem;">Intelligent Meal Planning</h4>
+        <p style="color: #6c757d; margin: 0; line-height: 1.6;">Plan your weekly meals with AI-powered suggestions and automatically generate optimized shopping lists.</p>
+    </div>
+    
+    <div class="feature-card" style="background: linear-gradient(145deg, #ffffff, #f8f9fa); border-radius: 20px; padding: 3rem 2rem; text-align: center; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); border: 1px solid rgba(0, 0, 0, 0.05); position: relative; overflow: hidden;">
+        <div class="feature-icon" style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; color: white; font-size: 2rem; box-shadow: 0 8px 25px rgba(240, 147, 251, 0.3);">
+            <i class="fas fa-users"></i>
+        </div>
+        <h4 style="color: #2c3e50; margin-bottom: 1.5rem; font-weight: 700; font-size: 1.3rem;">Vibrant Community</h4>
+        <p style="color: #6c757d; margin: 0; line-height: 1.6;">Discover new recipes, share your culinary creations, and connect with passionate food lovers worldwide.</p>
+    </div>
+    
+    <div class="feature-card" style="background: linear-gradient(145deg, #ffffff, #f8f9fa); border-radius: 20px; padding: 3rem 2rem; text-align: center; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); border: 1px solid rgba(0, 0, 0, 0.05); position: relative; overflow: hidden;">
+        <div class="feature-icon" style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; color: white; font-size: 2rem; box-shadow: 0 8px 25px rgba(168, 237, 234, 0.3);">
+            <i class="fas fa-chart-pie"></i>
+        </div>
+        <h4 style="color: #2c3e50; margin-bottom: 1.5rem; font-weight: 700; font-size: 1.3rem;">Nutrition Intelligence</h4>
+        <p style="color: #6c757d; margin: 0; line-height: 1.6;">Track nutritional information, monitor dietary goals, and maintain a healthy lifestyle with detailed analytics.</p>
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <div class="alert" style="background: linear-gradient(145deg, #e3f2fd, #bbdefb); border: none; border-radius: 15px; padding: 2rem; margin: 2rem 0; color: #1565c0;">
+        <i class="fas fa-lightbulb me-2"></i>
+        <strong>Pro Tip:</strong> HomeGrubHub grows with you! Start with basic recipe storage and gradually explore advanced features like meal planning and community sharing.
+    </div>
+    
+    <a href="{{ url_for('support.getting_started', step=2) }}" class="btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; border-radius: 30px; padding: 1.2rem 3rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3); font-size: 1.1rem;">
+        <i class="fas fa-magic me-2"></i>Let's Begin This Journey
+    </a>
+</div>
+
+<style>
+</style>
+{% endblock %}

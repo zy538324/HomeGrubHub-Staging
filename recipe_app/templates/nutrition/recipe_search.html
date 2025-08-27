@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Recipe Search</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+    <!-- Navigation for Home+ tier features -->
+    {% if user_tier in ['Home', 'Family', 'Pro', 'Student'] %}
+    <nav style="background: #f5f5f5; padding: 10px; margin-bottom: 20px; border-radius: 5px;">
+        <a href="/nutrition/recipe-search" style="margin-right: 15px; font-weight: bold; color: #007bff;">📝 Recipe Search</a>
+        <a href="/nutrition/smart-shopping-list" style="margin-right: 15px;">🛒 Smart Shopping List</a>
+        <a href="/nutrition/recipe-analysis" style="margin-right: 15px;">📊 Recipe Analysis</a>
+        <a href="/nutrition/enhanced-progress" style="margin-right: 15px;">📈 Progress Dashboard</a>
+    </nav>
+    {% endif %}
+
+    <h1>Recipe Search</h1>
+    <form method="GET" action="/nutrition/recipe-search">
+        <input type="text" name="query" placeholder="Search for recipes..." value="{{ query }}" required>
+        <button type="submit">Search</button>
+    </form>
+    {% if recipes %}
+    <h2>Results</h2>
+    <ul>
+        {% for recipe in recipes %}
+        <li>
+            <strong>{{ recipe.title }}</strong><br>
+            <em>{{ recipe.description }}</em><br>
+            <form method="POST" action="/nutrition/save-recipe">
+                <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
+                <button type="submit" {% if user_tier == 'Free' and saved_count >= 5 %}disabled{% endif %}>Save Recipe</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% if user_tier == 'Free' %}
+    <h2>Saved Recipes ({{ saved_count }}/5) - Free Tier Limit</h2>
+    <p><em>Upgrade to Home tier for unlimited recipe saving!</em></p>
+    {% else %}
+    <h2>Saved Recipes ({{ saved_count }}) - Unlimited</h2>
+    {% endif %}
+    <ul>
+        {% for recipe in saved_recipes %}
+        <li>{{ recipe.title }} <form method="POST" action="/nutrition/delete-recipe" style="display:inline;"><input type="hidden" name="recipe_id" value="{{ recipe.id }}"><button type="submit">Delete</button></form></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

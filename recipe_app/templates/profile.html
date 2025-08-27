@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 mb-4">{{ user.username }}'s Profile</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Profile Info -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user me-2"></i>Profile Information
+                    </h5>
+                    <a href="{{ url_for('main.edit_profile') }}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-edit me-1"></i>Edit
+                    </a>
+                </div>
+                <div class="card-body">
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>Member Since:</strong> {{ stats.member_since }}</p>
+                    <p><strong>Current Plan:</strong> 
+                        <span class="badge bg-primary">{{ stats.current_plan }}</span>
+                    </p>
+                    {% if user.postcode %}
+                    <p><strong>Location:</strong> 
+                        <span class="badge bg-success">{{ user.postcode }}</span>
+                        <small class="text-success d-block">
+                            <i class="fas fa-check me-1"></i>Location pricing enabled
+                        </small>
+                    </p>
+                    {% else %}
+                    <p><strong>Location:</strong> 
+                        <span class="text-muted">Not set</span>
+                        <small class="text-muted d-block">
+                            <i class="fas fa-info-circle me-1"></i>Add postcode for local pricing
+                        </small>
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="col-md-8 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Your Statistics
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <h3 class="text-primary">{{ stats.total_recipes }}</h3>
+                            <p class="text-muted">Recipes Created</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <h3 class="text-success">{{ stats.favorite_count }}</h3>
+                            <p class="text-muted">Favorite Recipes</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <h3 class="text-info">{{ stats.current_plan }}</h3>
+                            <p class="text-muted">Subscription Plan</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Recipes -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-utensils me-2"></i>My Recipes
+                    </h5>
+                    <a href="{{ url_for('main.add_recipe') }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-1"></i>Add Recipe
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if user_recipes %}
+                        <div class="row">
+                            {% for recipe in user_recipes %}
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <a href="{{ url_for('main.recipe', recipe_id=recipe.id) }}" 
+                                               class="text-decoration-none">{{ recipe.title }}</a>
+                                        </h6>
+                                        <p class="card-text text-muted small">
+                                            {{ recipe.description[:100] }}{% if recipe.description and recipe.description|length > 100 %}...{% endif %}
+                                        </p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">
+                                                <i class="fas fa-clock me-1"></i>
+                                                {{ recipe.total_time }} min
+                                            </small>
+                                            <small class="text-muted">
+                                                {{ recipe.created_at.strftime('%b %d, %Y') }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-utensils fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No recipes yet</h5>
+                            <p class="text-muted">Start by creating your first recipe!</p>
+                            <a href="{{ url_for('main.add_recipe') }}" class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i>Create Recipe
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Favorite Recipes -->
+    {% if favorite_recipes %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-heart me-2"></i>Favourite Recipes
+                    </h5>
+                    <a href="{{ url_for('main.favourites') }}" class="btn btn-outline-primary btn-sm">
+                        View All
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for recipe in favorite_recipes[:6] %}
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <a href="{{ url_for('main.recipe', recipe_id=recipe.id) }}" 
+                                           class="text-decoration-none">{{ recipe.title }}</a>
+                                    </h6>
+                                    <p class="card-text text-muted small">
+                                        By {{ recipe.user.username }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

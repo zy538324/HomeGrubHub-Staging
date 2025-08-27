@@ -1,0 +1,359 @@
+{% extends "base.html" %}
+
+{% block title %}FAQ - HomeGrubHub{% endblock %}
+
+{% block head %}
+{{ super() }}
+
+{% endblock %}
+
+{% block content %}
+<div class="faq-hero">
+    <div class="container text-center">
+        <h1 class="display-5 mb-3">
+            <i class="fas fa-question-circle me-3"></i>
+            Frequently Asked Questions
+        </h1>
+        <p class="lead mb-0">Find quick answers to common questions about HomeGrubHub</p>
+        
+        <!-- Search Box -->
+        <div class="faq-search">
+            <div class="input-group">
+                <input type="text" class="form-control" id="faqSearch" 
+                       placeholder="Search FAQ... (e.g., 'billing', 'recipes', 'account')">
+                <button class="btn" type="button" style="border: none; background: rgba(255,255,255,0.2); color: white; border-radius: 0 50px 50px 0;">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+
+<div class="container">
+    <!-- Getting Started Section -->
+    <div class="faq-section" data-category="getting-started">
+        <h2 class="faq-section-title">
+            <i class="fas fa-rocket me-2"></i>Getting Started
+        </h2>
+        <div class="accordion faq-accordion">
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#gettingStarted1">
+                        How do I create my first recipe in HomeGrubHub?
+                    </button>
+                </h3>
+                <div id="gettingStarted1" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <strong>Creating your first recipe is easy!</strong> Navigate to the "Recipes" menu and click "Add Recipe". Fill in the recipe details including title, ingredients, instructions, and cooking time. You can also add photos to make your recipe more appealing. Don't forget to set the difficulty level and cuisine type to help others find your recipe.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#gettingStarted2">
+                        What's the difference between the Free and Premium plans?
+                    </button>
+                </h3>
+                <div id="gettingStarted2" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <strong>Free Plan includes:</strong> Basic recipe management, up to 50 recipes, and community access.
+                        <strong>Premium Plan includes:</strong> Unlimited recipes, meal planning, nutrition tracking, barcode scanner, advanced features, and priority support.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#gettingStarted3">
+                        How do I set up meal planning?
+                    </button>
+                </h3>
+                <div id="gettingStarted3" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        Go to "Meal Planning" in the main menu and click "Weekly Planner". You can drag and drop recipes onto different days and meals. The system will automatically generate shopping lists based on your planned meals. <strong>Note:</strong> Meal planning requires a Premium subscription.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <!-- Recipes Section -->
+    <div class="faq-section" data-category="recipes">
+        <h2 class="faq-section-title">
+            <i class="fas fa-utensils me-2"></i>Recipe Management
+        </h2>
+        <div class="accordion faq-accordion">
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#recipes1">
+                        Can I import recipes from other websites?
+                    </button>
+                </h3>
+                <div id="recipes1" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <strong>Yes!</strong> Premium users can import recipes from popular cooking websites. Go to "Recipes" → "Import Recipe" and paste the URL. Our system will automatically extract the ingredients, instructions, and other details. You can then edit and customize the imported recipe.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#recipes2">
+                        How do I organize my recipes into categories?
+                    </button>
+                </h3>
+                <div id="recipes2" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        You can organize recipes using <strong>tags and cuisine types</strong>. When creating or editing a recipe, add relevant tags like "dinner", "vegetarian", "quick", etc. You can also set the cuisine type (Italian, Mexican, etc.) and difficulty level. Use the search and filter options to find recipes by these categories.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#recipes3">
+                        Can I share my recipes with friends?
+                    </button>
+                </h3>
+                <div id="recipes3" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <strong>Absolutely!</strong> You can share recipes via social media or direct links. You can also make recipes public in the community section where other users can discover, rate, and comment on them. Premium users can also create collections to group related recipes.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    
+    <!-- Billing Section -->
+    <div class="faq-section" data-category="billing">
+        <h2 class="faq-section-title">
+            <i class="fas fa-credit-card me-2"></i>Billing & Subscriptions
+        </h2>
+        <div class="accordion faq-accordion">
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#billing1">
+                        How do I upgrade to Premium?
+                    </button>
+                </h3>
+                <div id="billing1" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        Go to your <strong>Account & Billing</strong> section from the user menu, then click "Upgrade to Premium". You can choose between monthly and annual billing. We accept all major credit cards and PayPal. Your upgrade takes effect immediately.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#billing2">
+                        Can I cancel my subscription anytime?
+                    </button>
+                </h3>
+                <div id="billing2" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <strong>Yes, you can cancel anytime</strong> with no cancellation fees. Go to Account & Billing and click "Cancel Subscription". You'll continue to have Premium access until the end of your current billing period, then your account will revert to the Free plan.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#billing3">
+                        Do you offer refunds?
+                    </button>
+                </h3>
+                <div id="billing3" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        We offer a <strong>30-day money-back guarantee</strong> for new Premium subscriptions. If you're not satisfied within the first 30 days, contact our support team for a full refund. Refunds are processed within 5-7 business days.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <!-- Technical Section -->
+    <div class="faq-section" data-category="technical">
+        <h2 class="faq-section-title">
+            <i class="fas fa-cog me-2"></i>Technical Support
+        </h2>
+        <div class="accordion faq-accordion">
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#technical1">
+                        Why can't I upload photos to my recipes?
+                    </button>
+                </h3>
+                <div id="technical1" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        Photo uploads are available for <strong>Premium users only</strong>. Make sure you're using supported file formats (JPG, PNG, GIF) and files are under 5MB. If you're still having issues, try clearing your browser cache or using a different browser.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#technical2">
+                        The barcode scanner isn't working. What should I do?
+                    </button>
+                </h3>
+                <div id="technical2" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        First, make sure you've <strong>allowed camera access</strong> in your browser. The scanner works best in good lighting conditions. If it's still not working, try refreshing the page or using a different device. The barcode scanner requires a Premium subscription.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#technical3">
+                        Can I use HomeGrubHub on my mobile device?
+                    </button>
+                </h3>
+                <div id="technical3" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <strong>Yes!</strong> HomeGrubHub is fully responsive and works great on mobile devices. You can also install it as a Progressive Web App (PWA) for a native app-like experience. Look for the "Install" prompt in your browser or add it to your home screen.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    
+    <!-- Account Section -->
+    <div class="faq-section" data-category="account">
+        <h2 class="faq-section-title">
+            <i class="fas fa-user me-2"></i>Account Management
+        </h2>
+        <div class="accordion faq-accordion">
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#account1">
+                        How do I change my password?
+                    </button>
+                </h3>
+                <div id="account1" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        Go to your <strong>Profile page</strong> from the user menu and click "Change Password". You'll need to enter your current password and then your new password twice. For security, choose a strong password with at least 8 characters.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#account2">
+                        Can I delete my account?
+                    </button>
+                </h3>
+                <div id="account2" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        Yes, you can delete your account by contacting our support team. <strong>Warning:</strong> This action is permanent and will delete all your recipes, meal plans, and account data. Make sure to export any important data before requesting account deletion.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#account3">
+                        How do I export my recipe data?
+                    </button>
+                </h3>
+                <div id="account3" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <strong>Premium users</strong> can export their recipes in various formats (PDF, JSON, CSV) from the Account settings. This is useful for backing up your data or moving to another platform. The export includes all recipe details, photos, and metadata.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    
+    <!-- Contact CTA -->
+    <div class="contact-cta">
+        <h3>
+            <i class="fas fa-question-circle me-2"></i>
+            Didn't find what you were looking for?
+        </h3>
+        <p>Our support team is here to help! Get in touch and we'll respond within 24 hours.</p>
+        <a href="{{ url_for('support.contact_form') }}" class="btn btn-contact">
+            <i class="fas fa-envelope me-2"></i>Contact Support
+        </a>
+        <a href="{{ url_for('support.help_center') }}" class="btn btn-contact" style="background: linear-gradient(45deg, #2ecc71, #27ae60);">
+            <i class="fas fa-home me-2"></i>Help Center
+        </a>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('faqSearch');
+    const categories = document.querySelectorAll('.faq-category');
+    const sections = document.querySelectorAll('.faq-section');
+    const accordionItems = document.querySelectorAll('.accordion-item');
+    
+    // Category filtering
+    categories.forEach(category => {
+        category.addEventListener('click', function() {
+            const targetCategory = this.dataset.category;
+            
+            // Update active category
+            categories.forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Show/hide sections
+            sections.forEach(section => {
+                if (targetCategory === 'all' || section.dataset.category === targetCategory) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        });
+    });
+    
+    // Search functionality
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        
+        if (searchTerm === '') {
+            // Show all items if search is empty
+            accordionItems.forEach(item => {
+                item.style.display = 'block';
+            });
+            sections.forEach(section => {
+                section.style.display = 'block';
+            });
+        } else {
+            // Hide all sections first
+            sections.forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Show sections that have matching items
+            accordionItems.forEach(item => {
+                const button = item.querySelector('.accordion-button');
+                const body = item.querySelector('.accordion-body');
+                const text = (button.textContent + ' ' + body.textContent).toLowerCase();
+                
+                if (text.includes(searchTerm)) {
+                    item.style.display = 'block';
+                    item.closest('.faq-section').style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+    });
+    
+    // Handle URL search parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchParam = urlParams.get('search');
+    if (searchParam) {
+        searchInput.value = searchParam;
+        searchInput.dispatchEvent(new Event('input'));
+    }
+});
+</script>
+{% endblock %}

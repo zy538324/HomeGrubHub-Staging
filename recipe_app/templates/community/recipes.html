@@ -1,0 +1,398 @@
+{% extends "base.html" %}
+
+{% block title %}Community Recipes - HomeGrubHub{% endblock %}
+
+{% block head %}
+{{ super() }}
+<style>
+    .recipe-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        height: 100%;
+    }
+    
+    .recipe-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .recipe-image {
+        height: 200px;
+        object-fit: cover;
+        border-radius: 15px 15px 0 0;
+    }
+    
+    .recipe-card-body {
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+    
+    .recipe-title {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+        line-height: 1.3;
+    }
+    
+    .recipe-meta {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .recipe-stats {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+        padding-top: 0.75rem;
+        border-top: 1px solid #e9ecef;
+    }
+    
+    .stat-item {
+        display: flex;
+        align-items: center;
+        color: #6c757d;
+        font-size: 0.85rem;
+    }
+    
+    .stat-item i {
+        margin-right: 0.25rem;
+    }
+    
+    .filters-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 0 0 30px 30px;
+    }
+    
+    .filter-card {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+    }
+    
+    .filter-card .form-control,
+    .filter-card .form-select {
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        border-radius: 10px;
+    }
+    
+    .btn-filter {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-filter:hover {
+        background: rgba(255, 255, 255, 0.3);
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .sort-tabs .nav-link {
+        border: none;
+        border-radius: 25px;
+        padding: 0.5rem 1.5rem;
+        margin: 0 0.25rem;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .sort-tabs .nav-link.active {
+        background: rgba(255, 255, 255, 0.9);
+        color: #667eea;
+        font-weight: 600;
+    }
+    
+    .sort-tabs .nav-link:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+    
+    .no-recipes {
+        text-align: center;
+        padding: 3rem 0;
+        color: #6c757d;
+    }
+    
+    .no-recipes i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+    
+    .badge-cuisine {
+        background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+        border-radius: 15px;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.75rem;
+    }
+    
+    .badge-difficulty {
+        border-radius: 15px;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.75rem;
+    }
+    
+    .badge-easy { background: linear-gradient(45deg, #51cf66, #40c057); }
+    .badge-medium { background: linear-gradient(45deg, #ffd43b, #fab005); }
+    .badge-hard { background: linear-gradient(45deg, #ff6b6b, #fa5252); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="filters-section">
+    <div class="container">
+        <div class="row align-items-center mb-4">
+            <div class="col-md-8">
+                <h1 class="mb-0">
+                    <i class="fas fa-utensils me-2"></i>
+                    Community Recipes
+                </h1>
+                <p class="mb-0 mt-2 opacity-75">Discover amazing recipes from our community</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <div class="d-flex align-items-center justify-content-md-end">
+                    <i class="fas fa-chart-line me-2"></i>
+                    <span>{{ recipes.total }} recipes found</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sort Tabs -->
+        <ul class="nav nav-pills sort-tabs justify-content-center mb-4">
+            <li class="nav-item">
+                <a class="nav-link {% if current_sort == 'newest' %}active{% endif %}" 
+                   href="{{ url_for('community.community_recipes', sort='newest', cuisine=current_cuisine, difficulty=current_difficulty, search=current_search) }}">
+                    <i class="fas fa-clock me-1"></i> Newest
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if current_sort == 'popular' %}active{% endif %}" 
+                   href="{{ url_for('community.community_recipes', sort='popular', cuisine=current_cuisine, difficulty=current_difficulty, search=current_search) }}">
+                    <i class="fas fa-fire me-1"></i> Popular
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if current_sort == 'favorites' %}active{% endif %}" 
+                   href="{{ url_for('community.community_recipes', sort='favorites', cuisine=current_cuisine, difficulty=current_difficulty, search=current_search) }}">
+                    <i class="fas fa-heart me-1"></i> Most Loved
+                </a>
+            </li>
+        </ul>
+        
+        <!-- Filters -->
+        <div class="card filter-card">
+            <div class="card-body">
+                <form method="GET" id="filterForm">
+                    <input type="hidden" name="sort" value="{{ current_sort }}">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">
+                                <i class="fas fa-search me-1"></i> Search Recipes
+                            </label>
+                            <input type="text" class="form-control" name="search" 
+                                   placeholder="Search by recipe name..." 
+                                   value="{{ current_search }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">
+                                <i class="fas fa-globe me-1"></i> Cuisine Type
+                            </label>
+                            <select class="form-select" name="cuisine">
+                                <option value="">All Cuisines</option>
+                                {% for cuisine in cuisines %}
+                                <option value="{{ cuisine }}" {% if cuisine == current_cuisine %}selected{% endif %}>
+                                    {{ cuisine.title() }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">
+                                <i class="fas fa-signal me-1"></i> Difficulty
+                            </label>
+                            <select class="form-select" name="difficulty">
+                                <option value="">All Levels</option>
+                                {% for difficulty in difficulties %}
+                                <option value="{{ difficulty }}" {% if difficulty == current_difficulty %}selected{% endif %}>
+                                    {{ difficulty.title() }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-filter w-100">
+                                <i class="fas fa-filter me-1"></i> Filter
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    {% if recipes.items %}
+    <div class="row">
+        {% for recipe in recipes.items %}
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="card recipe-card h-100">
+                {% if recipe.photos %}
+                    <img src="{{ url_for('static', filename='uploads/photos/' + recipe.photos[0].filename) }}" 
+                         class="recipe-image" alt="{{ recipe.title }}">
+                {% else %}
+                    <div class="recipe-image d-flex align-items-center justify-content-center bg-light">
+                        <i class="fas fa-utensils text-muted" style="font-size: 2rem;"></i>
+                    </div>
+                {% endif %}
+                
+                <div class="recipe-card-body">
+                    <h5 class="recipe-title">
+                        <a href="{{ url_for('main.recipe', recipe_id=recipe.id) }}" 
+                           class="text-decoration-none text-dark">
+                            {{ recipe.title }}
+                        </a>
+                    </h5>
+                    
+                    <div class="recipe-meta">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-user-circle me-1"></i>
+                            <small>by {{ recipe.user.username }}</small>
+                        </div>
+                        
+                        <div class="d-flex gap-2 mb-2">
+                            {% if recipe.cuisine_type %}
+                            <span class="badge badge-cuisine">
+                                <i class="fas fa-globe me-1"></i>{{ recipe.cuisine_type.title() }}
+                            </span>
+                            {% endif %}
+                            
+                            {% if recipe.difficulty %}
+                            <span class="badge {% if recipe.difficulty.lower() == 'easy' %}badge-easy{% elif recipe.difficulty.lower() == 'medium' %}badge-medium{% else %}badge-hard{% endif %}">
+                                <i class="fas fa-signal me-1"></i>{{ recipe.difficulty.title() }}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="recipe-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-heart text-danger"></i>
+                            <span>{{ recipe.favorites_count }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-thumbs-up text-success"></i>
+                            <span>{{ recipe.vote_counts.love_it }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-star text-warning"></i>
+                            <span>{{ recipe.vote_counts.total }}</span>
+                        </div>
+                        {% if recipe.prep_time %}
+                        <div class="stat-item">
+                            <i class="fas fa-clock text-primary"></i>
+                            <span>{{ recipe.prep_time }}m</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if recipes.pages > 1 %}
+    <nav aria-label="Recipe pagination" class="mt-5">
+        <ul class="pagination justify-content-center">
+            {% if recipes.has_prev %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('community.community_recipes', page=recipes.prev_num, sort=current_sort, cuisine=current_cuisine, difficulty=current_difficulty, search=current_search) }}">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </a>
+            </li>
+            {% endif %}
+            
+            {% for page_num in recipes.iter_pages() %}
+                {% if page_num %}
+                    {% if page_num != recipes.page %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('community.community_recipes', page=page_num, sort=current_sort, cuisine=current_cuisine, difficulty=current_difficulty, search=current_search) }}">
+                            {{ page_num }}
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ page_num }}</span>
+                    </li>
+                    {% endif %}
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if recipes.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('community.community_recipes', page=recipes.next_num, sort=current_sort, cuisine=current_cuisine, difficulty=current_difficulty, search=current_search) }}">
+                    Next <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    
+    {% else %}
+    <div class="no-recipes">
+        <i class="fas fa-search"></i>
+        <h3>No recipes found</h3>
+        <p>Try adjusting your filters or search terms to find more recipes.</p>
+        <a href="{{ url_for('community.community_recipes') }}" class="btn btn-primary">
+            <i class="fas fa-refresh me-1"></i> Clear Filters
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// Auto-submit form when filters change
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('filterForm');
+    const selects = form.querySelectorAll('select');
+    
+    selects.forEach(select => {
+        select.addEventListener('change', function() {
+            form.submit();
+        });
+    });
+    
+    // Add search on enter
+    const searchInput = form.querySelector('input[name="search"]');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                form.submit();
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

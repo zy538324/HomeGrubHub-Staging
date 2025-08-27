@@ -1,0 +1,676 @@
+{% extends "base.html" %}
+
+{% block seo_title %}HomeGrubHub - Smart Meal Planning & Recipe Organization App | UK's Complete Kitchen Companion{% endblock %}
+
+{% block seo_description %}Transform your cooking with HomeGrubHub - the UK's complete meal planning app. Organize recipes, track nutrition, create shopping lists, and manage your kitchen efficiently. Join our beta today!{% endblock %}
+
+{% block seo_keywords %}meal planning app UK, recipe organizer, nutrition tracker, grocery list generator, meal prep planner, healthy eating app, family meal planning, budget cooking, smart shopping list, kitchen companion{% endblock %}
+
+{% block og_title %}HomeGrubHub - UK's Complete Meal Planning & Recipe Organization App{% endblock %}
+{% block og_description %}Join the beta for UK families to save time and money with smart meal planning. Organize recipes, track nutrition, generate shopping lists automatically. Start your free beta today!{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "HomeGrubHub",
+  "description": "Complete meal planning and recipe organization application for UK families",
+  "url": "{{ url_for('main.index', _external=True) }}",
+  "applicationCategory": "LifestyleApplication",
+  "operatingSystem": "Web Browser",
+  "browserRequirements": "HTML5, CSS3, JavaScript",
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Beta Access",
+      "price": "0",
+      "priceCurrency": "GBP",
+      "description": "Free beta access with all features included"
+    }
+  ],
+  "creator": {
+    "@type": "Organization",
+    "name": "HomeGrubHub",
+    "url": "{{ url_for('main.index', _external=True) }}"
+  },
+  "featureList": [
+    "Recipe Organization",
+    "Meal Planning",
+    "Nutrition Tracking",
+    "Shopping List Generation",
+    "Budget Tracking",
+    "Family Meal Planning",
+    "Community Recipe Sharing"
+  ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<!-- Enhanced Homepage Hero Section -->
+<section class="hero-section bg-gradient-primary text-white py-5">
+  <div class="container">
+    <div class="row align-items-center min-vh-100">
+      <div class="col-lg-6">
+        <div class="hero-content">
+          <h1 class="display-3 fw-bold mb-4 animate-fadeIn">
+            The UK's Most Complete
+            <span class="text-warning">Kitchen Companion</span>
+          </h1>
+          <p class="lead mb-4 animate-fadeIn-delay">
+            Transform your kitchen chaos into culinary success! The all-in-one platform designed to help UK families save money, reduce food waste, and save time through intelligent meal planning, recipe organization, pantry management, and smart shopping features.
+          </p>
+          <div class="hero-stats mb-4 animate-fadeIn-delay-2">
+            <div class="row text-center">
+              <div class="col-4">
+                <h3 class="fw-bold text-warning">All-in-One</h3>
+                <small>Complete Solution</small>
+              </div>
+              <div class="col-4">
+                <h3 class="fw-bold text-warning">Save Money</h3>
+                <small>Smart Shopping</small>
+              </div>
+              <div class="col-4">
+                <h3 class="fw-bold text-warning">Save Time</h3>
+                <small>Meal Planning</small>
+              </div>
+            </div>
+          </div>
+          <div class="hero-cta mb-4">
+            <a href="{{ url_for('main.register') }}" class="btn btn-warning btn-lg px-5 py-3 fw-bold me-3 animate-pulse">
+              <i class="fas fa-rocket me-2"></i>Join the Beta
+            </a>
+            <a href="#features" class="btn btn-outline-light btn-lg px-4 py-3">
+              <i class="fas fa-play-circle me-2"></i>See How It Works
+            </a>
+          </div>
+          <div class="trust-indicators">
+            <small class="opacity-75">
+              <i class="fas fa-shield-alt me-2"></i>Completely Free During Beta
+              <span class="mx-3">•</span>
+              <i class="fas fa-clock me-2"></i>Be Among the First Users
+            </small>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="hero-image text-center">
+          <div class="dashboard-preview bg-white rounded-3 shadow-lg animate-slideIn p-4" style="height: 400px; overflow: hidden;">
+            <div class="dashboard-header mb-3 text-start">
+              <div class="d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold text-dark m-0">Your Kitchen Dashboard</h6>
+                <small class="text-muted">Today</small>
+              </div>
+            </div>
+            
+            <!-- Mini Stats Cards -->
+            <div class="row g-2 mb-3">
+              <div class="col-4">
+                <div class="mini-stat bg-success text-white p-2 rounded text-center">
+                  <i class="fas fa-leaf"></i>
+                  <div style="font-size: 0.7rem;">5 items expiring</div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="mini-stat bg-primary text-white p-2 rounded text-center">
+                  <i class="fas fa-shopping-cart"></i>
+                  <div style="font-size: 0.7rem;">Shopping basket £32</div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="mini-stat bg-warning text-white p-2 rounded text-center">
+                  <i class="fas fa-calendar"></i>
+                  <div style="font-size: 0.7rem;">7 meals planned</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Quick Meal Plan Preview -->
+            <div class="meal-plan-preview text-start mb-3">
+              <h6 class="fw-bold text-dark mb-2" style="font-size: 0.9rem;">This Week's Meals</h6>
+              <div class="row g-1">
+                <div class="col-6">
+                  <div class="meal-card bg-light p-2 rounded" style="font-size: 0.7rem;">
+                    <strong>Mon:</strong> Spaghetti Bolognese
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="meal-card bg-light p-2 rounded" style="font-size: 0.7rem;">
+                    <strong>Tue:</strong> Chicken Curry
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="meal-card bg-light p-2 rounded" style="font-size: 0.7rem;">
+                    <strong>Wed:</strong> Fish & Chips
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="meal-card bg-light p-2 rounded" style="font-size: 0.7rem;">
+                    <strong>Thu:</strong> Stir Fry
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Shopping List Preview -->
+            <div class="shopping-preview text-start">
+              <h6 class="fw-bold text-dark mb-2" style="font-size: 0.9rem;">Shopping List (8 items)</h6>
+              <div class="shopping-items" style="font-size: 0.7rem;">
+                <div class="d-flex justify-content-between mb-1">
+                  <span>✓ Tomatoes</span>
+                  <span class="text-success">£2.50</span>
+                </div>
+                <div class="d-flex justify-content-between mb-1">
+                  <span>✓ Chicken Breast</span>
+                  <span class="text-success">£4.99</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span>• Rice (2kg)</span>
+                  <span class="text-muted">£1.99</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Preview Label -->
+            <div class="preview-badge position-absolute top-0 end-0 m-2">
+              <span class="badge bg-primary">Live Preview</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Key Benefits Section -->
+<section class="benefits-section py-5 bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 text-center mb-5">
+        <h2 class="display-4 fw-bold mb-3">Why HomeGrubHub Will Transform Your Kitchen</h2>
+        <p class="lead text-muted">The complete kitchen companion designed for modern UK families</p>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-lg-4 col-md-6">
+        <div class="benefit-card h-100 text-center p-4 bg-white rounded-3 shadow-sm">
+          <div class="benefit-icon mb-3">
+            <i class="fas fa-leaf fa-3x text-success"></i>
+          </div>
+          <h4 class="fw-bold mb-3">Reduce Food Waste</h4>
+          <p class="text-muted">Intelligent pantry management with expiry tracking, shelf-life optimization, and smart meal suggestions help prevent food waste and save the environment.</p>
+          <div class="benefit-proof">
+            <small class="text-success fw-bold">
+              <i class="fas fa-lightbulb me-1"></i>
+              Smart expiry alerts help prevent household food waste
+            </small>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6">
+        <div class="benefit-card h-100 text-center p-4 bg-white rounded-3 shadow-sm">
+          <div class="benefit-icon mb-3">
+            <i class="fas fa-piggy-bank fa-3x text-warning"></i>
+          </div>
+          <h4 class="fw-bold mb-3">Save Money on Groceries</h4>
+          <p class="text-muted">Smart meal planning, real-time price comparison across UK supermarkets, and waste reduction designed to help reduce your grocery bill significantly.</p>
+          <div class="benefit-proof">
+            <small class="text-warning fw-bold">
+              <i class="fas fa-lightbulb me-1"></i>
+              Compare prices across major UK supermarkets with live updates
+            </small>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6">
+        <div class="benefit-card h-100 text-center p-4 bg-white rounded-3 shadow-sm">
+          <div class="benefit-icon mb-3">
+            <i class="fas fa-clock fa-3x text-primary"></i>
+          </div>
+          <h4 class="fw-bold mb-3">Save Hours of Planning</h4>
+          <p class="text-muted">Drag-and-drop meal planning, auto-generated shopping lists, and one-click recipe imports eliminate the weekly kitchen chaos.</p>
+          <div class="benefit-proof">
+            <small class="text-primary fw-bold">
+              <i class="fas fa-lightbulb me-1"></i>
+              Turn hours of planning into minutes of smart decisions
+            </small>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6">
+        <div class="benefit-card h-100 text-center p-4 bg-white rounded-3 shadow-sm">
+          <div class="benefit-icon mb-3">
+            <i class="fas fa-heart fa-3x text-danger"></i>
+          </div>
+          <h4 class="fw-bold mb-3">Make Healthier Choices</h4>
+          <p class="text-muted">Barcode scanning, nutrition tracking, and smart recipe filtering make understanding and improving your family's nutrition effortless.</p>
+          <div class="benefit-proof">
+            <small class="text-danger fw-bold">
+              <i class="fas fa-lightbulb me-1"></i>
+              Instantly understand exactly what's in your food
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Showcase -->
+<section id="features" class="features-section py-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 text-center mb-5">
+        <h2 class="display-4 fw-bold mb-3">Complete Kitchen Management Solution</h2>
+        <p class="lead text-muted">Everything you need for stress-free cooking and eating</p>
+      </div>
+    </div>
+    <div class="row g-5 align-items-center mb-5">
+      <div class="col-lg-6">
+        <h3 class="fw-bold mb-4">
+          <i class="fas fa-utensils text-primary me-3"></i>
+          Intelligent Meal Planning
+        </h3>
+        <ul class="feature-list">
+          <li><i class="fas fa-check text-success me-2"></i>Drag-and-drop weekly meal planner</li>
+          <li><i class="fas fa-check text-success me-2"></i>Auto-generated shopping lists</li>
+          <li><i class="fas fa-check text-success me-2"></i>Nutritional balance tracking</li>
+          <li><i class="fas fa-check text-success me-2"></i>Family coordination features</li>
+          <li><i class="fas fa-check text-success me-2"></i>Multi-week planning ahead</li>
+        </ul>
+        <a href="{{ url_for('main.register') }}" class="btn btn-primary btn-lg">
+          Try Meal Planning <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+      </div>
+      <div class="col-lg-6">
+        <div class="feature-placeholder bg-light rounded-3 shadow d-flex align-items-center justify-content-center" style="height: 300px;">
+          <div class="text-center">
+            <i class="fas fa-calendar-alt fa-3x text-primary mb-3"></i>
+            <h6 class="text-muted">Meal Planning Interface</h6>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-5 align-items-center mb-5">
+      <div class="col-lg-6 order-lg-2">
+        <h3 class="fw-bold mb-4">
+          <i class="fas fa-boxes text-info me-3"></i>
+          Intelligent Pantry Management
+        </h3>
+        <ul class="feature-list">
+          <li><i class="fas fa-check text-success me-2"></i>Smart expiry date tracking and alerts</li>
+          <li><i class="fas fa-check text-success me-2"></i>Shelf-life optimization recommendations</li>
+          <li><i class="fas fa-check text-success me-2"></i>Food waste prevention system</li>
+          <li><i class="fas fa-check text-success me-2"></i>Barcode scanning for instant inventory</li>
+          <li><i class="fas fa-check text-success me-2"></i>AI-powered consumption predictions</li>
+        </ul>
+        <a href="{{ url_for('main.register') }}" class="btn btn-info btn-lg">
+          Manage Pantry <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+      </div>
+      <div class="col-lg-6 order-lg-1">
+        <div class="feature-placeholder bg-light rounded-3 shadow d-flex align-items-center justify-content-center" style="height: 300px;">
+          <div class="text-center">
+            <i class="fas fa-boxes fa-3x text-info mb-3"></i>
+            <h6 class="text-muted">Pantry Management Interface</h6>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-5 align-items-center mb-5">
+      <div class="col-lg-6">
+        <h3 class="fw-bold mb-4">
+          <i class="fas fa-shopping-cart text-success me-3"></i>
+          Smart Shopping & Live Price Updates
+        </h3>
+        <ul class="feature-list">
+          <li><i class="fas fa-check text-success me-2"></i>Real-time UK supermarket price comparison</li>
+          <li><i class="fas fa-check text-success me-2"></i>Live price update notifications</li>
+          <li><i class="fas fa-check text-success me-2"></i>Budget monitoring & cost alerts</li>
+          <li><i class="fas fa-check text-success me-2"></i>Store-specific optimized shopping lists</li>
+          <li><i class="fas fa-check text-success me-2"></i>Best time to buy recommendations</li>
+        </ul>
+        <a href="{{ url_for('main.register') }}" class="btn btn-success btn-lg">
+          Save Money Now <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+      </div>
+      <div class="col-lg-6">
+        <div class="feature-placeholder bg-light rounded-3 shadow d-flex align-items-center justify-content-center" style="height: 300px;">
+          <div class="text-center">
+            <i class="fas fa-shopping-cart fa-3x text-success mb-3"></i>
+            <h6 class="text-muted">Smart Shopping Interface</h6>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-5 align-items-center mb-5">
+      <div class="col-lg-6">
+        <h3 class="fw-bold mb-4">
+          <i class="fas fa-chart-line text-warning me-3"></i>
+          Comprehensive Nutrition Tracking
+        </h3>
+        <ul class="feature-list">
+          <li><i class="fas fa-check text-success me-2"></i>Daily nutrition logging</li>
+          <li><i class="fas fa-check text-success me-2"></i>Barcode-to-nutrition scanner</li>
+          <li><i class="fas fa-check text-success me-2"></i>Goal setting & progress tracking</li>
+          <li><i class="fas fa-check text-success me-2"></i>Dietary restriction support</li>
+          <li><i class="fas fa-check text-success me-2"></i>Weekly & monthly reports</li>
+        </ul>
+        <a href="{{ url_for('main.register') }}" class="btn btn-warning btn-lg">
+          Track Nutrition <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+      </div>
+      <div class="col-lg-6">
+        <div class="feature-placeholder bg-light rounded-3 shadow d-flex align-items-center justify-content-center" style="height: 300px;">
+          <div class="text-center">
+            <i class="fas fa-chart-line fa-3x text-warning mb-3"></i>
+            <h6 class="text-muted">Nutrition Tracking Interface</h6>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-6 order-lg-2">
+        <h3 class="fw-bold mb-4">
+          <i class="fas fa-users text-primary me-3"></i>
+          Community-Driven Recipe Sharing
+        </h3>
+        <ul class="feature-list">
+          <li><i class="fas fa-check text-success me-2"></i>Community-curated recipe discovery platform</li>
+          <li><i class="fas fa-check text-success me-2"></i>Constructive feedback and rating system</li>
+          <li><i class="fas fa-check text-success me-2"></i>Weekly cooking challenges and competitions</li>
+          <li><i class="fas fa-check text-success me-2"></i>Share your family recipes with the world</li>
+          <li><i class="fas fa-check text-success me-2"></i>Connect with passionate home cooks across the UK</li>
+        </ul>
+        <a href="{{ url_for('main.register') }}" class="btn btn-primary btn-lg">
+          Join Community <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+      </div>
+      <div class="col-lg-6 order-lg-1">
+        <div class="feature-placeholder bg-light rounded-3 shadow d-flex align-items-center justify-content-center" style="height: 300px;">
+          <div class="text-center">
+            <i class="fas fa-users fa-3x text-primary mb-3"></i>
+            <h6 class="text-muted">Community Interface</h6>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- Social Proof Section -->
+<section class="social-proof-section py-5 bg-primary text-white">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 text-center mb-5">
+        <h2 class="display-4 fw-bold mb-3">Be Part of Something Special</h2>
+        <p class="lead">Join our beta community and help shape the future of kitchen management</p>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="testimonial-card bg-white text-dark p-4 rounded-3 h-100">
+          <div class="beta-badge mb-3">
+            <span class="badge bg-primary">Beta Preview</span>
+          </div>
+          <p class="mb-3">"The concept is brilliant! As a busy working mum, I can already see how this will transform our weekly meal planning. The interface is intuitive and the features are exactly what families need."</p>
+          <div class="testimonial-author">
+            <strong>Development Preview</strong><br>
+            <small class="text-muted">Early Access Feedback</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="testimonial-card bg-white text-dark p-4 rounded-3 h-100">
+          <div class="beta-badge mb-3">
+            <span class="badge bg-success">Feature Complete</span>
+          </div>
+          <p class="mb-3">"Finally, a comprehensive kitchen companion that brings everything together - meal planning, nutrition tracking, price comparison, and community recipes. This is exactly what the UK market needs!"</p>
+          <div class="testimonial-author">
+            <strong>Product Vision</strong><br>
+            <small class="text-muted">Complete Feature Set</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="testimonial-card bg-white text-dark p-4 rounded-3 h-100">
+          <div class="beta-badge mb-3">
+            <span class="badge bg-warning">Coming Soon</span>
+          </div>
+          <p class="mb-3">"We're launching with all the essential features UK families need: smart shopping lists, barcode scanning, nutrition tracking, and meal planning. Join us as we build the future of kitchen management!"</p>
+          <div class="testimonial-author">
+            <strong>Launch Ready</strong><br>
+            <small class="text-muted">Beta Phase Starting</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA Section -->
+<section class="final-cta-section py-5 bg-gradient-secondary">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 text-center">
+        <h2 class="display-4 fw-bold mb-4">Ready to Transform Your Kitchen?</h2>
+        <p class="lead mb-4">Be among the first UK families to experience the complete kitchen management solution.</p>
+        
+        <div class="cta-benefits mb-4">
+          <div class="row text-center">
+            <div class="col-md-4">
+              <i class="fas fa-gift fa-2x text-success mb-2"></i>
+              <h5>Free Beta Access</h5>
+              <small>Full feature access during beta</small>
+            </div>
+            <div class="col-md-4">
+              <i class="fas fa-users fa-2x text-primary mb-2"></i>
+              <h5>Shape the Future</h5>
+              <small>Your feedback drives development</small>
+            </div>
+            <div class="col-md-4">
+              <i class="fas fa-star fa-2x text-warning mb-2"></i>
+              <h5>Early Adopter Benefits</h5>
+              <small>Special pricing when we launch</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="cta-buttons">
+          <a href="{{ url_for('main.register') }}" class="btn btn-success btn-lg px-5 py-3 fw-bold me-3">
+            <i class="fas fa-rocket me-2"></i>Join the Beta
+          </a>
+          <a href="{{ url_for('main.login') }}" class="btn btn-outline-light btn-lg px-4 py-3">
+            <i class="fas fa-sign-in-alt me-2"></i>Login
+          </a>
+        </div>
+
+        <div class="trust-signals mt-4">
+          <small class="text-light">
+            <i class="fas fa-shield-alt me-2"></i>Completely free during beta
+            <span class="mx-3">•</span>
+            <i class="fas fa-code me-2"></i>Built specifically for UK families
+            <span class="mx-3">•</span>
+            <i class="fas fa-lock me-2"></i>Your data stays secure
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.hero-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+  opacity: 0.1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 1s ease-out;
+}
+
+.animate-fadeIn-delay {
+  animation: fadeIn 1s ease-out 0.3s both;
+}
+
+.animate-fadeIn-delay-2 {
+  animation: fadeIn 1s ease-out 0.6s both;
+}
+
+.animate-slideIn {
+  animation: slideInFromRight 1s ease-out 0.4s both;
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInFromRight {
+  from { opacity: 0; transform: translateX(50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.benefit-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.benefit-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+}
+
+.feature-list li {
+  padding: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.testimonial-card {
+  transition: transform 0.3s ease;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-3px);
+}
+
+.bg-gradient-secondary {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.bg-gradient-dark {
+  background: linear-gradient(135deg, #232526 0%, #414345 100%);
+}
+
+.roadmap-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.roadmap-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3) !important;
+}
+
+.roadmap-list {
+  list-style: none;
+  padding: 0;
+}
+
+.roadmap-list li {
+  padding: 0.3rem 0;
+  font-size: 0.9rem;
+}
+
+.roadmap-highlight {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.cta-benefits .col-md-4 {
+  margin-bottom: 2rem;
+}
+
+.trust-signals {
+  opacity: 0.8;
+}
+
+.feature-placeholder, .hero-placeholder {
+  transition: transform 0.3s ease;
+}
+
+.feature-placeholder:hover, .hero-placeholder:hover {
+  transform: translateY(-2px);
+}
+
+.dashboard-preview {
+  position: relative;
+  border: 1px solid #e9ecef;
+}
+
+.mini-stat {
+  transition: transform 0.2s ease;
+}
+
+.mini-stat:hover {
+  transform: scale(1.05);
+}
+
+.meal-card {
+  transition: background-color 0.2s ease;
+  border: 1px solid #dee2e6;
+}
+
+.meal-card:hover {
+  background-color: #f8f9fa !important;
+}
+
+.shopping-items {
+  max-height: 80px;
+  overflow-y: auto;
+}
+
+.preview-badge {
+  z-index: 10;
+}
+
+.dashboard-preview:hover {
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+</style>
+{% endblock %}

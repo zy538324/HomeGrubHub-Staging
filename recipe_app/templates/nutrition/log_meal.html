@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Log a Meal</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+    <h1>Log a Meal</h1>
+    <form id="mealForm" method="POST" action="/nutrition/log-meal">
+        <label for="meal_type">Meal Type:</label>
+        <select name="meal_type" id="meal_type">
+            <option value="breakfast">Breakfast</option>
+            <option value="lunch">Lunch</option>
+            <option value="dinner">Dinner</option>
+            <option value="snack">Snack</option>
+        </select><br><br>
+        <label for="meal_date">Date:</label>
+        <input type="date" name="meal_date" id="meal_date" value="{{ today }}"><br><br>
+        <label for="foods">Foods:</label>
+        <select name="food_ids" id="foods" multiple>
+            {% for food in foods %}
+            <option value="{{ food.id }}">{{ food.name }} ({{ food.brand }})</option>
+            {% endfor %}
+        </select><br><br>
+        <button type="submit">Log Meal</button>
+    </form>
+    <div id="mealTotals">
+        <h3>Meal Totals</h3>
+        <p>Calories: <span id="totalCalories">0</span></p>
+        <p>Protein: <span id="totalProtein">0</span></p>
+        <p>Carbs: <span id="totalCarbs">0</span></p>
+        <p>Fat: <span id="totalFat">0</span></p>
+    </div>
+    <script>
+    // JS to update meal totals when foods are selected
+    const foodsData = {{ foods|tojson|safe }};
+    document.getElementById('foods').addEventListener('change', function() {
+        let selected = Array.from(this.selectedOptions).map(opt => parseInt(opt.value));
+        let totals = {calories: 0, protein: 0, carbs: 0, fat: 0};
+        foodsData.forEach(food => {
+            if (selected.includes(food.id)) {
+                totals.calories += food.calories;
+                totals.protein += food.protein;
+                totals.carbs += food.carbs;
+                totals.fat += food.fat;
+            }
+        });
+        document.getElementById('totalCalories').textContent = totals.calories;
+        document.getElementById('totalProtein').textContent = totals.protein;
+        document.getElementById('totalCarbs').textContent = totals.carbs;
+        document.getElementById('totalFat').textContent = totals.fat;
+    });
+    </script>
+</body>
+</html>

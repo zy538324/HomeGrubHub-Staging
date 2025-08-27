@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-9">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <h2 class="mb-4 text-center text-primary">Cookie Policy</h2>
+          <p class="lead">Home Grub Hub uses cookies and similar technologies to enhance your experience, analyse site usage, and personalise content.</p>
+
+          <h4 class="mt-4">1. What Are Cookies?</h4>
+          <p>Cookies are small text files stored on your browser or device when you visit a website. They help us remember your preferences, improve performance, and provide essential functionality.</p>
+
+          <h4 class="mt-4">2. Types of Cookies We Use</h4>
+          <ul>
+            <li><strong>Strictly Necessary Cookies:</strong> Required for the core operation of the website, such as secure login and account management.</li>
+            <li><strong>Functional Cookies:</strong> Enable enhanced personalisation and user preferences (e.g., remembering meal plans, theme settings).</li>
+            <li><strong>Performance & Analytics Cookies:</strong> Help us understand how users interact with Home Grub Hub, allowing us to improve the app's usability and content. (e.g., Google Analytics)</li>
+            <li><strong>Targeting/Marketing Cookies:</strong> Used occasionally to deliver relevant promotional content. These are only activated with your explicit consent.</li>
+          </ul>
+
+          <h4 class="mt-4">3. Why We Use Cookies</h4>
+          <ul>
+            <li>To keep you securely signed in during your session.</li>
+            <li>To personalise your dashboard and track dietary and recipe preferences.</li>
+            <li>To analyse visitor usage and optimise site performance.</li>
+            <li>To support optional integrations such as social logins or referral tracking.</li>
+          </ul>
+
+          <h4 class="mt-4">4. Managing Your Cookie Preferences</h4>
+          <p>You have control over which cookies we store:</p>
+          <ul>
+            <li>You can manage or withdraw your cookie consent via our <strong>Cookie Settings</strong> panel at any time by <button onclick="reopenCookieSettings()" class="btn btn-link p-0 text-primary" style="vertical-align: baseline; text-decoration: underline;">clicking here</button>.</li>
+            <li>Most browsers also allow you to block or delete cookies through their settings.</li>
+            <li>Note that disabling essential cookies may affect the core functionality of Home Grub Hub.</li>
+          </ul>
+
+          <h4 class="mt-4">5. Third-Party Cookies</h4>
+          <p>We may allow selected third parties to place cookies on your device for analytics or integration purposes. These providers include (but may not be limited to):</p>
+          <ul>
+            <li><strong>Auth0:</strong> For authentication and login session management.</li>
+            <li><strong>Stripe:</strong> For secure payment tracking and session security.</li>
+            <li><strong>Google Analytics:</strong> To collect anonymised usage statistics.</li>
+          </ul>
+          <p>We ensure all third-party cookie use is limited, secure, and compliant with applicable privacy laws.</p>
+
+          <h4 class="mt-4">6. Data Retention</h4>
+          <p>Cookies are stored on your device for varying durations, depending on their purpose:</p>
+          <ul>
+            <li>Session cookies are erased once you close your browser.</li>
+            <li>Persistent cookies remain for a defined period or until manually deleted.</li>
+          </ul>
+
+          <h4 class="mt-4">7. Consent and Changes</h4>
+          <p>By continuing to use Home Grub Hub, you agree to the use of cookies as outlined in this policy, unless you opt out or manage your preferences. We may update this Cookie Policy periodically. All changes will be reflected here with an updated revision date.</p>
+
+          <h4 class="mt-4">8. Contact Us</h4>
+          <p>If you have any questions or concerns about our use of cookies, please contact us at:</p>
+          <p>
+            Email: <a href="mailto:support@homegrubhub.co.uk">support@homegrubhub.co.uk</a><br>
+            
+          </p>
+
+          <hr class="my-4">
+          <p class="small text-muted text-center">© {{ current_year }} Home Grub Hub. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function reopenCookieSettings() {
+  // Remove existing consent to trigger the banner again
+  localStorage.removeItem('cookieConsent');
+  localStorage.removeItem('cookieConsentDate');
+  localStorage.removeItem('cookiePreferences');
+  
+  // Show modal directly instead of banner
+  if (typeof createCookieModal === 'function' && typeof showCookieModal === 'function') {
+    createCookieModal();
+    showCookieModal();
+  } else {
+    // Fallback: reload page to show banner
+    alert('Cookie settings will appear after page reload.');
+    window.location.reload();
+  }
+}
+</script>
+
+{% endblock %}

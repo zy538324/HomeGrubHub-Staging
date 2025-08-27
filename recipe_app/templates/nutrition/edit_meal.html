@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Meal</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+    <h1>Edit Meal</h1>
+    <form id="editMealForm" method="POST" action="">
+        <label for="meal_type">Meal Type:</label>
+        <select name="meal_type" id="meal_type">
+            <option value="breakfast" {% if meal.meal_type == 'breakfast' %}selected{% endif %}>Breakfast</option>
+            <option value="lunch" {% if meal.meal_type == 'lunch' %}selected{% endif %}>Lunch</option>
+            <option value="dinner" {% if meal.meal_type == 'dinner' %}selected{% endif %}>Dinner</option>
+            <option value="snack" {% if meal.meal_type == 'snack' %}selected{% endif %}>Snack</option>
+        </select><br><br>
+        <label for="meal_date">Date:</label>
+        <input type="date" name="meal_date" id="meal_date" value="{{ meal.meal_date }}"><br><br>
+        <label for="foods">Foods:</label>
+        <select name="food_ids" id="foods" multiple>
+            {% for food in foods %}
+            <option value="{{ food.id }}" {% if food.id in selected_food_ids %}selected{% endif %}>{{ food.name }} ({{ food.brand }})</option>
+            {% endfor %}
+        </select><br><br>
+        <button type="submit">Update Meal</button>
+    </form>
+    <form method="POST" action="?delete=1" style="margin-top:20px;">
+        <button type="submit" style="color:red;">Delete Meal</button>
+    </form>
+    <a href="/nutrition/daily-summary?date={{ meal.meal_date }}">Back to Daily Summary</a>
+    <script>
+    // JS to update meal totals when foods are selected
+    const foodsData = {{ foods|tojson|safe }};
+    document.getElementById('foods').addEventListener('change', function() {
+        let selected = Array.from(this.selectedOptions).map(opt => parseInt(opt.value));
+        let totals = {calories: 0, protein: 0, carbs: 0, fat: 0};
+        foodsData.forEach(food => {
+            if (selected.includes(food.id)) {
+                totals.calories += food.calories;
+                totals.protein += food.protein;
+                totals.carbs += food.carbs;
+                totals.fat += food.fat;
+            }
+        });
+        // Optionally display totals
+    });
+    </script>
+</body>
+</html>

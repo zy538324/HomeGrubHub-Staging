@@ -1,0 +1,621 @@
+{% extends "base.html" %}
+
+{% block title %}Family Notifications{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+    .notifications-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px 0;
+    }
+    
+    .notifications-wrapper {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    .notifications-header {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+    }
+    
+    .notifications-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+    }
+    
+    .mark-all-read-btn {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+    
+    .mark-all-read-btn:hover {
+        color: white;
+        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+    
+    .notifications-list {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        margin-bottom: 25px;
+    }
+    
+    .notification-item {
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        background: white;
+        cursor: pointer;
+    }
+    
+    .notification-item:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        transform: translateY(-1px);
+    }
+    
+    .notification-item.unread {
+        border-left: 5px solid #667eea;
+        background: linear-gradient(90deg, #f8f9ff 0%, #ffffff 100%);
+    }
+    
+    .notification-item.notification-achievement {
+        border-left: 5px solid #ffc107;
+    }
+    
+    .notification-item.notification-urgent {
+        border-left: 5px solid #dc3545;
+        animation: subtle-pulse 3s infinite;
+    }
+    
+    @keyframes subtle-pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.95; }
+        100% { opacity: 1; }
+    }
+    
+    .notification-header {
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+    
+    .notification-icon-wrapper {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .notification-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.3rem;
+        flex-shrink: 0;
+    }
+    
+    .notification-icon.meal-reminder {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    }
+    
+    .notification-icon.shopping-alert {
+        background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+    }
+    
+    .notification-icon.challenge-update {
+        background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    }
+    
+    .notification-icon.achievement-earned {
+        background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+    }
+    
+    .notification-icon.new-message {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .notification-icon.approval-granted {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    }
+    
+    .notification-icon.approval-denied {
+        background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+    }
+    
+    .notification-content {
+        flex: 1;
+    }
+    
+    .notification-title {
+        font-weight: 600;
+        color: #333;
+        margin: 0 0 8px 0;
+        font-size: 1.1rem;
+    }
+    
+    .notification-text {
+        color: #555;
+        line-height: 1.5;
+        margin-bottom: 12px;
+        font-size: 0.95rem;
+    }
+    
+    .notification-meta {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        font-size: 0.8rem;
+        color: #888;
+    }
+    
+    .notification-time {
+        text-align: right;
+        font-size: 0.85rem;
+        color: #666;
+    }
+    
+    .notification-timestamp {
+        font-weight: 500;
+    }
+    
+    .notification-badges {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+    }
+    
+    .badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 500;
+        text-transform: uppercase;
+    }
+    
+    .badge-unread {
+        background-color: #667eea;
+        color: white;
+    }
+    
+    .badge-new {
+        background-color: #28a745;
+        color: white;
+        animation: glow 2s infinite alternate;
+    }
+    
+    @keyframes glow {
+        from { opacity: 1; }
+        to { opacity: 0.7; }
+    }
+    
+    .badge-expired {
+        background-color: #6c757d;
+        color: white;
+    }
+    
+    .action-button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s ease;
+    }
+    
+    .action-button:hover {
+        color: white;
+        text-decoration: none;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        color: #ddd;
+        margin-bottom: 20px;
+    }
+    
+    .empty-state h3 {
+        color: #999;
+        margin-bottom: 15px;
+    }
+    
+    .empty-state p {
+        color: #bbb;
+        font-size: 1rem;
+    }
+    
+    .pagination-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+    }
+    
+    .pagination .page-link {
+        color: #667eea;
+        border-color: #dee2e6;
+        border-radius: 8px;
+        margin: 0 2px;
+    }
+    
+    .pagination .page-link:hover {
+        background-color: #667eea;
+        border-color: #667eea;
+        color: white;
+    }
+    
+    .pagination .page-item.active .page-link {
+        background-color: #667eea;
+        border-color: #667eea;
+    }
+    
+    .notification-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .summary-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+    
+    .summary-number {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    
+    .summary-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="notifications-container">
+    <div class="notifications-wrapper">
+        <!-- Header -->
+        <div class="notifications-header">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                    <h1 class="mb-0">
+                        <i class="fas fa-bell me-2"></i>
+                        Notifications
+                    </h1>
+                    <p class="text-muted mb-0 mt-2">Stay updated with your family activities</p>
+                </div>
+                <a href="{{ url_for('family_communication.communication_hub') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Hub
+                </a>
+            </div>
+            
+            <!-- Summary -->
+            <div class="notification-summary">
+                <div class="summary-card">
+                    <div class="summary-number">{{ notifications|selectattr('is_read', 'equalto', False)|list|length }}</div>
+                    <div class="summary-label">Unread</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-number">{{ notifications|selectattr('created_at')|selectattr('created_at', 'gt', (moment().startOf('day')))|list|length if moment else 0 }}</div>
+                    <div class="summary-label">Today</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-number">{{ notifications|length }}</div>
+                    <div class="summary-label">Total</div>
+                </div>
+            </div>
+            
+            <div class="notifications-controls">
+                <div>
+                    <small class="text-muted">
+                        Showing notifications for {{ current_member.display_name }}
+                    </small>
+                </div>
+                
+                {% if notifications|selectattr('is_read', 'equalto', False)|list|length > 0 %}
+                <button class="mark-all-read-btn" id="markAllReadBtn">
+                    <i class="fas fa-check-double"></i>
+                    Mark All as Read
+                </button>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Notifications List -->
+        <div class="notifications-list">
+            {% if notifications %}
+                {% for notification in notifications %}
+                <div class="notification-item {% if not notification.is_read %}unread{% endif %} notification-{{ notification.notification_type|replace('_', '-') }}" 
+                     data-notification-id="{{ notification.id }}">
+                    <div class="notification-header">
+                        <div class="notification-icon-wrapper">
+                            <div class="notification-icon {{ notification.notification_type|replace('_', '-') }}">
+                                {% if notification.notification_type == 'meal_reminder' %}
+                                <i class="fas fa-utensils"></i>
+                                {% elif notification.notification_type == 'shopping_alert' %}
+                                <i class="fas fa-shopping-cart"></i>
+                                {% elif notification.notification_type == 'challenge_update' %}
+                                <i class="fas fa-trophy"></i>
+                                {% elif notification.notification_type == 'achievement_earned' %}
+                                <i class="fas fa-medal"></i>
+                                {% elif notification.notification_type == 'new_message' %}
+                                <i class="fas fa-envelope"></i>
+                                {% elif notification.notification_type == 'approval_granted' %}
+                                <i class="fas fa-check-circle"></i>
+                                {% elif notification.notification_type == 'approval_denied' %}
+                                <i class="fas fa-times-circle"></i>
+                                {% else %}
+                                <i class="fas fa-info-circle"></i>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="notification-content">
+                                <h4 class="notification-title">{{ notification.title }}</h4>
+                                <p class="notification-text">{{ notification.content }}</p>
+                                
+                                <div class="notification-meta">
+                                    <span>
+                                        <i class="fas fa-tag"></i>
+                                        {{ notification.notification_type|replace('_', ' ')|title }}
+                                    </span>
+                                    
+                                    {% if notification.is_expired() %}
+                                    <span class="text-warning">
+                                        <i class="fas fa-clock"></i>
+                                        Expired
+                                    </span>
+                                    {% endif %}
+                                    
+                                    {% if notification.action_url %}
+                                    <a href="{{ notification.action_url }}" class="action-button">
+                                        <i class="fas fa-external-link-alt"></i>
+                                        View Details
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="notification-time">
+                            <div class="notification-timestamp">
+                                {% if notification.created_at.date() == moment().date() if moment else False %}
+                                Today
+                                {% elif notification.created_at.date() == (moment() - timedelta(days=1)).date() if moment else False %}
+                                Yesterday
+                                {% else %}
+                                {{ notification.created_at.strftime('%m/%d/%y') }}
+                                {% endif %}
+                            </div>
+                            <small>{{ notification.created_at.strftime('%I:%M %p') }}</small>
+                            
+                            <div class="notification-badges">
+                                {% if not notification.is_read %}
+                                <span class="badge badge-unread">Unread</span>
+                                {% endif %}
+                                
+                                {% if notification.created_at >= (moment() - timedelta(hours=1)) if moment else False %}
+                                <span class="badge badge-new">New</span>
+                                {% endif %}
+                                
+                                {% if notification.is_expired() %}
+                                <span class="badge badge-expired">Expired</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <!-- Pagination -->
+                {% if pagination.pages > 1 %}
+                <div class="pagination-wrapper">
+                    {{ render_pagination(pagination, 'family_communication.notifications') }}
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-bell-slash"></i>
+                    <h3>No Notifications</h3>
+                    <p>You're all caught up! New notifications will appear here.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Mark individual notification as read when clicked
+    $('.notification-item.unread').on('click', function() {
+        const notificationId = $(this).data('notification-id');
+        const element = $(this);
+        
+        markNotificationRead(notificationId, element);
+    });
+    
+    // Mark all notifications as read
+    $('#markAllReadBtn').on('click', function() {
+        const button = $(this);
+        button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Marking...');
+        
+        $.post('/family/communication/mark_all_notifications_read')
+            .done(function(data) {
+                if (data.success) {
+                    // Remove unread styling from all notifications
+                    $('.notification-item.unread').removeClass('unread');
+                    $('.badge-unread').remove();
+                    
+                    // Update summary
+                    $('.summary-card .summary-number').first().text('0');
+                    
+                    // Hide the button
+                    button.fadeOut();
+                    
+                    // Show success message
+                    showNotification('All notifications marked as read!', 'success');
+                } else {
+                    showNotification('Failed to mark notifications as read.', 'error');
+                }
+            })
+            .fail(function() {
+                showNotification('Network error. Please try again.', 'error');
+            })
+            .always(function() {
+                button.prop('disabled', false).html('<i class="fas fa-check-double"></i> Mark All as Read');
+            });
+    });
+    
+    function markNotificationRead(notificationId, element) {
+        $.post(`/family/communication/mark_notification_read/${notificationId}`)
+            .done(function(data) {
+                if (data.success) {
+                    element.removeClass('unread');
+                    element.find('.badge-unread').remove();
+                    
+                    // Update unread count
+                    updateUnreadCount();
+                }
+            })
+            .fail(function() {
+                console.log('Failed to mark notification as read');
+            });
+    }
+    
+    function updateUnreadCount() {
+        const unreadCount = $('.notification-item.unread').length;
+        $('.summary-card .summary-number').first().text(unreadCount);
+        
+        if (unreadCount === 0) {
+            $('#markAllReadBtn').fadeOut();
+        }
+    }
+    
+    function showNotification(message, type) {
+        const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+        const notification = $(`
+            <div class="alert ${alertClass} alert-dismissible fade show" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `);
+        
+        $('body').append(notification);
+        
+        // Auto-dismiss after 3 seconds
+        setTimeout(function() {
+            notification.alert('close');
+        }, 3000);
+    }
+    
+    // Auto-refresh every 60 seconds
+    setInterval(function() {
+        // Check for new notifications
+        $.get('/family/communication/api/recent_activity')
+            .done(function(data) {
+                if (data.success && data.recent_notifications.length > 0) {
+                    // Check if there are any new notifications since page load
+                    const newestOnPage = $('.notification-item').first().data('notification-id');
+                    const newestFromServer = data.recent_notifications[0].id;
+                    
+                    if (newestFromServer > newestOnPage) {
+                        // There are new notifications, show a subtle indicator
+                        showNewNotificationIndicator();
+                    }
+                }
+            });
+    }, 60000);
+    
+    function showNewNotificationIndicator() {
+        if ($('#newNotificationBanner').length === 0) {
+            const banner = $(`
+                <div id="newNotificationBanner" class="alert alert-info alert-dismissible fade show" 
+                     style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px;">
+                    <i class="fas fa-bell me-2"></i>
+                    New notifications available. 
+                    <a href="javascript:location.reload()" class="alert-link">Refresh to view</a>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `);
+            
+            $('body').append(banner);
+        }
+    }
+    
+    // Keyboard shortcuts
+    $(document).on('keydown', function(e) {
+        // Press 'r' to mark all as read
+        if (e.key === 'r' && !$(e.target).is('input, textarea')) {
+            e.preventDefault();
+            $('#markAllReadBtn').click();
+        }
+        
+        // Press 'Escape' to go back to hub
+        if (e.key === 'Escape') {
+            window.location.href = '{{ url_for("family_communication.communication_hub") }}';
+        }
+    });
+    
+    // Add visual feedback for clickable notifications
+    $('.notification-item').hover(
+        function() {
+            $(this).addClass('shadow-lg');
+        },
+        function() {
+            $(this).removeClass('shadow-lg');
+        }
+    );
+});
+</script>
+{% endblock %}

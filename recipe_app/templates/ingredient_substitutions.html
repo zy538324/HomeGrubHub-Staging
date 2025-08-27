@@ -1,0 +1,395 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="h2 mb-1">
+            <i class="fas fa-exchange-alt me-2 text-primary"></i>Ingredient Substitutions
+          </h1>
+          <p class="text-muted mb-0">
+            Find smart alternatives for your recipe ingredients
+            <span class="badge bg-success ms-2">HOME+ FEATURE</span>
+          </p>
+        </div>
+        
+        {% if current_user.current_plan in ['Free'] %}
+        <div>
+          <a href="{{ url_for('billing.pricing') }}" class="btn btn-primary">
+            <i class="fas fa-crown me-2"></i>Upgrade for Full Access
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  
+  <!-- Recipe & Ingredient Selection -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-search me-2"></i>Find Substitutions
+          </h5>
+        </div>
+        <div class="card-body">
+          <form method="post">
+            {{ form.hidden_tag() }}
+            
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="{{ form.recipe_id.id }}" class="form-label">
+                  {{ form.recipe_id.label }}
+                </label>
+                {{ form.recipe_id(class="form-select", onchange="loadRecipeIngredients()") }}
+                {% if form.recipe_id.errors %}
+                  <div class="text-danger small mt-1">
+                    {% for error in form.recipe_id.errors %}{{ error }}{% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              
+              <div class="col-md-4">
+                <label for="{{ form.ingredient_name.id }}" class="form-label">
+                  {{ form.ingredient_name.label }}
+                </label>
+                {{ form.ingredient_name(class="form-control", placeholder="Enter ingredient name...") }}
+                {% if form.ingredient_name.errors %}
+                  <div class="text-danger small mt-1">
+                    {% for error in form.ingredient_name.errors %}{{ error }}{% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              
+              <div class="col-md-2 d-flex align-items-end">
+                {{ form.submit(class="btn btn-primary w-100") }}
+              </div>
+            </div>
+            
+            {% if selected_recipe %}
+            <div class="mt-3">
+              <h6 class="text-primary">Ingredients in {{ selected_recipe.title }}:</h6>
+              <div class="ingredient-tags">
+                {% for ingredient in selected_recipe.ingredients.split('\n') %}
+                  {% if ingredient.strip() %}
+                  <button type="button" class="btn btn-outline-secondary btn-sm me-1 mb-1" 
+                          onclick="selectIngredient('{{ ingredient.strip().split(' ', 1)[1] if ' ' in ingredient.strip() else ingredient.strip() }}')">
+                    {{ ingredient.strip() }}
+                  </button>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+            
+            {% if current_user.current_plan in ['Free'] %}
+            <div class="alert alert-warning mt-3 mb-0">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              <strong>Limited Access:</strong> Upgrade to Home plan for ingredient substitution features.
+            </div>
+            {% endif %}
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Substitution Results -->
+  {% if substitutions %}
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-lightbulb me-2"></i>Substitutions for "{{ ingredient_name }}"
+          </h5>
+        </div>
+        <div class="card-body">
+          {% if substitutions %}
+          <div class="row g-4">
+            {% for substitution in substitutions %}
+            <div class="col-lg-6">
+              <div class="substitution-card border rounded p-3 h-100">
+                <div class="d-flex align-items-start mb-3">
+                  <div class="substitution-icon me-3">
+                    <i class="fas fa-arrow-right text-primary fa-2x"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h6 class="fw-bold text-primary mb-1">{{ substitution.substitute_name }}</h6>
+                    <div class="substitution-ratio mb-2">
+                      <span class="badge bg-info">{{ substitution.ratio }}</span>
+                      <small class="text-muted ms-2">conversion ratio</small>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="substitution-details">
+                  {% if substitution.notes %}
+                  <p class="text-muted small mb-3">
+                    <i class="fas fa-info-circle me-1"></i>{{ substitution.notes }}
+                  </p>
+                  {% endif %}
+                  
+                  <!-- Suitability Tags -->
+                  <div class="mb-3">
+                    {% for diet in substitution.suitable_for_diets %}
+                    <span class="badge bg-success me-1">{{ diet|title }}</span>
+                    {% endfor %}
+                    
+                    {% if substitution.allergen_free %}
+                    {% for allergen in substitution.allergen_free %}
+                    <span class="badge bg-warning me-1">{{ allergen|title }}-Free</span>
+                    {% endfor %}
+                    {% endif %}
+                  </div>
+                  
+                  <!-- Nutritional Comparison -->
+                  {% if substitution.nutritional_impact %}
+                  <div class="nutritional-comparison">
+                    <h6 class="small fw-bold text-secondary mb-2">Nutritional Impact:</h6>
+                    <div class="row g-2 small">
+                      {% if substitution.nutritional_impact.calories_change %}
+                      <div class="col-6">
+                        <div class="d-flex justify-content-between">
+                          <span>Calories:</span>
+                          <span class="{% if substitution.nutritional_impact.calories_change > 0 %}text-danger{% elif substitution.nutritional_impact.calories_change < 0 %}text-success{% else %}text-muted{% endif %}">
+                            {% if substitution.nutritional_impact.calories_change > 0 %}+{% endif %}{{ substitution.nutritional_impact.calories_change }}
+                          </span>
+                        </div>
+                      </div>
+                      {% endif %}
+                      
+                      {% if substitution.nutritional_impact.protein_change %}
+                      <div class="col-6">
+                        <div class="d-flex justify-content-between">
+                          <span>Protein:</span>
+                          <span class="{% if substitution.nutritional_impact.protein_change > 0 %}text-success{% elif substitution.nutritional_impact.protein_change < 0 %}text-warning{% else %}text-muted{% endif %}">
+                            {% if substitution.nutritional_impact.protein_change > 0 %}+{% endif %}{{ substitution.nutritional_impact.protein_change }}g
+                          </span>
+                        </div>
+                      </div>
+                      {% endif %}
+                      
+                      {% if substitution.nutritional_impact.carbs_change %}
+                      <div class="col-6">
+                        <div class="d-flex justify-content-between">
+                          <span>Carbs:</span>
+                          <span class="{% if substitution.nutritional_impact.carbs_change > 0 %}text-info{% elif substitution.nutritional_impact.carbs_change < 0 %}text-success{% else %}text-muted{% endif %}">
+                            {% if substitution.nutritional_impact.carbs_change > 0 %}+{% endif %}{{ substitution.nutritional_impact.carbs_change }}g
+                          </span>
+                        </div>
+                      </div>
+                      {% endif %}
+                      
+                      {% if substitution.nutritional_impact.fat_change %}
+                      <div class="col-6">
+                        <div class="d-flex justify-content-between">
+                          <span>Fat:</span>
+                          <span class="{% if substitution.nutritional_impact.fat_change > 0 %}text-warning{% elif substitution.nutritional_impact.fat_change < 0 %}text-success{% else %}text-muted{% endif %}">
+                            {% if substitution.nutritional_impact.fat_change > 0 %}+{% endif %}{{ substitution.nutritional_impact.fat_change }}g
+                          </span>
+                        </div>
+                      </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                  {% endif %}
+                  
+                  <!-- Confidence & Source -->
+                  <div class="mt-3 pt-3 border-top">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div class="confidence-score">
+                        <small class="text-muted">Confidence:</small>
+                        <div class="progress" style="width: 80px; height: 8px;">
+                          <div class="progress-bar" role="progressbar" 
+                               style="width: {{ (substitution.confidence_score * 100)|round }}%"
+                               aria-valuenow="{{ (substitution.confidence_score * 100)|round }}" 
+                               aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="text-muted">{{ (substitution.confidence_score * 100)|round }}%</small>
+                      </div>
+                      
+                      {% if substitution.source %}
+                      <small class="text-muted">
+                        <i class="fas fa-external-link-alt me-1"></i>{{ substitution.source }}
+                      </small>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          
+          {% else %}
+          <div class="text-center py-4">
+            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">No substitutions found</h5>
+            <p class="text-muted">We couldn't find any suitable substitutions for "{{ ingredient_name }}".</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Common Substitutions Reference -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white">
+          <h6 class="card-title mb-0">
+            <i class="fas fa-book me-2"></i>Common Substitution Reference
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row g-4">
+            <div class="col-md-6">
+              <h6 class="text-primary">Baking Essentials</h6>
+              <div class="substitution-reference">
+                <div class="ref-item">
+                  <strong>1 cup butter</strong> → 1 cup margarine or ¾ cup oil
+                </div>
+                <div class="ref-item">
+                  <strong>1 cup sugar</strong> → ¾ cup honey (reduce liquid by ¼ cup)
+                </div>
+                <div class="ref-item">
+                  <strong>1 egg</strong> → ¼ cup applesauce or 1 tbsp ground flaxseed + 3 tbsp water
+                </div>
+                <div class="ref-item">
+                  <strong>1 cup milk</strong> → 1 cup plant milk or ½ cup evaporated milk + ½ cup water
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <h6 class="text-primary">Cooking Basics</h6>
+              <div class="substitution-reference">
+                <div class="ref-item">
+                  <strong>1 clove garlic</strong> → ⅛ tsp garlic powder
+                </div>
+                <div class="ref-item">
+                  <strong>1 tbsp fresh herbs</strong> → 1 tsp dried herbs
+                </div>
+                <div class="ref-item">
+                  <strong>1 cup wine</strong> → 1 cup broth + 1 tbsp vinegar
+                </div>
+                <div class="ref-item">
+                  <strong>1 cup heavy cream</strong> → ¾ cup milk + ¼ cup butter
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+.substitution-card {
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+}
+
+.substitution-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background: white;
+}
+
+.substitution-icon {
+  min-width: 50px;
+}
+
+.ingredient-tags {
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.substitution-reference .ref-item {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 0.9rem;
+}
+
+.substitution-reference .ref-item:last-child {
+  border-bottom: none;
+}
+
+.confidence-score {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nutritional-comparison {
+  background: #f8f9fa;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.substitution-ratio {
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .substitution-card {
+    margin-bottom: 1rem;
+  }
+  
+  .d-flex.align-items-start {
+    flex-direction: column;
+  }
+  
+  .substitution-icon {
+    align-self: center;
+    margin-bottom: 0.5rem;
+  }
+}
+</style>
+
+<script>
+function selectIngredient(ingredientName) {
+  // Extract just the ingredient name without quantities
+  const cleanName = ingredientName.replace(/^\d+\s*\w*\s*/, '').replace(/[,\(\)]/g, '').trim();
+  document.getElementById('{{ form.ingredient_name.id }}').value = cleanName;
+}
+
+function loadRecipeIngredients() {
+  // This could be enhanced with AJAX to load ingredients dynamically
+  const recipeSelect = document.getElementById('{{ form.recipe_id.id }}');
+  if (recipeSelect.value) {
+    // Submit form to reload with selected recipe
+    document.forms[0].submit();
+  }
+}
+
+// Auto-suggest functionality for ingredient input
+document.addEventListener('DOMContentLoaded', function() {
+  const ingredientInput = document.getElementById('{{ form.ingredient_name.id }}');
+  
+  // Common ingredients for auto-suggestions
+  const commonIngredients = [
+    'butter', 'milk', 'eggs', 'flour', 'sugar', 'salt', 'pepper', 'garlic',
+    'onion', 'olive oil', 'vanilla extract', 'baking powder', 'baking soda',
+    'chicken', 'beef', 'pork', 'fish', 'cheese', 'tomatoes', 'potatoes',
+    'carrots', 'celery', 'bell peppers', 'mushrooms', 'spinach', 'herbs'
+  ];
+  
+  ingredientInput.addEventListener('input', function() {
+    const value = this.value.toLowerCase();
+    
+    // Simple auto-complete logic could be added here
+    // For now, we'll just provide placeholder functionality
+  });
+});
+</script>
+{% endblock %}

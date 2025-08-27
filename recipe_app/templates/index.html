@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="page-header text-center">
+  <div class="container">
+    <h1 class="display-4 fw-bold mb-3">
+      <i class="fas fa-utensils me-3"></i>Welcome to HomeGrubHub
+    </h1>
+    <p class="lead mb-4">Discover, save, and share your favorite recipes from around the world</p>
+    
+    <!-- Search Bar -->
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <form action="" method="post" novalidate>
+          {{ form.hidden_tag() }}
+          <div class="input-group input-group-lg">
+            {{ form.q(size=20, class="form-control", placeholder="Search recipes, ingredients, or cuisines...") }}
+            <button class="btn btn-light" type="submit">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  {% if current_user.is_authenticated %}
+  
+  <!-- NEW AI FEATURES ANNOUNCEMENT -->
+  <div class="row justify-content-center mb-4">
+    <div class="col-lg-10">
+      <div class="alert alert-primary alert-dismissible fade show border-primary" role="alert">
+        <div class="d-flex align-items-center">
+          <div class="flex-shrink-0 me-3">
+            <i class="fas fa-brain fa-2x text-primary"></i>
+          </div>
+          <div class="flex-grow-1">
+            <h5 class="alert-heading mb-2">
+              <i class="fas fa-star me-2"></i>NEW: Enhanced Family Meal Planning!
+            </h5>
+            <p class="mb-2">Plan family meals, manage shopping lists, and track nutrition with our streamlined family management tools.</p>
+            <div class="d-flex flex-wrap gap-2">
+              <a href="{{ url_for('family.family_dashboard') }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-tachometer-alt me-1"></i>Family Dashboard
+              </a>
+              <a href="{{ url_for('family.family_meal_planning') }}" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-utensils me-1"></i>Meal Planning
+              </a>
+              <a href="{{ url_for('nutrition.nutrition_log_list') }}" class="btn btn-outline-info btn-sm">
+                <i class="fas fa-chart-bar me-1"></i>Nutrition Tracker
+              </a>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Subscription Status -->
+  <div class="row justify-content-center mb-4">
+    <div class="col-lg-8">
+      <div class="card {% if current_user.current_plan == 'Free' %}border-warning{% else %}border-success{% endif %}">
+        <div class="card-body text-center">
+          <div class="row align-items-center">
+            <div class="col-md-4">
+              <h5 class="mb-0">
+                <i class="fas fa-crown me-2 {% if current_user.current_plan == 'Free' %}text-warning{% else %}text-success{% endif %}"></i>
+                {{ current_user.current_plan }} Plan
+              </h5>
+            </div>
+            <div class="col-md-4">
+              <p class="mb-0">
+                <strong>Recipes:</strong> {{ current_user.get_recipe_count() }}
+                {% if current_user.current_plan == 'Free' %}
+                  / {{ current_user.get_recipe_limit() }} (all public)
+                {% else %}
+                  (Unlimited private)
+                {% endif %}
+              </p>
+            </div>
+            <div class="col-md-4">
+              {% if current_user.current_plan == 'Free' %}
+                <a href="{{ url_for('billing.pricing') }}" class="btn btn-warning btn-sm">
+                  <i class="fas fa-arrow-up me-1"></i>Upgrade
+                </a>
+              {% elif current_user.is_on_trial() %}
+                <span class="badge bg-info">
+                  {{ current_user.days_left_in_trial() }} trial days left
+                </span>
+              {% else %}
+                <span class="badge bg-success">Active</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Quick Actions -->
+  <div class="row mb-5">
+    <div class="col-lg-3 col-md-6 mb-3">
+      <div class="card text-center h-100">
+        <div class="card-body">
+          <i class="fas fa-plus-circle fa-3x text-primary mb-3"></i>
+          <h5 class="card-title">Add New Recipe</h5>
+          <p class="card-text">Create your own recipes from scratch</p>
+          {% if not current_user.is_anonymous %}
+          <a href="{{ url_for('main.add_recipe') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Add Recipe
+          </a>
+          {% else %}
+          <a href="{{ url_for('main.login') }}" class="btn btn-outline-primary">
+            <i class="fas fa-sign-in-alt me-2"></i>Login to Add
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+      <div class="card text-center h-100">
+        <div class="card-body">
+          <i class="fas fa-download fa-3x text-info mb-3"></i>
+          <h5 class="card-title">Import Recipe</h5>
+          <p class="card-text">Import from websites and RSS feeds</p>
+          {% if not current_user.is_anonymous %}
+          <a href="{{ url_for('main.import_recipe') }}" class="btn btn-info">
+            <i class="fas fa-download me-2"></i>Import Recipe
+          </a>
+          {% else %}
+          <a href="{{ url_for('main.login') }}" class="btn btn-outline-info">
+            <i class="fas fa-sign-in-alt me-2"></i>Login to Import
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+      <div class="card text-center h-100">
+        <div class="card-body">
+          <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
+          <h5 class="card-title">Nutrition Tracker</h5>
+          <p class="card-text">Track your daily nutrition and reach your health goals</p>
+          {% if not current_user.is_anonymous %}
+          <a href="{{ url_for('nutrition.nutrition_log_list') }}" class="btn btn-success">
+            <i class="fas fa-chart-line me-2"></i>Track Nutrition
+          </a>
+          {% else %}
+          <a href="{{ url_for('main.login') }}" class="btn btn-outline-success">
+            <i class="fas fa-sign-in-alt me-2"></i>Login to Track
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+      <div class="card text-center h-100">
+        <div class="card-body">
+          <i class="fas fa-tags fa-3x text-warning mb-3"></i>
+          <h5 class="card-title">Browse Categories</h5>
+          <p class="card-text">Find recipes by cuisine or dietary preference</p>
+          <a href="{{ url_for('main.tags') }}" class="btn btn-warning">
+            <i class="fas fa-list me-2"></i>Browse Categories
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recipe Statistics -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="card bg-light">
+        <div class="card-body">
+          <div class="row text-center">
+            <div class="col-md-3">
+              <h3 class="text-primary mb-1">{{ stats.total_recipes if stats else (recent_recipes|length if recent_recipes else 0) }}</h3>
+              <p class="text-muted mb-0">Total Recipes</p>
+            </div>
+            <div class="col-md-3">
+              <h3 class="text-success mb-1">{{ stats.total_countries if stats else '0' }}</h3>
+              <p class="text-muted mb-0">Countries</p>
+            </div>
+            <div class="col-md-3">
+              <h3 class="text-warning mb-1">{{ stats.total_categories if stats else '0' }}</h3>
+              <p class="text-muted mb-0">Categories</p>
+            </div>
+            <div class="col-md-3">
+              <h3 class="text-info mb-1">{{ stats.recent_recipes_count if stats else '0' }}</h3>
+              <p class="text-muted mb-0">Recent (7 days)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Recipes -->
+  {% if recent_recipes %}
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="h3 mb-0">
+          <i class="fas fa-clock me-2 text-primary"></i>Recent Recipes
+        </h2>
+        <a href="{{ url_for('main.all_recipes') }}" class="text-decoration-none">View All <i class="fas fa-arrow-right ms-1"></i></a>
+      </div>
+      
+      <div class="row">
+        {% for recipe in recent_recipes[:6] %}
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="card recipe-card">
+            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+              <i class="fas fa-utensils fa-3x text-muted"></i>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">{{ recipe.title }}</h5>
+              <p class="card-text text-muted">
+                {% if recipe.description %}
+                  {{ recipe.description[:100] }}{{ '...' if recipe.description|length > 100 }}
+                {% else %}
+                  A delicious recipe waiting to be discovered.
+                {% endif %}
+              </p>
+              <div class="d-flex justify-content-between align-items-center">
+                <a href="{{ url_for('main.recipe', recipe_id=recipe.id) }}" class="btn btn-primary btn-sm">
+                  <i class="fas fa-eye me-1"></i>View Recipe
+                </a>
+                {% if recipe.country %}
+                <span class="country-badge">
+                  <i class="fas fa-globe me-1"></i>{{ recipe.country }}
+                </span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="row">
+    <div class="col-12 text-center">
+      <div class="card">
+        <div class="card-body py-5">
+          <i class="fas fa-utensils fa-4x text-muted mb-4"></i>
+          <h3 class="text-muted">No recipes yet</h3>
+          <p class="text-muted">Be the first to add a delicious recipe to our collection!</p>
+          {% if not current_user.is_anonymous %}
+          <a href="{{ url_for('main.add_recipe') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Add Your First Recipe
+          </a>
+          {% else %}
+          <a href="{{ url_for('main.login') }}" class="btn btn-primary">
+            <i class="fas fa-sign-in-alt me-2"></i>Login to Add Recipe
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+          <div>
+            <h2 class="card-title mb-0">
+              <i class="fas fa-eye me-2"></i>Review Bulk Import
+            </h2>
+            <p class="card-text mb-0">{{ total_recipes }} recipes loaded - select which ones to save</p>
+          </div>
+          <div>
+            <a href="{{ url_for('main.bulk_import_dataset') }}" class="btn btn-outline-light">
+              <i class="fas fa-arrow-left me-1"></i>Back to Import
+            </a>
+          </div>
+        </div>
+        <div class="card-body">
+          
+          <form method="POST" action="{{ url_for('main.save_bulk_imports') }}">
+            
+            <!-- Bulk Selection Controls -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="selectAll">
+                  <label class="form-check-label fw-bold" for="selectAll">
+                    Select All Recipes
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-6 text-end">
+                <button type="submit" class="btn btn-success">
+                  <i class="fas fa-save me-2"></i>Save Selected Recipes
+                </button>
+              </div>
+            </div>
+            
+            <!-- Recipe Cards -->
+            <div class="row">
+              {% for recipe in recipes %}
+              <div class="col-lg-6 mb-4">
+                <div class="card recipe-preview-card">
+                  <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="form-check">
+                      <input class="form-check-input recipe-checkbox" type="checkbox" 
+                             name="selected_recipes" value="{{ loop.index0 + (pagination.page - 1) * pagination.per_page }}" 
+                             id="recipe{{ loop.index0 }}">
+                      <label class="form-check-label fw-bold" for="recipe{{ loop.index0 }}">
+                        {{ recipe.title[:50] }}{% if recipe.title|length > 50 %}...{% endif %}
+                      </label>
+                    </div>
+                    <small class="text-muted">#{{ loop.index0 + (pagination.page - 1) * pagination.per_page + 1 }}</small>
+                  </div>
+                  <div class="card-body">
+                    
+                    <!-- Recipe Info -->
+                    <div class="row mb-3">
+                      {% if recipe.prep_time or recipe.cook_time %}
+                      <div class="col-6">
+                        <small class="text-muted">
+                          <i class="fas fa-clock me-1"></i>
+                          {% if recipe.prep_time %}{{ recipe.prep_time }}min prep{% endif %}
+                          {% if recipe.prep_time and recipe.cook_time %} | {% endif %}
+                          {% if recipe.cook_time %}{{ recipe.cook_time }}min cook{% endif %}
+                        </small>
+                      </div>
+                      {% endif %}
+                      {% if recipe.servings %}
+                      <div class="col-6">
+                        <small class="text-muted">
+                          <i class="fas fa-users me-1"></i>{{ recipe.servings }} servings
+                        </small>
+                      </div>
+                      {% endif %}
+                    </div>
+                    
+                    <!-- Description -->
+                    {% if recipe.description %}
+                    <p class="card-text text-muted mb-2">
+                      {{ recipe.description[:100] }}{% if recipe.description|length > 100 %}...{% endif %}
+                    </p>
+                    {% endif %}
+                    
+                    <!-- Ingredients Preview -->
+                    <div class="mb-2">
+                      <small class="fw-bold text-success">Ingredients:</small>
+                      <small class="text-muted d-block">
+                        {% set ingredients_lines = recipe.ingredients.split('\n') %}
+                        {% for ingredient in ingredients_lines[:3] %}
+                          {{ ingredient.strip() }}{% if not loop.last %} | {% endif %}
+                        {% endfor %}
+                        {% if ingredients_lines|length > 3 %}
+                          ... and {{ ingredients_lines|length - 3 }} more
+                        {% endif %}
+                      </small>
+                    </div>
+                    
+                    <!-- Method Preview -->
+                    <div class="mb-2">
+                      <small class="fw-bold text-primary">Method:</small>
+                      <small class="text-muted d-block">
+                        {{ recipe.method[:80] }}{% if recipe.method|length > 80 %}...{% endif %}
+                      </small>
+                    </div>
+                    
+                    <!-- Tags -->
+                    {% if recipe.tags %}
+                    <div class="mt-2">
+                      {% set tag_list = recipe.tags.split(',') %}
+                      {% for tag in tag_list[:3] %}
+                      <span class="badge bg-secondary me-1">{{ tag.strip() }}</span>
+                      {% endfor %}
+                      {% if tag_list|length > 3 %}
+                      <span class="badge bg-light text-dark">+{{ tag_list|length - 3 }} more</span>
+                      {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if pagination.total > pagination.per_page %}
+            <nav aria-label="Recipe pagination">
+              <ul class="pagination justify-content-center">
+                {% if pagination.has_prev %}
+                <li class="page-item">
+                  <a class="page-link" href="{{ url_for('main.review_bulk_imports', page=pagination.prev_num) }}">
+                    <i class="fas fa-chevron-left"></i>
+                  </a>
+                </li>
+                {% endif %}
+                
+                {% for page_num in range(1, (pagination.total // pagination.per_page) + 2) %}
+                  {% if page_num <= 10 %}
+                  <li class="page-item {{ 'active' if page_num == pagination.page else '' }}">
+                    <a class="page-link" href="{{ url_for('main.review_bulk_imports', page=page_num) }}">
+                      {{ page_num }}
+                    </a>
+                  </li>
+                  {% endif %}
+                {% endfor %}
+                
+                {% if pagination.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="{{ url_for('main.review_bulk_imports', page=pagination.next_num) }}">
+                    <i class="fas fa-chevron-right"></i>
+                  </a>
+                </li>
+                {% endif %}
+              </ul>
+            </nav>
+            {% endif %}
+            
+            <!-- Bottom Action Bar -->
+            <div class="row mt-4">
+              <div class="col-md-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="selectAllBottom">
+                  <label class="form-check-label fw-bold" for="selectAllBottom">
+                    Select All on This Page
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-6 text-end">
+                <button type="submit" class="btn btn-success btn-lg">
+                  <i class="fas fa-save me-2"></i>Save Selected Recipes
+                </button>
+              </div>
+            </div>
+            
+          </form>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.recipe-preview-card {
+  border-left: 4px solid #28a745;
+  transition: transform 0.2s ease;
+}
+
+.recipe-preview-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.recipe-checkbox:checked + label {
+  color: #28a745;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Select all functionality
+    const selectAllTop = document.getElementById('selectAll');
+    const selectAllBottom = document.getElementById('selectAllBottom');
+    const recipeCheckboxes = document.querySelectorAll('.recipe-checkbox');
+    
+    function updateSelectAll() {
+        const checkedCount = document.querySelectorAll('.recipe-checkbox:checked').length;
+        const totalCount = recipeCheckboxes.length;
+        
+        selectAllTop.checked = checkedCount === totalCount;
+        selectAllBottom.checked = checkedCount === totalCount;
+        
+        selectAllTop.indeterminate = checkedCount > 0 && checkedCount < totalCount;
+        selectAllBottom.indeterminate = checkedCount > 0 && checkedCount < totalCount;
+    }
+    
+    function toggleAll(checked) {
+        recipeCheckboxes.forEach(checkbox => {
+            checkbox.checked = checked;
+        });
+        updateSelectAll();
+    }
+    
+    selectAllTop.addEventListener('change', function() {
+        toggleAll(this.checked);
+    });
+    
+    selectAllBottom.addEventListener('change', function() {
+        toggleAll(this.checked);
+    });
+    
+    recipeCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateSelectAll);
+    });
+    
+    // Initial state
+    updateSelectAll();
+});
+</script>
+{% endblock %}

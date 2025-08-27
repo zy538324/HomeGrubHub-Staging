@@ -1,0 +1,16 @@
+INFO:recipe_app.utils.sendgrid_service:SendGrid API client initialized successfully
+Warning: Using fallback SECRET_KEY. Set SECRET_KEY environment variable for production.
+Database URI: postgresql://postgres:Dedicate3-Deputize-Enchanted-Decency-Affront@localhost:5432/flavorio
+Database URI: postgresql://postgres:Dedicate3-Deputize-Enchanted-Decency-Affront@localhost:5432/flavorio
+Resolved Database Path: C:\inetpub\wwwroot\Flavorio\instance\recipes.db
+Current Working Directory: C:\inetpub\wwwroot\Flavorio
+Traceback (most recent call last):
+  File "C:\inetpub\wwwroot\Flavorio\test_csrf.py", line 80, in <module>
+    test_with_csrf()
+  File "C:\inetpub\wwwroot\Flavorio\test_csrf.py", line 14, in test_with_csrf
+    print("SHOPPING LIST TEST WITH CSRF")
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f9ea' in position 0: character maps to <undefined>

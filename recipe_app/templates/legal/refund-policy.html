@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Refund Policy - HomeGrubHub{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h3 mb-0">Refund Policy</h1>
+                </div>
+                <div class="card-body">
+                    <p class="lead">At HomeGrubHub, we strive to provide excellent service and value to our users.</p>
+                    
+                    <h2>Subscription Refunds</h2>
+                    <h3>Premium Subscriptions</h3>
+                    <ul>
+                        <li><strong>7-Day Money-Back Guarantee:</strong> New premium subscribers can request a full refund within 7 days of their first subscription.</li>
+                        <li><strong>Unused Portion:</strong> If you cancel your subscription, you'll retain access until the end of your current billing period.</li>
+                        <li><strong>No Partial Refunds:</strong> We do not provide partial refunds for partially used billing periods after the 7-day guarantee.</li>
+                    </ul>
+                    
+                    <h3>Annual Subscriptions</h3>
+                    <ul>
+                        <li><strong>30-Day Money-Back Guarantee:</strong> Annual subscribers can request a full refund within 30 days of purchase.</li>
+                        <li><strong>Pro-rated Refunds:</strong> After 30 days, refunds may be considered on a case-by-case basis with pro-rated amounts.</li>
+                    </ul>
+                    
+                    <h2>How to Request a Refund</h2>
+                    <ol>
+                        <li>Contact our support team at <a href="mailto:support@homegrubhub.co.uk">support@homegrubhub.co.uk</a></li>
+                        <li>Include your account email and reason for the refund request</li>
+                        <li>Allow 3-5 business days for processing</li>
+                        <li>Refunds will be processed to the original payment method</li>
+                    </ol>
+                    
+                    <h2>Non-Refundable Items</h2>
+                    <ul>
+                        <li>Free account features and services</li>
+                        <li>Downloadable content that has been accessed</li>
+                        <li>Custom meal plans that have been delivered</li>
+                        <li>Usage fees for API access</li>
+                    </ul>
+                    
+                    <h2>Special Circumstances</h2>
+                    <p>We may consider refunds outside of our standard policy for:</p>
+                    <ul>
+                        <li>Technical issues preventing service access</li>
+                        <li>Billing errors or duplicate charges</li>
+                        <li>Service outages lasting more than 24 hours</li>
+                        <li>Fraudulent or unauthorized charges</li>
+                    </ul>
+                    
+                    <h2>Processing Time</h2>
+                    <ul>
+                        <li><strong>Review:</strong> 1-2 business days</li>
+                        <li><strong>Processing:</strong> 3-5 business days</li>
+                        <li><strong>Bank Processing:</strong> 5-10 business days (varies by payment method)</li>
+                    </ul>
+                    
+                    <div class="alert alert-info">
+                        <h4>Need Help?</h4>
+                        <p class="mb-0">If you have questions about our refund policy or need assistance, please contact our support team at <a href="mailto:support@homegrubhub.co.uk">support@homegrubhub.co.uk</a> or use our <a href="{{ url_for('support.contact_form') }}">contact form</a>.</p>
+                    </div>
+                    
+                    <p class="text-muted mt-4">
+                        <small>This refund policy was last updated on January 1, 2024. We reserve the right to modify this policy at any time with notice to users.</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

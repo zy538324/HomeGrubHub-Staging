@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+{% block title %}Create Family Account - HomeGrubHub{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="mb-0">
+                        <i class="fas fa-home me-2"></i>Create Your Family Account
+                    </h3>
+                    <p class="mb-0">Start collaborative nutrition tracking for your family</p>
+                </div>
+                
+                <div class="card-body">
+                    <!-- Family Tier Benefits -->
+                    <div class="alert alert-info">
+                        <h5><i class="fas fa-star me-2"></i>Family Tier Benefits</h5>
+                        <ul class="mb-0 small">
+                            <li>Support for up to 6 family members</li>
+                            <li>Shared meal planning and shopping lists</li>
+                            <li>Family nutrition challenges and achievements</li>
+                            <li>Parental controls and child-friendly features</li>
+                            <li>Family health insights and reports</li>
+                        </ul>
+                    </div>
+
+                    <form id="create-family-form">
+                        <!-- Family Name -->
+                        <div class="mb-4">
+                            <label for="family_name" class="form-label">
+                                <i class="fas fa-users me-1"></i>Family Name
+                            </label>
+                            <input type="text" class="form-control form-control-lg" 
+                                   id="family_name" name="family_name" 
+                                   placeholder="e.g., The Smith Family"
+                                   required maxlength="100">
+                            <div class="form-text">This will be displayed on your family dashboard</div>
+                        </div>
+
+                        <!-- Maximum Members -->
+                        <div class="mb-4">
+                            <label for="max_members" class="form-label">
+                                <i class="fas fa-user-plus me-1"></i>Maximum Family Members
+                            </label>
+                            <select class="form-select form-select-lg" id="max_members" name="max_members" required>
+                                <option value="2">2 Members</option>
+                                <option value="3">3 Members</option>
+                                <option value="4" selected>4 Members</option>
+                                <option value="5">5 Members</option>
+                                <option value="6">6 Members</option>
+                            </select>
+                            <div class="form-text">You can always add fewer members, but cannot exceed this limit</div>
+                        </div>
+
+                        <!-- Admin Information -->
+                        <div class="alert alert-warning">
+                            <h6><i class="fas fa-crown me-1"></i>Family Administrator</h6>
+                            <p class="mb-1">You will be the primary administrator with full access to:</p>
+                            <ul class="mb-0 small">
+                                <li>Add and remove family members</li>
+                                <li>Manage family settings and permissions</li>
+                                <li>View all family data and reports</li>
+                                <li>Control billing and subscription</li>
+                            </ul>
+                        </div>
+
+                        <!-- Create Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg" id="create-family-btn">
+                                <i class="fas fa-plus-circle me-2"></i>Create Family Account
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Alternative Options -->
+                    <div class="text-center mt-4 pt-4 border-top">
+                        <p class="text-muted mb-2">Already have a family code?</p>
+                        <a href="{{ url_for('family.join_family') }}" class="btn btn-outline-success">
+                            <i class="fas fa-sign-in-alt me-1"></i>Join Existing Family
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Pricing Information -->
+                <div class="card-footer bg-light">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="h5 text-primary mb-1">$9.99</div>
+                            <small class="text-muted">per month</small>
+                        </div>
+                        <div class="col-4">
+                            <div class="h5 text-success mb-1">Up to 6</div>
+                            <small class="text-muted">family members</small>
+                        </div>
+                        <div class="col-4">
+                            <div class="h5 text-info mb-1">Premium</div>
+                            <small class="text-muted">family features</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-body text-center py-4">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h6>Creating your family account...</h6>
+                <p class="text-muted small mb-0">This may take a moment</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-check-circle me-2"></i>Family Account Created!
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <i class="fas fa-home fa-4x text-success mb-3"></i>
+                    <h4>Welcome to the Family Tier!</h4>
+                    <p class="text-muted">Your family account has been successfully created.</p>
+                </div>
+
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-share-alt me-1"></i>Invite Family Members</h6>
+                    <p class="mb-2">Share this family code with your family members:</p>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="family-code" readonly>
+                        <button class="btn btn-outline-secondary" type="button" onclick="copyCode()">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                    <small class="text-muted">They can use this code to join your family account</small>
+                </div>
+
+                <div class="row text-center">
+                    <div class="col-6">
+                        <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                        <h6>Multi-User Support</h6>
+                        <small class="text-muted">Track nutrition for everyone</small>
+                    </div>
+                    <div class="col-6">
+                        <i class="fas fa-calendar-alt fa-2x text-success mb-2"></i>
+                        <h6>Shared Planning</h6>
+                        <small class="text-muted">Collaborate on meal plans</small>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="goToDashboard()">
+                    <i class="fas fa-tachometer-alt me-1"></i>Go to Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+.card {
+    border: none;
+    border-radius: 12px;
+}
+
+.card-header {
+    border-radius: 12px 12px 0 0 !important;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+}
+
+.btn {
+    border-radius: 8px;
+}
+
+.alert {
+    border-radius: 8px;
+}
+
+.bg-primary {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+</style>
+
+<!-- JavaScript -->
+<script>
+document.getElementById('create-family-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = {
+        family_name: formData.get('family_name'),
+        max_members: parseInt(formData.get('max_members'))
+    };
+    
+    // Show loading modal
+    const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+    loadingModal.show();
+    
+    // Disable form
+    document.getElementById('create-family-btn').disabled = true;
+    
+    try {
+        const response = await fetch('{{ url_for("family.create_family_post") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('meta[name=csrf-token]')?.content
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        // Hide loading modal
+        loadingModal.hide();
+        
+        if (result.success) {
+            // Show success modal with family code
+            document.getElementById('family-code').value = result.family_code;
+            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+            
+            // Store redirect URL for later
+            window.redirectUrl = result.redirect;
+            
+        } else {
+            // Show error message
+            showAlert(result.message || 'Failed to create family account', 'danger');
+            document.getElementById('create-family-btn').disabled = false;
+        }
+        
+    } catch (error) {
+        console.error('Error creating family:', error);
+        loadingModal.hide();
+        showAlert('Network error. Please try again.', 'danger');
+        document.getElementById('create-family-btn').disabled = false;
+    }
+});
+
+function copyCode() {
+    const codeInput = document.getElementById('family-code');
+    codeInput.select();
+    document.execCommand('copy');
+    
+    // Visual feedback
+    const button = event.target.closest('button');
+    const originalHTML = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-check"></i>';
+    button.classList.remove('btn-outline-secondary');
+    button.classList.add('btn-success');
+    
+    setTimeout(() => {
+        button.innerHTML = originalHTML;
+        button.classList.remove('btn-success');
+        button.classList.add('btn-outline-secondary');
+    }, 2000);
+}
+
+function goToDashboard() {
+    if (window.redirectUrl) {
+        window.location.href = window.redirectUrl;
+    } else {
+        window.location.href = '{{ url_for("family.family_dashboard") }}';
+    }
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    const container = document.querySelector('.container');
+    container.insertBefore(alertDiv, container.firstChild);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
+
+// Form validation
+document.getElementById('family_name').addEventListener('input', function() {
+    const value = this.value.trim();
+    const isValid = value.length >= 3 && value.length <= 100;
+    
+    this.classList.toggle('is-valid', isValid && value.length > 0);
+    this.classList.toggle('is-invalid', !isValid && value.length > 0);
+});
+</script>
+{% endblock %}

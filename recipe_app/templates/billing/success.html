@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+  <div class="alert alert-success">
+    <h2>Payment Successful!</h2>
+    <p>Your subscription is now active. Thank you for supporting Flavorio!</p>
+    <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary mt-3">Go to Dashboard</a>
+  </div>
+</div>
+{% endblock %}

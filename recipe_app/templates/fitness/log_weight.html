@@ -1,0 +1,365 @@
+{% extends "base.html" %}
+{% block title %}Log Weight{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fitness.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-weight me-2"></i>Log Weight Entry
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="weightLogForm">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <div class="mb-3">
+                            <label for="log_date" class="form-label">Date</label>
+                            <input type="date" 
+                                   class="form-control" 
+                                   id="log_date" 
+                                   name="log_date" 
+                                   required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="weight_unit" class="form-label">Weight Unit</label>
+                            <select class="form-control mb-2" id="weight_unit" name="weight_unit">
+                                <option value="kg" selected>Kilograms (kg)</option>
+                                <option value="lbs">Pounds (lbs)</option>
+                                <option value="st_lbs">Stones & Pounds (st lb)</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Weight input fields that change based on unit -->
+                        <div class="mb-3" id="weight_kg_group" style="display: block;">
+                            <label for="weight_kg" class="form-label">Weight (kg) *</label>
+                            <input type="number" 
+                                   step="0.1" 
+                                   min="1" 
+                                   max="500" 
+                                   class="form-control" 
+                                   id="weight_kg" 
+                                   name="weight_kg">
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Your weight in kilograms
+                            </div>
+                        </div>
+
+                        <div class="mb-3" id="weight_lbs_group" style="display: none;">
+                            <label for="weight_lbs" class="form-label">Weight (lbs) *</label>
+                            <input type="number" 
+                                   step="0.1" 
+                                   min="1" 
+                                   max="1100" 
+                                   class="form-control" 
+                                   id="weight_lbs" 
+                                   name="weight_lbs">
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Your weight in pounds
+                            </div>
+                        </div>
+
+                        <div class="mb-3" id="weight_st_lbs_group" style="display: none;">
+                            <label class="form-label">Weight (Stones & Pounds) *</label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <input type="number" 
+                                           min="0" 
+                                           max="50" 
+                                           class="form-control" 
+                                           id="weight_stones" 
+                                           name="weight_stones" 
+                                           placeholder="Stones">
+                                    <div class="form-text">Stones</div>
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" 
+                                           step="0.1" 
+                                           min="0" 
+                                           max="13.9" 
+                                           class="form-control" 
+                                           id="weight_pounds" 
+                                           name="weight_pounds" 
+                                           placeholder="Pounds">
+                                    <div class="form-text">Pounds</div>
+                                </div>
+                            </div>
+                            <div class="form-text">1 stone = 14 pounds</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="body_fat_percentage" class="form-label">Body Fat Percentage (optional)</label>
+                            <input type="number" 
+                                   step="0.1" 
+                                   min="1" 
+                                   max="50" 
+                                   class="form-control" 
+                                   id="body_fat_percentage" 
+                                   name="body_fat_percentage">
+                            <div class="form-text">If you have body fat measurements</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes (optional)</label>
+                            <textarea class="form-control" 
+                                      id="notes" 
+                                      name="notes" 
+                                      rows="3" 
+                                      placeholder="How are you feeling? Any observations about your progress..."></textarea>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <i class="fas fa-save me-2"></i>Log Weight
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Quick Weight Converter -->
+            <div class="card mt-4">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-exchange-alt me-2"></i>Quick Converter
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <label class="form-label">Pounds</label>
+                            <input type="number" 
+                                   class="form-control form-control-sm" 
+                                   id="pounds" 
+                                   placeholder="lbs"
+                                   step="0.1">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Kilograms</label>
+                            <input type="number" 
+                                   class="form-control form-control-sm" 
+                                   id="kilograms" 
+                                   placeholder="kg"
+                                   step="0.1">
+                        </div>
+                    </div>
+                    <div class="text-center mt-2">
+                        <button type="button" class="btn btn-sm btn-outline-info" id="useKg">
+                            Use kg value above
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tips -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-lightbulb text-warning me-2"></i>Weight Tracking Tips
+                    </h6>
+                    <ul class="list-unstyled small">
+                        <li><i class="fas fa-check text-success me-2"></i>Weigh yourself at the same time each day</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Use the same scale consistently</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Morning weight after bathroom, before eating</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Track trends, not daily fluctuations</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Weight can vary 1-2 kg daily due to fluid retention</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-check-circle me-2"></i>Weight Logged Successfully!
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="successMessage">
+                <!-- Success message will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Continue</button>
+                <a href="{{ url_for('fitness.weight_history') }}" class="btn btn-outline-success">View History</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/fitness-csrf.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('weightLogForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const poundsInput = document.getElementById('pounds');
+    const kgInput = document.getElementById('kilograms');
+    const useKgBtn = document.getElementById('useKg');
+    
+    const weightUnitSelect = document.getElementById('weight_unit');
+    const weightKgGroup = document.getElementById('weight_kg_group');
+    const weightLbsGroup = document.getElementById('weight_lbs_group');
+    const weightStLbsGroup = document.getElementById('weight_st_lbs_group');
+    
+    // Handle weight unit switching
+    function updateWeightDisplay() {
+        // Hide all weight groups
+        weightKgGroup.style.display = 'none';
+        weightLbsGroup.style.display = 'none';
+        weightStLbsGroup.style.display = 'none';
+        
+        // Show the selected group
+        switch(weightUnitSelect.value) {
+            case 'kg':
+                weightKgGroup.style.display = 'block';
+                break;
+            case 'lbs':
+                weightLbsGroup.style.display = 'block';
+                break;
+            case 'st_lbs':
+                weightStLbsGroup.style.display = 'block';
+                break;
+        }
+    }
+    
+    weightUnitSelect.addEventListener('change', updateWeightDisplay);
+    
+    // Initialize display immediately
+    updateWeightDisplay();
+    
+    // Weight converter
+    poundsInput.addEventListener('input', function() {
+        if (this.value) {
+            kgInput.value = (parseFloat(this.value) / 2.205).toFixed(1);
+        } else {
+            kgInput.value = '';
+        }
+    });
+    
+    kgInput.addEventListener('input', function() {
+        if (this.value) {
+            poundsInput.value = (parseFloat(this.value) * 2.205).toFixed(1);
+        } else {
+            poundsInput.value = '';
+        }
+    });
+    
+    useKgBtn.addEventListener('click', function() {
+        if (kgInput.value) {
+            if (weightUnitSelect.value === 'kg') {
+                document.getElementById('weight_kg').value = kgInput.value;
+            } else if (weightUnitSelect.value === 'lbs') {
+                document.getElementById('weight_lbs').value = poundsInput.value;
+            } else if (weightUnitSelect.value === 'st_lbs') {
+                const totalLbs = parseFloat(poundsInput.value);
+                const stones = Math.floor(totalLbs / 14);
+                const remainingLbs = (totalLbs % 14).toFixed(1);
+                document.getElementById('weight_stones').value = stones;
+                document.getElementById('weight_pounds').value = remainingLbs;
+            }
+        }
+    });
+    
+    // Form submission with unit handling
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        let weightKg = 0;
+        
+        // Convert weight to kg based on selected unit
+        const weightUnit = formData.get('weight_unit');
+        if (weightUnit === 'kg') {
+            weightKg = parseFloat(formData.get('weight_kg') || 0);
+        } else if (weightUnit === 'lbs') {
+            const weightLbs = parseFloat(formData.get('weight_lbs') || 0);
+            weightKg = weightLbs / 2.205;
+        } else if (weightUnit === 'st_lbs') {
+            const stones = parseFloat(formData.get('weight_stones') || 0);
+            const pounds = parseFloat(formData.get('weight_pounds') || 0);
+            const totalLbs = (stones * 14) + pounds;
+            weightKg = totalLbs / 2.205;
+        }
+        
+        if (weightKg <= 0) {
+            alert('Please enter a valid weight.');
+            return;
+        }
+        
+        // Prepare JSON data
+        const jsonData = {
+            log_date: formData.get('log_date'),
+            weight_kg: weightKg,
+            body_fat_percentage: formData.get('body_fat_percentage') ? parseFloat(formData.get('body_fat_percentage')) : null,
+            notes: formData.get('notes') || null
+        };
+        
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+        
+        csrfFetch('/fitness/log-weight', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                // Show success message with original units
+                let weightDisplay = `${jsonData.weight_kg.toFixed(1)}kg`;
+                if (weightUnit === 'lbs') {
+                    weightDisplay = `${formData.get('weight_lbs')} lbs (${jsonData.weight_kg.toFixed(1)}kg)`;
+                } else if (weightUnit === 'st_lbs') {
+                    const stones = formData.get('weight_stones');
+                    const pounds = formData.get('weight_pounds');
+                    weightDisplay = `${stones} st ${pounds} lbs (${jsonData.weight_kg.toFixed(1)}kg)`;
+                }
+                
+                document.getElementById('successMessage').innerHTML = `
+                    <p><strong>Weight logged:</strong> ${weightDisplay} on ${jsonData.log_date}</p>
+                    ${jsonData.body_fat_percentage ? `<p><strong>Body fat:</strong> ${jsonData.body_fat_percentage}%</p>` : ''}
+                    ${jsonData.notes ? `<p><strong>Notes:</strong> ${jsonData.notes}</p>` : ''}
+                `;
+                
+                const modal = new bootstrap.Modal(document.getElementById('successModal'));
+                modal.show();
+                
+                // Reset form
+                form.reset();
+                document.getElementById('log_date').value = new Date().toISOString().split('T')[0];
+                updateWeightDisplay();
+            } else {
+                alert('Error logging weight: ' + result.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error logging weight. Please try again.');
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-save me-2"></i>Log Weight';
+        });
+    });
+    
+    // Set today's date by default
+    document.getElementById('log_date').value = new Date().toISOString().split('T')[0];
+});
+</script>
+{% endblock %}

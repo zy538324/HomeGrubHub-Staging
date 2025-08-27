@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+          <i class="fas fa-calendar-week me-2"></i>Weekly Shopping Lists
+        </h2>
+        <div>
+          <a href="{{ url_for('weekly_shopping.current_week') }}" class="btn btn-outline-secondary me-2">
+            <i class="fas fa-list me-1"></i>This Week's List
+          </a>
+          <a href="/barcode-scanner" class="btn btn-primary">
+            <i class="fas fa-camera me-1"></i>Scan Items
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    {% for week in weeks %}
+    <div class="col-md-6 col-lg-3 mb-4">
+      <div class="card h-100 shadow-sm {% if loop.index == 1 %}border-primary{% endif %}">
+        <div class="card-header {% if loop.index == 1 %}bg-primary text-white{% else %}bg-light{% endif %}">
+          <div class="d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">
+              {% if loop.index == 1 %}
+                <i class="fas fa-star me-1"></i>This Week
+              {% else %}
+                Week {{ loop.index }}
+              {% endif %}
+            </h6>
+            <small class="{% if loop.index == 1 %}text-light{% else %}text-muted{% endif %}">
+              {{ week.week_start_date.strftime('%b %d') }} - {{ week.week_end_date.strftime('%b %d') }}
+            </small>
+          </div>
+          <div class="mt-1">
+            <small class="{% if loop.index == 1 %}text-light{% else %}text-muted{% endif %}">
+              {{ week.week_label }}
+            </small>
+          </div>
+        </div>
+        
+        <div class="card-body">
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="text-muted">Items:</span>
+              <span class="badge bg-secondary">{{ week.items.count() }}</span>
+            </div>
+            
+            {% if week.items.count() > 0 %}
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="text-muted">Purchased:</span>
+              <span class="badge bg-success">{{ week.items.filter_by(is_purchased=True).count() }}</span>
+            </div>
+            
+            {% if week.total_estimated_cost %}
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="text-muted">Budget:</span>
+              <span class="text-success">${{ "%.2f"|format(week.total_estimated_cost) }}</span>
+            </div>
+            {% endif %}
+            
+            {% if week.total_actual_cost > 0 %}
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="text-muted">Spent:</span>
+              <span class="text-primary">${{ "%.2f"|format(week.total_actual_cost) }}</span>
+            </div>
+            {% endif %}
+            
+            <!-- Progress Bar -->
+            <div class="mt-3">
+              <div class="progress" style="height: 8px;">
+                {% set progress = (week.items.filter_by(is_purchased=True).count() / week.items.count() * 100) if week.items.count() > 0 else 0 %}
+                <div class="progress-bar bg-success" style="width: {{ progress }}%"></div>
+              </div>
+              <small class="text-muted">{{ progress|round }}% complete</small>
+            </div>
+            {% endif %}
+          </div>
+          
+          <!-- Status Badge -->
+          <div class="mb-3">
+            {% if week.status == 'planning' %}
+              <span class="badge bg-info">Planning</span>
+            {% elif week.status == 'active' %}
+              <span class="badge bg-warning">Active</span>
+            {% elif week.status == 'completed' %}
+              <span class="badge bg-success">Completed</span>
+            {% endif %}
+          </div>
+          
+          <!-- Quick Preview of Items -->
+          {% if week.items.limit(3).all() %}
+          <div class="mb-3">
+            <small class="text-muted d-block mb-1">Preview:</small>
+            {% for item in week.items.limit(3) %}
+            <small class="d-block {% if item.is_purchased %}text-decoration-line-through text-muted{% endif %}">
+              • {{ item.item_name }}
+            </small>
+            {% endfor %}
+            {% if week.items.count() > 3 %}
+            <small class="text-muted">... and {{ week.items.count() - 3 }} more</small>
+            {% endif %}
+          </div>
+          {% endif %}
+        </div>
+        
+        <div class="card-footer bg-transparent">
+          <div class="d-grid gap-2">
+            <a href="{{ url_for('weekly_shopping.view_week', week_id=week.id) }}" 
+               class="btn btn-{% if loop.index == 1 %}primary{% else %}outline-primary{% endif %} btn-sm">
+              <i class="fas fa-eye me-1"></i>View & Edit
+            </a>
+            
+            {% if loop.index > 1 and week.items.count() == 0 %}
+            <button class="btn btn-outline-secondary btn-sm" 
+                    onclick="copyFromPrevious({{ weeks[loop.index-2].id }}, {{ week.id }})">
+              <i class="fas fa-copy me-1"></i>Copy from Previous
+            </button>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  
+  <!-- Quick Add Section -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h6 class="mb-0">
+            <i class="fas fa-plus me-2"></i>Quick Add to This Week
+          </h6>
+        </div>
+        <div class="card-body">
+          <form id="quickAddForm" class="row g-3">
+            <div class="col-md-4">
+              <label for="itemName" class="form-label">Item Name</label>
+              <input type="text" class="form-control" id="itemName" placeholder="e.g., Milk, Bread" required>
+            </div>
+            <div class="col-md-2">
+              <label for="quantity" class="form-label">Quantity</label>
+              <input type="number" class="form-control" id="quantity" value="1" min="1" step="0.1">
+            </div>
+            <div class="col-md-2">
+              <label for="category" class="form-label">Category</label>
+              <select class="form-select" id="category">
+                <option value="Other">Other</option>
+                <option value="Dairy & Eggs">Dairy & Eggs</option>
+                <option value="Meat & Seafood">Meat & Seafood</option>
+                <option value="Fresh Produce">Fresh Produce</option>
+                <option value="Pantry Staples">Pantry Staples</option>
+                <option value="Frozen Foods">Frozen Foods</option>
+                <option value="Beverages">Beverages</option>
+                <option value="Snacks">Snacks</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label for="estimatedCost" class="form-label">Est. Cost</label>
+              <input type="number" class="form-control" id="estimatedCost" step="0.01" placeholder="0.00">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">&nbsp;</label>
+              <button type="submit" class="btn btn-primary d-block">
+                <i class="fas fa-plus me-1"></i>Add
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('quickAddForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const formData = {
+    name: document.getElementById('itemName').value,
+    quantity: document.getElementById('quantity').value,
+    category: document.getElementById('category').value,
+    estimated_cost: document.getElementById('estimatedCost').value || null
+  };
+  
+  if (!formData.name.trim()) {
+    alert('Please enter an item name');
+    return;
+  }
+  
+  // Add to current week (first week in the list)
+  const currentWeekId = {{ weeks[0].id }};
+  
+  fetch(`/weekly-shopping/api/week/${currentWeekId}/add-item`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': '{{ csrf_token() }}'
+    },
+    body: JSON.stringify(formData)
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Reset form
+      document.getElementById('quickAddForm').reset();
+      document.getElementById('quantity').value = '1';
+      
+      // Show success message
+      showAlert('success', data.message);
+      
+      // Reload page to update counts
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      showAlert('danger', data.error || 'Failed to add item');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    showAlert('danger', 'Failed to add item');
+  });
+});
+
+function copyFromPrevious(sourceWeekId, targetWeekId) {
+  if (!confirm('Copy all unpurchased items from the previous week?')) {
+    return;
+  }
+  
+  fetch(`/weekly-shopping/api/week/${sourceWeekId}/copy-to-next`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': '{{ csrf_token() }}'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      showAlert('success', data.message);
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      showAlert('danger', data.error || 'Failed to copy items');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    showAlert('danger', 'Failed to copy items');
+  });
+}
+
+function showAlert(type, message) {
+  const alertDiv = document.createElement('div');
+  alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+  alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 1050; min-width: 300px;';
+  alertDiv.innerHTML = `
+    ${message}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  `;
+  document.body.appendChild(alertDiv);
+  
+  // Auto-remove after 3 seconds
+  setTimeout(() => {
+    if (alertDiv.parentNode) {
+      alertDiv.remove();
+    }
+  }, 3000);
+}
+</script>
+
+<style>
+.card {
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.progress {
+  border-radius: 10px;
+}
+
+.badge {
+  font-size: 0.75em;
+}
+</style>
+{% endblock %}

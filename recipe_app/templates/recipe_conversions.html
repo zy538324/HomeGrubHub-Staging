@@ -1,0 +1,627 @@
+{% extends "base.html" %}
+
+{% block head %}
+<meta name="csrf-token" content="{{ csrf_token() }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <!-- Page Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <h1 class="display-6 mb-2">
+            <i class="fas fa-calculator me-3 text-success"></i>Recipe Tools
+          </h1>
+          {% if recipe %}
+          <p class="text-muted mb-0">Convert measurements and adjust serving sizes for: <strong>{{ recipe.title }}</strong></p>
+          {% else %}
+          <p class="text-muted mb-0">Select a recipe to use conversion tools</p>
+          {% endif %}
+        </div>
+        {% if recipe %}
+        <div class="d-flex gap-2">
+          <a href="{{ url_for('main.recipe', recipe_id=recipe.id) }}" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left me-1"></i>Back to Recipe
+          </a>
+        </div>
+        {% endif %}
+      </div>
+      <hr class="my-4">
+    </div>
+  </div>
+
+  {% if recipe %}
+  <div class="row">
+    <!-- Serving Size Adjuster -->
+    <div class="col-lg-6 mb-4">
+      <div class="card h-100 border-0 shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-users me-2"></i>Adjust Serving Size
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label for="original-servings" class="form-label">Original Recipe Serves:</label>
+            <input type="number" class="form-control" id="original-servings" 
+                   value="{{ recipe.servings or 4 }}" min="1" max="50">
+          </div>
+          
+          <div class="mb-3">
+            <label for="target-servings" class="form-label">I want to serve:</label>
+            <input type="number" class="form-control" id="target-servings" 
+                   value="3" min="1" max="50">
+          </div>
+          
+          <div class="mb-3">
+            <div class="d-flex gap-1 flex-wrap">
+              <button class="btn btn-outline-primary btn-sm serving-preset" data-servings="1">1 person</button>
+              <button class="btn btn-outline-primary btn-sm serving-preset" data-servings="2">2 people</button>
+              <button class="btn btn-outline-primary btn-sm serving-preset" data-servings="4">4 people</button>
+              <button class="btn btn-outline-primary btn-sm serving-preset" data-servings="6">6 people</button>
+              <button class="btn btn-outline-primary btn-sm serving-preset" data-servings="8">8 people</button>
+            </div>
+          </div>
+          
+          <button class="btn btn-primary w-100" id="adjust-servings-btn">
+            <i class="fas fa-magic me-1"></i>Adjust Ingredients
+          </button>
+          
+          <button class="btn btn-outline-info w-100 mt-2" id="test-btn">
+            <i class="fas fa-flask me-1"></i>Test Connection
+          </button>
+          
+          <div id="serving-multiplier" class="mt-2 text-center" style="display: none;">
+            <small class="text-muted">Multiplier: <span id="multiplier-value"></span></small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metric Converter -->
+    <div class="col-lg-6 mb-4">
+      <div class="card h-100 border-0 shadow-sm">
+        <div class="card-header bg-success text-white">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-balance-scale me-2"></i>Convert to Metric
+          </h5>
+        </div>
+        <div class="card-body">
+          <p class="text-muted mb-3">Convert US measurements (cups, ounces, pounds, Fahrenheit) to metric units</p>
+          <p class="small text-info mb-3">
+            <i class="fas fa-info-circle me-1"></i>
+            This will convert whatever ingredients are currently displayed (original or adjusted servings)
+          </p>
+          
+          <button class="btn btn-success w-100 mb-3" id="convert-all-btn">
+            <i class="fas fa-exchange-alt me-1"></i>Convert Current Ingredients to Metric
+          </button>
+          
+          <div class="conversion-info">
+            <h6>Common Conversions:</h6>
+            <ul class="small text-muted">
+              <li>1 cup = 237 ml</li>
+              <li>1 tablespoon = 15 ml</li>
+              <li>1 teaspoon = 5 ml</li>
+              <li>1 pound = 454 g</li>
+              <li>1 ounce = 28 g</li>
+              <li>350°F = 175°C</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ingredients Display -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-light">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-list me-2"></i>Ingredients
+            </h5>
+            <div class="btn-group btn-group-sm" role="group">
+              <button type="button" class="btn btn-outline-secondary active" id="show-original">Original</button>
+              <button type="button" class="btn btn-outline-secondary" id="show-adjusted">Adjusted</button>
+              <button type="button" class="btn btn-outline-secondary" id="show-metric">Metric</button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- Original Ingredients -->
+          <div id="original-ingredients" class="ingredients-section">
+            <pre class="ingredient-text">{{ recipe.ingredients }}</pre>
+          </div>
+          
+          <!-- Adjusted Ingredients -->
+          <div id="adjusted-ingredients" class="ingredients-section" style="display: none;">
+            <pre class="ingredient-text" id="adjusted-text">{{ recipe.ingredients }}</pre>
+          </div>
+          
+          <!-- Metric Ingredients -->
+          <div id="metric-ingredients" class="ingredients-section" style="display: none;">
+            <pre class="ingredient-text">{{ metric_ingredients }}</pre>
+          </div>
+        </div>
+        <div class="card-footer bg-transparent">
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-primary btn-sm" id="copy-ingredients">
+              <i class="fas fa-copy me-1"></i>Copy Ingredients
+            </button>
+            <button class="btn btn-outline-success btn-sm" id="print-recipe">
+              <i class="fas fa-print me-1"></i>Print Recipe
+            </button>
+            <button class="btn btn-outline-warning btn-sm" id="save-conversion" style="display: none;" data-conversion-id="">
+              <i class="fas fa-bookmark me-1"></i>Save Conversion
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Method Section -->
+  {% if recipe.method %}
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-light">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-list-ol me-2"></i>Method
+          </h5>
+        </div>
+        <div class="card-body">
+          <pre class="method-text">{{ recipe.method }}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+.ingredient-text, .method-text {
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.serving-preset.active {
+  background-color: var(--bs-primary);
+  color: white;
+  border-color: var(--bs-primary);
+}
+
+.conversion-info ul {
+  margin-bottom: 0;
+}
+
+.card-header {
+  border-bottom: 1px solid rgba(0,0,0,0.125);
+}
+
+.ingredients-section {
+  min-height: 200px;
+}
+
+@media print {
+  .card-header, .btn, .navbar, .card-footer {
+    display: none !important;
+  }
+  
+  .card {
+    border: none !important;
+    box-shadow: none !important;
+  }
+}
+</style>
+
+{% else %}
+<!-- No recipe selected -->
+<div class="row">
+  <div class="col-12">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body text-center py-5">
+        <i class="fas fa-calculator fa-4x text-muted mb-4"></i>
+        <h3 class="text-muted mb-3">No Recipe Selected</h3>
+        <p class="text-muted mb-4">To use the recipe conversion tools, please select a recipe first.</p>
+        <a href="{{ url_for('main.all_recipes') }}" class="btn btn-primary">
+          <i class="fas fa-th-large me-2"></i>Browse Recipes
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+</div>
+</div>
+
+<script>
+{% if recipe %}
+document.addEventListener('DOMContentLoaded', function() {
+    // Get CSRF token from meta tag
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
+    const originalServingsInput = document.getElementById('original-servings');
+    const targetServingsInput = document.getElementById('target-servings');
+    const adjustServingsBtn = document.getElementById('adjust-servings-btn');
+    const convertAllBtn = document.getElementById('convert-all-btn');
+    const servingPresets = document.querySelectorAll('.serving-preset');
+    const multiplierDisplay = document.getElementById('serving-multiplier');
+    const multiplierValue = document.getElementById('multiplier-value');
+    
+    // View switching
+    const showOriginalBtn = document.getElementById('show-original');
+    const showAdjustedBtn = document.getElementById('show-adjusted');
+    const showMetricBtn = document.getElementById('show-metric');
+    
+    const originalSection = document.getElementById('original-ingredients');
+    const adjustedSection = document.getElementById('adjusted-ingredients');
+    const metricSection = document.getElementById('metric-ingredients');
+    
+    // Serving preset buttons
+    servingPresets.forEach(btn => {
+        btn.addEventListener('click', function() {
+            servingPresets.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            targetServingsInput.value = this.dataset.servings;
+            updateMultiplier();
+        });
+    });
+    
+    // Update multiplier display
+    function updateMultiplier() {
+        const original = parseFloat(originalServingsInput.value) || 1;
+        const target = parseFloat(targetServingsInput.value) || 1;
+        const multiplier = (target / original).toFixed(2);
+        multiplierValue.textContent = multiplier + 'x';
+        multiplierDisplay.style.display = 'block';
+    }
+    
+    originalServingsInput.addEventListener('input', updateMultiplier);
+    targetServingsInput.addEventListener('input', updateMultiplier);
+    
+    // Initial multiplier calculation
+    updateMultiplier();
+    
+    // Test button for debugging
+    document.getElementById('test-btn').addEventListener('click', function() {
+        console.log('Test button clicked');
+        
+        this.disabled = true;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Testing...';
+        
+        fetch('/test-adjust', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                test: 'hello',
+                timestamp: new Date().toISOString()
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Test response:', data);
+            this.disabled = false;
+            this.innerHTML = '<i class="fas fa-flask me-1"></i>Test Connection';
+            showToast('Test successful: ' + data.message, 'success');
+        })
+        .catch(error => {
+            console.error('Test error:', error);
+            this.disabled = false;
+            this.innerHTML = '<i class="fas fa-flask me-1"></i>Test Connection';
+            showToast('Test failed: ' + error.message, 'error');
+        });
+    });
+    
+    // Adjust servings
+    adjustServingsBtn.addEventListener('click', function() {
+        console.log('Adjust servings button clicked');
+        
+        const originalServings = parseInt(originalServingsInput.value);
+        const targetServings = parseInt(targetServingsInput.value);
+        const ingredientsElement = document.querySelector('#original-ingredients .ingredient-text');
+        const ingredients = ingredientsElement ? ingredientsElement.textContent.trim() : '';
+        
+        console.log('Original servings:', originalServings);
+        console.log('Target servings:', targetServings);
+        console.log('Ingredients element:', ingredientsElement);
+        console.log('Ingredients text:', ingredients);
+        
+        // Validation
+        if (!ingredients) {
+            showToast('No ingredients found to adjust', 'error');
+            return;
+        }
+        
+        if (isNaN(originalServings) || isNaN(targetServings) || originalServings <= 0 || targetServings <= 0) {
+            showToast('Please enter valid serving sizes', 'error');
+            return;
+        }
+        
+        // Show loading state
+        adjustServingsBtn.disabled = true;
+        adjustServingsBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Adjusting...';
+        
+        const requestData = {
+            ingredients: ingredients,
+            original_servings: originalServings,
+            target_servings: targetServings,
+            recipe_id: {{ recipe.id }}
+        };
+        
+        console.log('Sending request data:', requestData);
+        
+        fetch('/adjust-servings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Response data:', data);
+            
+            // Reset button
+            adjustServingsBtn.disabled = false;
+            adjustServingsBtn.innerHTML = '<i class="fas fa-magic me-1"></i>Adjust Ingredients';
+            
+            if (data.success) {
+                const adjustedTextElement = document.getElementById('adjusted-text');
+                if (adjustedTextElement) {
+                    adjustedTextElement.textContent = data.adjusted_ingredients;
+                    showAdjusted();
+                    showToast(`Ingredients adjusted for ${data.target_servings} servings (${data.multiplier.toFixed(2)}x)`, 'success');
+                    
+                    // Show save button if conversion was created
+                    if (data.conversion_id) {
+                        showSaveButton(data.conversion_id);
+                    }
+                } else {
+                    showToast('Error: Could not find adjusted text element', 'error');
+                }
+            } else {
+                showToast('Error adjusting ingredients: ' + (data.message || 'Unknown error'), 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            
+            // Reset button
+            adjustServingsBtn.disabled = false;
+            adjustServingsBtn.innerHTML = '<i class="fas fa-magic me-1"></i>Adjust Ingredients';
+            
+            showToast('Network error: Could not adjust ingredients', 'error');
+        });
+    });
+    
+    // Convert to metric
+    convertAllBtn.addEventListener('click', function() {
+        console.log('Convert to metric button clicked');
+        
+        // Get the currently visible ingredients
+        let currentIngredients = '';
+        const activeSection = document.querySelector('.ingredients-section:not([style*="display: none"]) .ingredient-text');
+        
+        if (activeSection) {
+            currentIngredients = activeSection.textContent.trim();
+        } else {
+            // Fallback to original ingredients
+            const originalIngredientsElement = document.querySelector('#original-ingredients .ingredient-text');
+            currentIngredients = originalIngredientsElement ? originalIngredientsElement.textContent.trim() : '';
+        }
+        
+        console.log('Current ingredients to convert:', currentIngredients);
+        
+        if (!currentIngredients) {
+            showToast('No ingredients found to convert', 'error');
+            return;
+        }
+        
+        // Show loading state
+        convertAllBtn.disabled = true;
+        convertAllBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Converting...';
+        
+        fetch('/convert-to-metric', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                ingredients: currentIngredients,
+                recipe_id: {{ recipe.id }}
+            })
+        })
+        .then(response => {
+            console.log('Metric conversion response status:', response.status);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Metric conversion response data:', data);
+            
+            // Reset button
+            convertAllBtn.disabled = false;
+            convertAllBtn.innerHTML = '<i class="fas fa-exchange-alt me-1"></i>Convert Current Ingredients to Metric';
+            
+            if (data.success) {
+                const metricTextElement = document.querySelector('#metric-ingredients .ingredient-text');
+                if (metricTextElement) {
+                    metricTextElement.textContent = data.metric_ingredients;
+                    showMetric();
+                    showToast('Ingredients converted to metric!', 'success');
+                    
+                    // Show save button if conversion was created
+                    if (data.conversion_id) {
+                        showSaveButton(data.conversion_id);
+                    }
+                } else {
+                    showToast('Error: Could not find metric text element', 'error');
+                }
+            } else {
+                showToast('Error converting to metric: ' + (data.message || 'Unknown error'), 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Metric conversion error:', error);
+            
+            // Reset button
+            convertAllBtn.disabled = false;
+            convertAllBtn.innerHTML = '<i class="fas fa-exchange-alt me-1"></i>Convert Current Ingredients to Metric';
+            
+            showToast('Network error: Could not convert to metric', 'error');
+        });
+    });
+    
+    // View switching functions
+    function showOriginal() {
+        originalSection.style.display = 'block';
+        adjustedSection.style.display = 'none';
+        metricSection.style.display = 'none';
+        
+        showOriginalBtn.classList.add('active');
+        showAdjustedBtn.classList.remove('active');
+        showMetricBtn.classList.remove('active');
+    }
+    
+    function showAdjusted() {
+        originalSection.style.display = 'none';
+        adjustedSection.style.display = 'block';
+        metricSection.style.display = 'none';
+        
+        showOriginalBtn.classList.remove('active');
+        showAdjustedBtn.classList.add('active');
+        showMetricBtn.classList.remove('active');
+    }
+    
+    function showMetric() {
+        originalSection.style.display = 'none';
+        adjustedSection.style.display = 'none';
+        metricSection.style.display = 'block';
+        
+        showOriginalBtn.classList.remove('active');
+        showAdjustedBtn.classList.remove('active');
+        showMetricBtn.classList.add('active');
+    }
+    
+    showOriginalBtn.addEventListener('click', showOriginal);
+    showAdjustedBtn.addEventListener('click', showAdjusted);
+    showMetricBtn.addEventListener('click', showMetric);
+    
+    // Copy ingredients
+    document.getElementById('copy-ingredients').addEventListener('click', function() {
+        const activeSection = document.querySelector('.ingredients-section:not([style*="display: none"]) .ingredient-text');
+        const text = activeSection.textContent;
+        
+        navigator.clipboard.writeText(text).then(function() {
+            showToast('Ingredients copied to clipboard!', 'success');
+        }, function() {
+            showToast('Failed to copy ingredients', 'error');
+        });
+    });
+    
+    // Print recipe
+    document.getElementById('print-recipe').addEventListener('click', function() {
+        window.print();
+    });
+    
+    // Save conversion functionality
+    const saveConversionBtn = document.getElementById('save-conversion');
+    let currentConversionId = null;
+    
+    function showSaveButton(conversionId) {
+        if (conversionId) {
+            currentConversionId = conversionId;
+            saveConversionBtn.setAttribute('data-conversion-id', conversionId);
+            saveConversionBtn.style.display = 'inline-block';
+        }
+    }
+    
+    saveConversionBtn.addEventListener('click', function() {
+        const conversionId = this.getAttribute('data-conversion-id');
+        if (!conversionId) return;
+        
+        this.disabled = true;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Saving...';
+        
+        fetch(`/save-conversion/${conversionId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            this.disabled = false;
+            if (data.success) {
+                if (data.is_saved) {
+                    this.innerHTML = '<i class="fas fa-bookmark-check me-1"></i>Saved!';
+                    this.classList.remove('btn-outline-warning');
+                    this.classList.add('btn-warning');
+                } else {
+                    this.innerHTML = '<i class="fas fa-bookmark me-1"></i>Save Conversion';
+                    this.classList.remove('btn-warning');
+                    this.classList.add('btn-outline-warning');
+                }
+                showToast(data.message, 'success');
+            } else {
+                this.innerHTML = '<i class="fas fa-bookmark me-1"></i>Save Conversion';
+                showToast('Error saving conversion: ' + (data.message || 'Unknown error'), 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Save conversion error:', error);
+            this.disabled = false;
+            this.innerHTML = '<i class="fas fa-bookmark me-1"></i>Save Conversion';
+            showToast('Network error: Could not save conversion', 'error');
+        });
+    });
+    
+    // Toast notification function
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show position-fixed`;
+        toast.style.top = '20px';
+        toast.style.right = '20px';
+        toast.style.zIndex = '9999';
+        toast.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    }
+});
+{% endif %}
+</script>
+{% endblock %}

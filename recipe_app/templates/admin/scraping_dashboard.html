@@ -1,0 +1,482 @@
+{% extends "base.html" %}
+
+{% block title %}Scraping System Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1>Scraping System Dashboard</h1>
+            <p class="text-muted">Manage the UK supermarket price scraping system</p>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Products</h5>
+                    <h2>{{ total_products }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Prices</h5>
+                    <h2>{{ total_prices }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Last 24h</h5>
+                    <h2>{{ recent_prices }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Store Count</h5>
+                    <h2>{{ store_stats|length }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Store Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Store Breakdown</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Store</th>
+                                <th>Price Records</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for store, count in store_stats %}
+                            <tr>
+                                <td>{{ store.title() }}</td>
+                                <td>{{ count }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#testScrapingModal">
+                            Test Product Scraping
+                        </button>
+                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#categoryScrapingModal">
+                            Scrape Category
+                        </button>
+                        <a href="{{ url_for('admin_scraping.list_products') }}" class="btn btn-info">
+                            View All Products
+                        </a>
+                        <a href="{{ url_for('admin_scraping.scraping_logs') }}" class="btn btn-secondary">
+                            View Scraping Logs
+                        </a>
+                        <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#cleanupModal">
+                            Cleanup Old Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent Scraping Logs</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Store</th>
+                                    <th>Category</th>
+                                    <th>Status</th>
+                                    <th>Products</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in recent_logs %}
+                                <tr>
+                                    <td>{{ log.started_at.strftime('%m/%d %H:%M') }}</td>
+                                    <td>{{ log.store.title() if log.store else '-' }}</td>
+                                    <td>{{ log.category or log.search_term or '-' }}</td>
+                                    <td>
+                                        {% if log.status == 'completed' %}
+                                            <span class="badge bg-success">{{ log.status }}</span>
+                                        {% elif log.status == 'failed' %}
+                                            <span class="badge bg-danger">{{ log.status }}</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">{{ log.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ log.products_saved or 0 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent Products</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Store</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for price in recent_products %}
+                                <tr>
+                                    <td>{{ price.product.name[:30] }}{% if price.product.name|length > 30 %}...{% endif %}</td>
+                                    <td>£{{ "%.2f"|format(price.price) }}</td>
+                                    <td>{{ price.store.title() }}</td>
+                                    <td>{{ price.scraped_at.strftime('%m/%d %H:%M') }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Test Scraping Modal -->
+<div class="modal fade" id="testScrapingModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Test Product Scraping</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="testScrapingForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="productName" class="form-label">Product Name</label>
+                        <input type="text" class="form-control" id="productName" name="product_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="storeSelect" class="form-label">Store</label>
+                        <select class="form-select" id="storeSelect" name="store">
+                            <option value="tesco">Tesco</option>
+                            <option value="sainsburys">Sainsbury's</option>
+                            <option value="asda">ASDA</option>
+                            <option value="morrisons">Morrisons</option>
+                        </select>
+                    </div>
+                    <div id="testResults" class="d-none">
+                        <h6>Results:</h6>
+                        <div id="testResultsContent"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Test Scraping</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Category Scraping Modal -->
+<div class="modal fade" id="categoryScrapingModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Scrape Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="categoryScrapingForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="categoryName" class="form-label">Category</label>
+                        <select class="form-select" id="categoryName" name="category">
+                            <option value="dairy">Dairy</option>
+                            <option value="meat">Meat</option>
+                            <option value="vegetables">Vegetables</option>
+                            <option value="fruits">Fruits</option>
+                            <option value="pantry">Pantry</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Stores to Scrape</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="stores" value="tesco" id="tesco" checked>
+                            <label class="form-check-label" for="tesco">Tesco</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="stores" value="sainsburys" id="sainsburys" checked>
+                            <label class="form-check-label" for="sainsburys">Sainsbury's</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="stores" value="asda" id="asda">
+                            <label class="form-check-label" for="asda">ASDA</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="stores" value="morrisons" id="morrisons">
+                            <label class="form-check-label" for="morrisons">Morrisons</label>
+                        </div>
+                    </div>
+                    <div id="categoryResults" class="d-none">
+                        <h6>Results:</h6>
+                        <div id="categoryResultsContent"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">Start Scraping</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Cleanup Modal -->
+<div class="modal fade" id="cleanupModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cleanup Old Data</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="cleanupForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="cleanupDays" class="form-label">Remove data older than (days)</label>
+                        <input type="number" class="form-control" id="cleanupDays" name="days" value="30" min="1" max="365">
+                    </div>
+                    <div class="alert alert-warning">
+                        <strong>Warning:</strong> This will permanently delete old scraping data and logs.
+                    </div>
+                    <div id="cleanupResults" class="d-none">
+                        <h6>Results:</h6>
+                        <div id="cleanupResultsContent"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-warning">Cleanup Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Test scraping form
+document.getElementById('testScrapingForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const submitBtn = this.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Testing...';
+    
+    fetch('{{ url_for("admin_scraping.test_scraping") }}', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultsDiv = document.getElementById('testResults');
+        const contentDiv = document.getElementById('testResultsContent');
+        
+        if (data.success) {
+            contentDiv.innerHTML = `
+                <div class="alert alert-success">
+                    <strong>Success!</strong><br>
+                    Found ${data.products_found} products, saved ${data.products_saved} to database.
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr><th>Product</th><th>Price</th><th>Store</th></tr>
+                        </thead>
+                        <tbody>
+                            ${data.sample_products.map(p => `
+                                <tr>
+                                    <td>${p.name.substring(0, 30)}${p.name.length > 30 ? '...' : ''}</td>
+                                    <td>£${p.price.toFixed(2)}</td>
+                                    <td>${p.store}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        } else {
+            contentDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <strong>Error:</strong> ${data.error}
+                </div>
+            `;
+        }
+        
+        resultsDiv.classList.remove('d-none');
+    })
+    .catch(error => {
+        document.getElementById('testResultsContent').innerHTML = `
+            <div class="alert alert-danger">
+                <strong>Error:</strong> ${error.message}
+            </div>
+        `;
+        document.getElementById('testResults').classList.remove('d-none');
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Test Scraping';
+    });
+});
+
+// Category scraping form
+document.getElementById('categoryScrapingForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const submitBtn = this.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Scraping...';
+    
+    fetch('{{ url_for("admin_scraping.scrape_category") }}', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultsDiv = document.getElementById('categoryResults');
+        const contentDiv = document.getElementById('categoryResultsContent');
+        
+        if (data.success) {
+            contentDiv.innerHTML = `
+                <div class="alert alert-success">
+                    <strong>Success!</strong><br>
+                    Total products saved: ${data.total_saved}
+                </div>
+                <table class="table table-sm">
+                    <thead>
+                        <tr><th>Store</th><th>Products Saved</th></tr>
+                    </thead>
+                    <tbody>
+                        ${Object.entries(data.store_results).map(([store, count]) => `
+                            <tr>
+                                <td>${store.charAt(0).toUpperCase() + store.slice(1)}</td>
+                                <td>${count}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        } else {
+            contentDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <strong>Error:</strong> ${data.error}
+                </div>
+            `;
+        }
+        
+        resultsDiv.classList.remove('d-none');
+    })
+    .catch(error => {
+        document.getElementById('categoryResultsContent').innerHTML = `
+            <div class="alert alert-danger">
+                <strong>Error:</strong> ${error.message}
+            </div>
+        `;
+        document.getElementById('categoryResults').classList.remove('d-none');
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Start Scraping';
+    });
+});
+
+// Cleanup form
+document.getElementById('cleanupForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const submitBtn = this.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Cleaning...';
+    
+    fetch('{{ url_for("admin_scraping.cleanup_old_data") }}', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultsDiv = document.getElementById('cleanupResults');
+        const contentDiv = document.getElementById('cleanupResultsContent');
+        
+        if (data.success) {
+            contentDiv.innerHTML = `
+                <div class="alert alert-success">
+                    <strong>Cleanup Complete!</strong><br>
+                    Deleted ${data.prices_deleted} price records and ${data.logs_deleted} log entries.
+                </div>
+            `;
+        } else {
+            contentDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <strong>Error:</strong> ${data.error}
+                </div>
+            `;
+        }
+        
+        resultsDiv.classList.remove('d-none');
+    })
+    .catch(error => {
+        document.getElementById('cleanupResultsContent').innerHTML = `
+            <div class="alert alert-danger">
+                <strong>Error:</strong> ${error.message}
+            </div>
+        `;
+        document.getElementById('cleanupResults').classList.remove('d-none');
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Cleanup Data';
+    });
+});
+</script>
+{% endblock %}

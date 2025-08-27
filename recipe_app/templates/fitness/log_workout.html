@@ -1,0 +1,517 @@
+{% extends "base.html" %}
+{% block title %}Log Workout{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fitness.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-orange text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-dumbbell me-2"></i>Log Workout
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="workoutForm">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        
+                        <div class="mb-3">
+                            <label for="workout_date" class="form-label">Workout Date</label>
+                            <input type="date" 
+                                   class="form-control" 
+                                   id="workout_date" 
+                                   name="workout_date" 
+                                   required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="workout_type" class="form-label">Workout Type</label>
+                            <select class="form-control" id="workout_type" name="workout_type" required>
+                                <option value="">Select workout type...</option>
+                                <option value="Strength Training">Strength Training</option>
+                                <option value="Cardio">Cardio</option>
+                                <option value="HIIT">HIIT</option>
+                                <option value="Yoga">Yoga</option>
+                                <option value="Pilates">Pilates</option>
+                                <option value="Stretching">Stretching</option>
+                                <option value="Sports">Sports</option>
+                                <option value="Mixed">Mixed</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="start_time" class="form-label">Start Time (optional)</label>
+                                <input type="time" 
+                                       class="form-control" 
+                                       id="start_time" 
+                                       name="start_time">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="end_time" class="form-label">End Time (optional)</label>
+                                <input type="time" 
+                                       class="form-control" 
+                                       id="end_time" 
+                                       name="end_time">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="duration_minutes" class="form-label">Duration (minutes)</label>
+                            <input type="number" 
+                                   min="1" 
+                                   max="600" 
+                                   class="form-control" 
+                                   id="duration_minutes" 
+                                   name="duration_minutes" 
+                                   placeholder="e.g., 45">
+                            <div class="form-text">Total workout duration in minutes</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="calories_burned" class="form-label">Estimated Calories Burned</label>
+                            <input type="number" 
+                                   class="form-control bg-light" 
+                                   id="calories_burned" 
+                                   name="calories_burned" 
+                                   readonly>
+                            <div class="form-text">Automatically calculated based on workout type, duration, and your weight</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes (optional)</label>
+                            <textarea class="form-control" 
+                                      id="notes" 
+                                      name="notes" 
+                                      rows="3" 
+                                      placeholder="How did the workout feel? Any observations?"></textarea>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-orange" id="submitBtn">
+                                <i class="fas fa-save me-2"></i>Log Workout
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Exercise Tracking Section -->
+    <div class="row justify-content-center mt-4" id="exerciseSection" style="display: none;">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>Add Exercises
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">Now add the individual exercises you performed during this workout.</p>
+                    
+                    <form id="exerciseForm">
+                        <input type="hidden" id="workout_log_id" name="workout_log_id">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="exercise_name" class="form-label">Exercise Name *</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="exercise_name" 
+                                       name="exercise_name" 
+                                       placeholder="e.g., Push-ups, Squats, Running"
+                                       required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="exercise_type" class="form-label">Exercise Type</label>
+                                <select class="form-control" id="exercise_type" name="exercise_type">
+                                    <option value="strength">Strength</option>
+                                    <option value="cardio">Cardio</option>
+                                    <option value="flexibility">Flexibility</option>
+                                    <option value="balance">Balance</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Strength Exercise Fields -->
+                        <div id="strengthFields" class="exercise-type-fields">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="sets" class="form-label">Sets</label>
+                                    <input type="number" 
+                                           min="1" 
+                                           max="20" 
+                                           class="form-control" 
+                                           id="sets" 
+                                           name="sets">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="reps" class="form-label">Reps</label>
+                                    <input type="number" 
+                                           min="1" 
+                                           max="1000" 
+                                           class="form-control" 
+                                           id="reps" 
+                                           name="reps">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="weight_kg" class="form-label">Weight (kg)</label>
+                                    <input type="number" 
+                                           step="0.5" 
+                                           min="0" 
+                                           max="1000" 
+                                           class="form-control" 
+                                           id="weight_kg" 
+                                           name="weight_kg">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Cardio Exercise Fields -->
+                        <div id="cardioFields" class="exercise-type-fields" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="distance_km" class="form-label">Distance (km)</label>
+                                    <input type="number" 
+                                           step="0.1" 
+                                           min="0" 
+                                           max="1000" 
+                                           class="form-control" 
+                                           id="distance_km" 
+                                           name="distance_km">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="cardio_duration" class="form-label">Duration (minutes)</label>
+                                    <input type="number" 
+                                           min="1" 
+                                           max="600" 
+                                           class="form-control" 
+                                           id="cardio_duration" 
+                                           name="cardio_duration">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="calories_burned" class="form-label">Calories Burned (optional)</label>
+                                <input type="number" 
+                                       min="1" 
+                                       max="5000" 
+                                       class="form-control" 
+                                       id="calories_burned" 
+                                       name="calories_burned">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="exercise_notes" class="form-label">Exercise Notes</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="exercise_notes" 
+                                       name="exercise_notes" 
+                                       placeholder="Notes about this exercise">
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-plus me-2"></i>Add Exercise
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Exercise List -->
+                    <div id="exerciseList" class="mt-4">
+                        <h6>Exercises Added:</h6>
+                        <div id="exerciseContainer" class="list-group">
+                            <!-- Exercises will be added here -->
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid mt-4">
+                        <a href="{{ url_for('fitness.fitness_dashboard') }}" class="btn btn-secondary">
+                            <i class="fas fa-check me-2"></i>Finish Workout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-check-circle me-2"></i>Workout Logged!
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="successMessage">
+                <!-- Success message will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="{{ url_for('fitness.workout_history') }}" class="btn btn-primary">View Workouts</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/fitness-csrf.js') }}"></script>
+<script>
+// MET values for common workout types
+const MET_VALUES = {
+    'Strength Training': 6,
+    'Cardio': 7,
+    'HIIT': 8,
+    'Yoga': 3,
+    'Pilates': 3.5,
+    'Stretching': 2.3,
+    'Sports': 6.5,
+    'Mixed': 5,
+    'Other': 4
+};
+
+// Get user's latest weight from backend
+let userWeightKg = null;
+fetch('/fitness/api/latest-weight')
+    .then(r => r.json())
+    .then(data => {
+        if (data.success && data.weight_kg) {
+            userWeightKg = data.weight_kg;
+        }
+    });
+
+function estimateCalories(workoutType, durationMin, weightKg) {
+    if (!workoutType || !durationMin || !weightKg) return '';
+    const met = MET_VALUES[workoutType] || 4;
+    // Calories burned = MET * weight (kg) * duration (hr)
+    return Math.round(met * weightKg * (durationMin / 60));
+}
+
+function updateCaloriesBurned() {
+    const type = document.getElementById('workout_type').value;
+    const duration = parseFloat(document.getElementById('duration_minutes').value || 0);
+    const caloriesField = document.getElementById('calories_burned');
+    let weight = userWeightKg;
+    // Allow manual override if desired
+    if (!weight) {
+        weight = parseFloat(prompt('Enter your weight in kg for calorie calculation:')) || 70;
+    }
+    const calories = estimateCalories(type, duration, weight);
+    caloriesField.value = calories ? calories : '';
+}
+
+document.getElementById('workout_type').addEventListener('change', updateCaloriesBurned);
+document.getElementById('duration_minutes').addEventListener('input', updateCaloriesBurned);
+
+// Optionally, update on page load if values are present
+window.addEventListener('DOMContentLoaded', updateCaloriesBurned);
+
+document.addEventListener('DOMContentLoaded', function() {
+    const workoutForm = document.getElementById('workoutForm');
+    const exerciseForm = document.getElementById('exerciseForm');
+    const exerciseSection = document.getElementById('exerciseSection');
+    const exerciseTypeSelect = document.getElementById('exercise_type');
+    const strengthFields = document.getElementById('strengthFields');
+    const cardioFields = document.getElementById('cardioFields');
+    const exerciseContainer = document.getElementById('exerciseContainer');
+    
+    let currentWorkoutId = null;
+    let exerciseCount = 0;
+    
+    // Set today's date by default
+    document.getElementById('workout_date').value = new Date().toISOString().split('T')[0];
+    
+    // Handle exercise type switching
+    exerciseTypeSelect.addEventListener('change', function() {
+        strengthFields.style.display = 'none';
+        cardioFields.style.display = 'none';
+        
+        if (this.value === 'strength') {
+            strengthFields.style.display = 'block';
+        } else if (this.value === 'cardio') {
+            cardioFields.style.display = 'block';
+        }
+    });
+    
+    // Handle workout form submission
+    workoutForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(workoutForm);
+        const jsonData = {
+            workout_date: formData.get('workout_date'),
+            workout_type: formData.get('workout_type'),
+            start_time: formData.get('start_time') || null,
+            end_time: formData.get('end_time') || null,
+            duration_minutes: formData.get('duration_minutes') ? parseInt(formData.get('duration_minutes')) : null,
+            notes: formData.get('notes') || null
+        };
+        
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+        
+        csrfFetch('/fitness/log-workout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                currentWorkoutId = result.workout.id;
+                document.getElementById('workout_log_id').value = currentWorkoutId;
+                
+                // Show exercise section
+                exerciseSection.style.display = 'block';
+                
+                // Scroll to exercise section
+                exerciseSection.scrollIntoView({ behavior: 'smooth' });
+                
+                // Disable workout form
+                Array.from(workoutForm.elements).forEach(el => el.disabled = true);
+                
+                alert('Workout logged successfully! Now add your exercises.');
+            } else {
+                alert('Error logging workout: ' + result.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error logging workout. Please try again.');
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-save me-2"></i>Log Workout';
+        });
+    });
+    
+    // Handle exercise form submission
+    exerciseForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if (!currentWorkoutId) {
+            alert('Please log a workout first.');
+            return;
+        }
+        
+        const formData = new FormData(exerciseForm);
+        const exerciseType = formData.get('exercise_type');
+        
+        const jsonData = {
+            workout_log_id: currentWorkoutId,
+            exercise_name: formData.get('exercise_name'),
+            exercise_type: exerciseType,
+            notes: formData.get('exercise_notes') || null,
+            calories_burned: formData.get('calories_burned') ? parseFloat(formData.get('calories_burned')) : null
+        };
+        
+        // Add type-specific fields
+        if (exerciseType === 'strength') {
+            if (formData.get('sets')) jsonData.sets = parseInt(formData.get('sets'));
+            if (formData.get('reps')) jsonData.reps = parseInt(formData.get('reps'));
+            if (formData.get('weight_kg')) jsonData.weight_kg = parseFloat(formData.get('weight_kg'));
+        } else if (exerciseType === 'cardio') {
+            if (formData.get('distance_km')) jsonData.distance_km = parseFloat(formData.get('distance_km'));
+            if (formData.get('cardio_duration')) jsonData.duration_minutes = parseInt(formData.get('cardio_duration'));
+        }
+        
+        csrfFetch('/fitness/log-exercise', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                addExerciseToList(result.exercise);
+                exerciseForm.reset();
+                exerciseTypeSelect.dispatchEvent(new Event('change'));
+                document.getElementById('exercise_name').focus();
+                exerciseCount++;
+            } else {
+                alert('Error logging exercise: ' + result.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error logging exercise. Please try again.');
+        });
+    });
+    
+    // Function to add exercise to the display list
+    function addExerciseToList(exercise) {
+        const exerciseDiv = document.createElement('div');
+        exerciseDiv.className = 'list-group-item d-flex justify-content-between align-items-center';
+        
+        let exerciseDetails = `<strong>${exercise.exercise_name}</strong> (${exercise.exercise_type})`;
+        
+        if (exercise.exercise_type === 'strength') {
+            const details = [];
+            if (exercise.sets) details.push(`${exercise.sets} sets`);
+            if (exercise.reps) details.push(`${exercise.reps} reps`);
+            if (exercise.weight_kg) details.push(`${exercise.weight_kg}kg`);
+            if (details.length > 0) exerciseDetails += `<br><small class="text-muted">${details.join(', ')}</small>`;
+        } else if (exercise.exercise_type === 'cardio') {
+            const details = [];
+            if (exercise.distance_km) details.push(`${exercise.distance_km}km`);
+            if (exercise.duration_minutes) details.push(`${exercise.duration_minutes} min`);
+            if (details.length > 0) exerciseDetails += `<br><small class="text-muted">${details.join(', ')}</small>`;
+        }
+        
+        if (exercise.calories_burned) {
+            exerciseDetails += `<br><small class="text-success">${exercise.calories_burned} calories</small>`;
+        }
+        
+        exerciseDiv.innerHTML = `
+            <div>${exerciseDetails}</div>
+            <button class="btn btn-sm btn-danger" onclick="deleteExercise(${exercise.id}, this)">
+                <i class="fas fa-trash"></i>
+            </button>
+        `;
+        
+        exerciseContainer.appendChild(exerciseDiv);
+    }
+    
+    // Initialize exercise type fields
+    exerciseTypeSelect.dispatchEvent(new Event('change'));
+});
+
+function deleteExercise(exerciseId, button) {
+    if (confirm('Are you sure you want to delete this exercise?')) {
+        csrfFetch(`/fitness/exercise-logs/${exerciseId}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                button.closest('.list-group-item').remove();
+            } else {
+                alert('Error deleting exercise: ' + result.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error deleting exercise. Please try again.');
+        });
+    }
+}
+</script>
+{% endblock %}

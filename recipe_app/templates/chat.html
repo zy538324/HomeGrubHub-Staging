@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}Live Chat Support{% endblock %}
+
+{% block head %}
+{{ super() }}
+<style>
+.chat-container {
+    max-width: 800px;
+    margin: 20px auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-header {
+    background: #007bff;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background: #f8f9fa;
+}
+
+.message {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 8px;
+    max-width: 70%;
+}
+
+.message.user {
+    background: #007bff;
+    color: white;
+    margin-left: auto;
+    text-align: right;
+}
+
+.message.admin {
+    background: #28a745;
+    color: white;
+    margin-right: auto;
+}
+
+.message.system {
+    background: #6c757d;
+    color: white;
+    text-align: center;
+    margin: 0 auto;
+    max-width: 90%;
+    font-style: italic;
+}
+
+.message-info {
+    font-size: 0.8em;
+    opacity: 0.8;
+    margin-top: 5px;
+}
+
+.chat-input {
+    display: flex;
+    padding: 15px;
+    background: white;
+    border-top: 1px solid #ddd;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.chat-input button {
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.chat-input button:hover {
+    background: #0056b3;
+}
+
+.chat-status {
+    padding: 10px;
+    text-align: center;
+    background: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.9em;
+    color: #6c757d;
+}
+
+.setup-notice {
+    padding: 20px;
+    margin: 20px;
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    color: #856404;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 class="text-center mb-4">Live Chat Support</h2>
+    
+    {% if current_user.is_authenticated %}
+    <div class="chat-container">
+        <div class="chat-header">
+            <h5 class="mb-0">HomeGrubHub Support Chat</h5>
+        </div>
+        
+        <div class="chat-status">
+            Chat System Ready - SocketIO integration pending
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="message system">
+                <div>Welcome to HomeGrubHub support, {{ current_user.username }}!</div>
+                <div class="message-info">System message</div>
+            </div>
+            
+            <div class="message system">
+                <div>The live chat system is ready for SocketIO integration.</div>
+                <div class="message-info">System message</div>
+            </div>
+        </div>
+        
+        <form class="chat-input" id="chatForm" action="{{ url_for('main.send_chat_message') }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <input type="text" name="message" id="messageInput" placeholder="Type your message..." maxlength="500" required>
+            <button type="submit" id="sendButton">Send Message</button>
+        </form>
+    </div>
+    
+    <div class="setup-notice">
+        <h6><i class="fas fa-info-circle"></i> Chat System Status</h6>
+        <p><strong>✅ Database:</strong> Chat table created and ready</p>
+        <p><strong>✅ UI:</strong> Chat interface implemented</p>
+        <p><strong>⏳ WebSocket:</strong> SocketIO integration ready for activation</p>
+        <p><strong>📋 Next Steps:</strong> Start with <code>python run_chat.py --chat</code> for full real-time functionality</p>
+    </div>
+    
+    {% else %}
+    
+    <div class="alert alert-warning text-center">
+        <h4><i class="fas fa-lock"></i> Authentication Required</h4>
+        <p>Please <a href="{{ url_for('auth.login') }}" class="btn btn-primary">log in</a> to access live chat support.</p>
+    </div>
+    
+    {% endif %}
+</div>
+
+<script>
+// Basic form handling without SocketIO
+document.addEventListener('DOMContentLoaded', function() {
+    const chatForm = document.getElementById('chatForm');
+    const messageInput = document.getElementById('messageInput');
+    const chatMessages = document.getElementById('chatMessages');
+    
+    if (chatForm) {
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const message = messageInput.value.trim();
+            if (!message) return;
+            
+            // Add user message to chat immediately
+            addMessage(message, 'user', '{{ current_user.username if current_user.is_authenticated else "User" }}');
+            
+            // Clear input
+            messageInput.value = '';
+            
+            // Submit via AJAX
+            fetch(chatForm.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': document.querySelector('[name=csrf_token]').value
+                },
+                body: new URLSearchParams(new FormData(chatForm))
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    addMessage('Message saved! Enable SocketIO for real-time chat.', 'system', 'System');
+                } else {
+                    addMessage('Error: ' + (data.error || 'Failed to send message'), 'system', 'System');
+                }
+            })
+            .catch(error => {
+                addMessage('Error sending message. Please try again.', 'system', 'System');
+                console.error('Error:', error);
+            });
+        });
+    }
+    
+    function addMessage(message, type, username) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${type}`;
+        
+        const timestamp = new Date().toLocaleTimeString();
+        
+        messageDiv.innerHTML = `
+            <div>${escapeHtml(message)}</div>
+            <div class="message-info">${username} • ${timestamp}</div>
+        `;
+        
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weight History</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+    <h1>Weight History</h1>
+    <canvas id="weightChart" width="800" height="400"></canvas>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Weight (kg)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.log_date }}</td>
+                <td>{{ log.weight }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/nutrition/log-weight">Log New Weight</a>
+    <script>
+    const chartData = {{ chart_data|tojson|safe }};
+    const ctx = document.getElementById('weightChart').getContext('2d');
+    const weightChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: chartData.dates,
+            datasets: [{
+                label: 'Weight (kg)',
+                data: chartData.weights,
+                borderColor: 'rgba(54,162,235,1)',
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: { title: { display: true, text: 'Date' } },
+                y: { title: { display: true, text: 'Weight (kg)' } }
+            }
+        }
+    });
+    </script>
+</body>
+</html>

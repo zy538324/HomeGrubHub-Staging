@@ -1,0 +1,610 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+  <div class="row">
+    <!-- Filter Sidebar -->
+    <div class="col-lg-3">
+      <div class="card shadow-sm sticky-top" style="top: 100px;">
+        <div class="card-header bg-primary text-white">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-filter me-2"></i>Advanced Search Filters
+          </h5>
+        </div>
+        <div class="card-body p-0">
+          <form method="post" id="filterForm">
+            {{ form.hidden_tag() }}
+            
+            <!-- Search Query -->
+            <div class="filter-section p-3 border-bottom">
+              <label class="form-label fw-bold">{{ form.search_query.label }}</label>
+              {{ form.search_query(class="form-control") }}
+            </div>
+            
+            <!-- Time Filters -->
+            <div class="filter-section p-3 border-bottom">
+              <h6 class="text-primary mb-3">
+                <i class="fas fa-clock me-2"></i>Time Constraints
+              </h6>
+              <div class="row g-2">
+                <div class="col-12">
+                  <label class="form-label small">{{ form.max_prep_time.label }}</label>
+                  {{ form.max_prep_time(class="form-control form-control-sm") }}
+                </div>
+                <div class="col-12">
+                  <label class="form-label small">{{ form.max_cook_time.label }}</label>
+                  {{ form.max_cook_time(class="form-control form-control-sm") }}
+                </div>
+                <div class="col-12">
+                  <label class="form-label small">{{ form.max_total_time.label }}</label>
+                  {{ form.max_total_time(class="form-control form-control-sm") }}
+                </div>
+              </div>
+              <div class="form-check mt-2">
+                {{ form.quick_prep(class="form-check-input") }}
+                {{ form.quick_prep.label(class="form-check-label small") }}
+              </div>
+            </div>
+            
+            <!-- Difficulty & Skill -->
+            <div class="filter-section p-3 border-bottom">
+              <h6 class="text-primary mb-3">
+                <i class="fas fa-chart-line me-2"></i>Difficulty
+              </h6>
+              <div class="mb-3">
+                <label class="form-label small fw-bold">Difficulty Level</label>
+                {% for subfield in form.difficulty %}
+                  <div class="form-check">
+                    {{ subfield(class="form-check-input") }}
+                    {{ subfield.label(class="form-check-label small") }}
+                  </div>
+                {% endfor %}
+              </div>
+              {% if current_user.can_access_feature('advanced_filtering') %}
+              <div class="mb-3">
+                <label class="form-label small fw-bold">Skill Level</label>
+                {% for subfield in form.skill_level %}
+                  <div class="form-check">
+                    {{ subfield(class="form-check-input") }}
+                    {{ subfield.label(class="form-check-label small") }}
+                  </div>
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+            
+            <!-- Servings -->
+            <div class="filter-section p-3 border-bottom">
+              <h6 class="text-primary mb-3">
+                <i class="fas fa-users me-2"></i>Servings
+              </h6>
+              <div class="row g-2">
+                <div class="col-6">
+                  <label class="form-label small">{{ form.min_servings.label }}</label>
+                  {{ form.min_servings(class="form-control form-control-sm") }}
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">{{ form.max_servings.label }}</label>
+                  {{ form.max_servings(class="form-control form-control-sm") }}
+                </div>
+              </div>
+            </div>
+            
+            <!-- Nutrition Filters (Home+ only) -->
+            {% if current_user.can_access_feature('nutrition_analysis') %}
+            <div class="filter-section p-3 border-bottom">
+              <h6 class="text-primary mb-3">
+                <i class="fas fa-heartbeat me-2"></i>Nutrition
+                <span class="badge bg-success small">HOME+</span>
+              </h6>
+              <div class="row g-2 mb-3">
+                <div class="col-12">
+                  <label class="form-label small">{{ form.max_calories.label }}</label>
+                  {{ form.max_calories(class="form-control form-control-sm") }}
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">{{ form.min_protein.label }}</label>
+                  {{ form.min_protein(class="form-control form-control-sm") }}
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">{{ form.max_carbs.label }}</label>
+                  {{ form.max_carbs(class="form-control form-control-sm") }}
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">{{ form.max_fat.label }}</label>
+                  {{ form.max_fat(class="form-control form-control-sm") }}
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">{{ form.min_fiber.label }}</label>
+                  {{ form.min_fiber(class="form-control form-control-sm") }}
+                </div>
+                <div class="col-12">
+                  <label class="form-label small">{{ form.max_sodium.label }}</label>
+                  {{ form.max_sodium(class="form-control form-control-sm") }}
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <label class="form-label small fw-bold">Nutritional Benefits</label>
+                {% for subfield in form.nutritional_flags %}
+                  <div class="form-check">
+                    {{ subfield(class="form-check-input") }}
+                    {{ subfield.label(class="form-check-label small") }}
+                  </div>
+                {% endfor %}
+              </div>
+              
+              <div class="form-check">
+                {{ form.has_nutrition_info(class="form-check-input") }}
+                {{ form.has_nutrition_info.label(class="form-check-label small") }}
+              </div>
+            </div>
+            {% endif %}
+            
+            <!-- Dietary Restrictions -->
+            {% if current_user.can_access_feature('dietary_filtering') %}
+            <div class="filter-section p-3 border-bottom">
+              <h6 class="text-primary mb-3">
+                <i class="fas fa-leaf me-2"></i>Dietary Requirements
+                <span class="badge bg-info small">STUDENT+</span>
+              </h6>
+              {% for subfield in form.dietary_restrictions %}
+                <div class="form-check">
+                  {{ subfield(class="form-check-input") }}
+                  {{ subfield.label(class="form-check-label small") }}
+                </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- Equipment (Home+ only) -->
+            {% if current_user.can_access_feature('equipment_filtering') %}
+            <div class="filter-section p-3 border-bottom">
+              <h6 class="text-primary mb-3">
+                <i class="fas fa-tools me-2"></i>Equipment Available
+                <span class="badge bg-success small">HOME+</span>
+              </h6>
+              {% for subfield in form.required_equipment %}
+                <div class="form-check">
+                  {{ subfield(class="form-check-input") }}
+                  {{ subfield.label(class="form-check-label small") }}
+                </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- Budget (Home+ only) -->
+            {% if current_user.can_access_feature('price_comparison_multi') %}
+            <div class="filter-section p-3 border-bottom">
+              <h6 class="text-primary mb-3">
+                <i class="fas fa-pound-sign me-2"></i>Budget
+                <span class="badge bg-success small">HOME+</span>
+              </h6>
+              <label class="form-label small">{{ form.max_cost_per_serving.label }}</label>
+              {{ form.max_cost_per_serving(class="form-control form-control-sm") }}
+            </div>
+            {% endif %}
+            
+            <!-- Cuisine & Meal Type -->
+            <div class="filter-section p-3 border-bottom">
+              <h6 class="text-primary mb-3">
+                <i class="fas fa-globe me-2"></i>Cuisine & Type
+              </h6>
+              <div class="mb-3">
+                <label class="form-label small fw-bold">Cuisine Type</label>
+                <div class="cuisine-grid">
+                  {% for subfield in form.cuisine_type %}
+                    <div class="form-check">
+                      {{ subfield(class="form-check-input") }}
+                      {{ subfield.label(class="form-check-label small") }}
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <label class="form-label small fw-bold">Meal Type</label>
+                {% for subfield in form.meal_type %}
+                  <div class="form-check">
+                    {{ subfield(class="form-check-input") }}
+                    {{ subfield.label(class="form-check-label small") }}
+                  </div>
+                {% endfor %}
+              </div>
+              
+              <div class="mb-3">
+                <label class="form-label small fw-bold">{{ form.seasonal_preference.label }}</label>
+                {{ form.seasonal_preference(class="form-select form-select-sm") }}
+              </div>
+            </div>
+            
+            <!-- Recipe Features -->
+            <div class="filter-section p-3 border-bottom">
+              <h6 class="text-primary mb-3">
+                <i class="fas fa-star me-2"></i>Recipe Features
+              </h6>
+              <div class="form-check">
+                {{ form.has_image(class="form-check-input") }}
+                {{ form.has_image.label(class="form-check-label small") }}
+              </div>
+              {% if current_user.can_access_feature('batch_cooking') %}
+              <div class="form-check">
+                {{ form.has_batch_cooking(class="form-check-input") }}
+                {{ form.has_batch_cooking.label(class="form-check-label small") }}
+              </div>
+              <div class="form-check">
+                {{ form.freezer_friendly(class="form-check-input") }}
+                {{ form.freezer_friendly.label(class="form-check-label small") }}
+              </div>
+              {% endif %}
+              <div class="form-check">
+                {{ form.one_pot(class="form-check-input") }}
+                {{ form.one_pot.label(class="form-check-label small") }}
+              </div>
+            </div>
+            
+            <!-- Sorting & Display -->
+            <div class="filter-section p-3">
+              <h6 class="text-primary mb-3">
+                <i class="fas fa-sort me-2"></i>Sort & Display
+              </h6>
+              <div class="mb-3">
+                <label class="form-label small">{{ form.sort_by.label }}</label>
+                {{ form.sort_by(class="form-select form-select-sm") }}
+              </div>
+              <div class="mb-3">
+                <label class="form-label small">{{ form.per_page.label }}</label>
+                {{ form.per_page(class="form-select form-select-sm") }}
+              </div>
+              
+              <div class="d-grid gap-2">
+                {{ form.submit(class="btn btn-primary") }}
+                {{ form.clear_filters(class="btn btn-outline-secondary") }}
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Results Area -->
+    <div class="col-lg-9">
+      <!-- Results Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h1 class="h3 mb-1">
+            <i class="fas fa-search me-2 text-primary"></i>Advanced Recipe Search
+          </h1>
+          {% if total_count > 0 %}
+            <p class="text-muted mb-0">Found {{ total_count }} recipe{{ 's' if total_count != 1 else '' }}</p>
+          {% endif %}
+        </div>
+        
+        {% if current_user.current_plan == 'Free' %}
+        <div class="text-end">
+          <div class="alert alert-info d-inline-block mb-0 py-2 px-3">
+            <small>
+              <i class="fas fa-info-circle me-1"></i>
+              <strong>Limited Search:</strong> 
+              <a href="{{ url_for('billing.pricing') }}" class="alert-link">Upgrade</a> 
+              for advanced filters!
+            </small>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      
+      <!-- Active Filters Display -->
+      {% if request.method == 'POST' %}
+      <div class="card mb-4 border-info">
+        <div class="card-body py-2">
+          <div class="d-flex align-items-center">
+            <small class="text-muted me-2">
+              <i class="fas fa-filter me-1"></i>Active filters:
+            </small>
+            <div class="filter-tags">
+              {% if form.search_query.data %}
+                <span class="badge bg-primary me-1">"{{ form.search_query.data }}"</span>
+              {% endif %}
+              {% if form.difficulty.data %}
+                {% for diff in form.difficulty.data %}
+                  <span class="badge bg-secondary me-1">{{ diff }}</span>
+                {% endfor %}
+              {% endif %}
+              {% if form.cuisine_type.data %}
+                {% for cuisine in form.cuisine_type.data %}
+                  <span class="badge bg-info me-1">{{ cuisine|title }}</span>
+                {% endfor %}
+              {% endif %}
+              {% if form.dietary_restrictions.data %}
+                {% for diet in form.dietary_restrictions.data %}
+                  <span class="badge bg-success me-1">{{ diet|title }}</span>
+                {% endfor %}
+              {% endif %}
+              {% if form.max_calories.data %}
+                <span class="badge bg-warning me-1">≤{{ form.max_calories.data }} cal</span>
+              {% endif %}
+              {% if form.max_total_time.data %}
+                <span class="badge bg-dark me-1">≤{{ form.max_total_time.data }} min</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      
+      <!-- Recipe Results -->
+      {% if recipes %}
+        <div class="row g-4">
+          {% for recipe in recipes %}
+          <div class="col-xl-4 col-lg-6 col-md-6">
+            <div class="card recipe-card h-100 shadow-sm">
+              <!-- Recipe Image -->
+              <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                {% if recipe.image_file %}
+                {% if recipe.image_file.startswith('imported_') %}
+                  <img src="{{ url_for('static', filename='uploads/imported_' + recipe.image_file[9:]) }}" 
+                       class="img-fluid" alt="{{ recipe.title }}" style="max-height: 200px; object-fit: cover;">
+                {% else %}
+                  <img src="{{ url_for('static', filename='uploads/' + recipe.image_file) }}" 
+                       class="img-fluid" alt="{{ recipe.title }}" style="max-height: 200px; object-fit: cover;">
+                {% endif %}
+                {% else %}
+                  <i class="fas fa-utensils fa-3x text-muted"></i>
+                {% endif %}
+              </div>
+              
+              <!-- Recipe Info -->
+              <div class="card-body">
+                <h5 class="card-title">
+                  <a href="{{ url_for('main.recipe', recipe_id=recipe.id) }}" 
+                     class="text-decoration-none">{{ recipe.title }}</a>
+                </h5>
+                
+                {% if recipe.description %}
+                  <p class="card-text text-muted small">{{ recipe.description[:100] }}...</p>
+                {% endif %}
+                
+                <!-- Recipe Metadata -->
+                <div class="recipe-meta">
+                  <div class="row g-2 text-center small">
+                    {% if recipe.prep_time %}
+                    <div class="col-4">
+                      <div class="bg-light rounded p-2">
+                        <i class="fas fa-clock text-primary"></i>
+                        <div class="fw-bold">{{ recipe.prep_time }}m</div>
+                        <div class="text-muted">Prep</div>
+                      </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if recipe.cook_time %}
+                    <div class="col-4">
+                      <div class="bg-light rounded p-2">
+                        <i class="fas fa-fire text-danger"></i>
+                        <div class="fw-bold">{{ recipe.cook_time }}m</div>
+                        <div class="text-muted">Cook</div>
+                      </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="col-4">
+                      <div class="bg-light rounded p-2">
+                        <i class="fas fa-chart-line text-warning"></i>
+                        <div class="fw-bold">{{ recipe.difficulty }}</div>
+                        <div class="text-muted">Level</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Nutrition Info (if available) -->
+                {% if recipe.nutrition_profile and current_user.can_access_feature('nutrition_analysis') %}
+                <div class="mt-3">
+                  <div class="row g-1 text-center small">
+                    {% if recipe.nutrition_profile.calories %}
+                    <div class="col-3">
+                      <div class="text-primary fw-bold">{{ recipe.nutrition_profile.calories|round|int }}</div>
+                      <div class="text-muted tiny">cal</div>
+                    </div>
+                    {% endif %}
+                    {% if recipe.nutrition_profile.protein_g %}
+                    <div class="col-3">
+                      <div class="text-success fw-bold">{{ recipe.nutrition_profile.protein_g|round|int }}g</div>
+                      <div class="text-muted tiny">protein</div>
+                    </div>
+                    {% endif %}
+                    {% if recipe.nutrition_profile.carbs_g %}
+                    <div class="col-3">
+                      <div class="text-warning fw-bold">{{ recipe.nutrition_profile.carbs_g|round|int }}g</div>
+                      <div class="text-muted tiny">carbs</div>
+                    </div>
+                    {% endif %}
+                    {% if recipe.nutrition_profile.fat_g %}
+                    <div class="col-3">
+                      <div class="text-info fw-bold">{{ recipe.nutrition_profile.fat_g|round|int }}g</div>
+                      <div class="text-muted tiny">fat</div>
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+                {% endif %}
+                
+                <!-- Tags and Features -->
+                <div class="mt-3">
+                  {% if recipe.cuisine_type %}
+                    <span class="badge bg-primary me-1">{{ recipe.cuisine_type }}</span>
+                  {% endif %}
+                  {% if recipe.country %}
+                    <span class="badge bg-info me-1">{{ recipe.country }}</span>
+                  {% endif %}
+                  {% if recipe.cost_per_serving %}
+                    <span class="badge bg-success me-1">£{{ "%.2f"|format(recipe.cost_per_serving) }}</span>
+                  {% endif %}
+                  {% if recipe.nutrition_profile %}
+                    {% if recipe.nutrition_profile.is_high_protein %}
+                      <span class="badge bg-success me-1">High Protein</span>
+                    {% endif %}
+                    {% if recipe.nutrition_profile.is_low_carb %}
+                      <span class="badge bg-warning me-1">Low Carb</span>
+                    {% endif %}
+                  {% endif %}
+                </div>
+              </div>
+              
+              <!-- Card Footer -->
+              <div class="card-footer bg-transparent">
+                <div class="d-flex justify-content-between align-items-center">
+                  <small class="text-muted">
+                    <i class="fas fa-user me-1"></i>{{ recipe.user.username }}
+                  </small>
+                  <div class="recipe-privacy-badge">
+                    {{ recipe.get_privacy_label() }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if pagination and pagination.pages > 1 %}
+        <nav aria-label="Recipe search pagination" class="mt-5">
+          <ul class="pagination justify-content-center">
+            {% if pagination.has_prev %}
+              <li class="page-item">
+                <a class="page-link" href="{{ url_for('main.advanced_search', page=pagination.prev_num, **request.args) }}">
+                  <i class="fas fa-chevron-left"></i> Previous
+                </a>
+              </li>
+            {% endif %}
+            
+            {% for page_num in pagination.iter_pages() %}
+              {% if page_num %}
+                {% if page_num != pagination.page %}
+                  <li class="page-item">
+                    <a class="page-link" href="{{ url_for('main.advanced_search', page=page_num, **request.args) }}">{{ page_num }}</a>
+                  </li>
+                {% else %}
+                  <li class="page-item active">
+                    <span class="page-link">{{ page_num }}</span>
+                  </li>
+                {% endif %}
+              {% else %}
+                <li class="page-item disabled">
+                  <span class="page-link">…</span>
+                </li>
+              {% endif %}
+            {% endfor %}
+            
+            {% if pagination.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="{{ url_for('main.advanced_search', page=pagination.next_num, **request.args) }}">
+                  Next <i class="fas fa-chevron-right"></i>
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+        {% endif %}
+        
+      {% elif request.method == 'POST' %}
+        <!-- No Results -->
+        <div class="text-center py-5">
+          <i class="fas fa-search fa-4x text-muted mb-4"></i>
+          <h3 class="text-muted">No recipes found</h3>
+          <p class="text-muted">Try adjusting your filters or search terms.</p>
+          <button type="button" class="btn btn-primary" onclick="clearAllFilters()">
+            <i class="fas fa-refresh me-2"></i>Clear All Filters
+          </button>
+        </div>
+        
+      {% else %}
+        <!-- Initial State -->
+        <div class="text-center py-5">
+          <i class="fas fa-utensils fa-4x text-primary mb-4"></i>
+          <h3>Find Your Perfect Recipe</h3>
+          <p class="text-muted">Use the filters on the left to discover recipes that match your preferences.</p>
+          {% if current_user.current_plan == 'Free' %}
+          <div class="alert alert-info d-inline-block">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Limited search available.</strong> 
+            <a href="{{ url_for('billing.pricing') }}" class="alert-link">Upgrade to unlock advanced filters</a> 
+            like nutrition analysis, equipment requirements, and dietary restrictions!
+          </div>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+.filter-section {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.cuisine-grid {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.recipe-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.recipe-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+
+.recipe-privacy-badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  background-color: #f8f9fa;
+  color: #6c757d;
+}
+
+.tiny {
+  font-size: 0.6rem;
+}
+
+.sticky-top {
+  z-index: 1020;
+}
+
+.form-check {
+  margin-bottom: 0.25rem;
+}
+
+.filter-tags {
+  flex-wrap: wrap;
+  display: flex;
+  gap: 0.25rem;
+}
+</style>
+
+<script>
+function clearAllFilters() {
+  document.getElementById('filterForm').reset();
+  window.location.href = "{{ url_for('main.advanced_search') }}";
+}
+
+// Auto-submit form on filter change (optional)
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('filterForm');
+  const autoSubmitElements = form.querySelectorAll('select, input[type="checkbox"]');
+  
+  autoSubmitElements.forEach(element => {
+    element.addEventListener('change', function() {
+      // Optional: Auto-submit form when filters change
+      // Uncomment the line below to enable auto-submit
+      // form.submit();
+    });
+  });
+});
+</script>
+{% endblock %}

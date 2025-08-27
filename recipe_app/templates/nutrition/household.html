@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Household Members</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+    <h1>Household Members</h1>
+    <form method="POST" action="/nutrition/add-household-member">
+        <input type="text" name="email" placeholder="Add member by email..." required>
+        <button type="submit">Add</button>
+    </form>
+    <ul>
+        {% for member in members %}
+        <li>{{ member.email }} <form method="POST" action="/nutrition/remove-household-member" style="display:inline;"><input type="hidden" name="member_id" value="{{ member.id }}"><button type="submit">Remove</button></form></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

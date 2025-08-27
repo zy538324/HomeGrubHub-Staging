@@ -1,0 +1,903 @@
+{% extends "base.html" %}
+
+{% block title %}Getting Started - HomeGrubHub{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="guide-hero">
+    <div class="container text-center">
+        <h1 class="display-4 mb-4">
+            <i class="fas fa-rocket me-3"></i>
+            Getting Started with HomeGrubHub
+        </h1>
+        <p class="lead mb-0">Welcome! Let's get you up and running in just a few minutes with your personal recipe companion.</p>
+        
+        <!-- Progress Bar -->
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar" style="width: 20%"></div>
+        </div>
+        <p class="mt-3 mb-0 fw-semibold">Step <span id="currentStep">1</span> of 5 - Let's make cooking amazing!</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Step Navigation -->
+    <div class="step-navigation">
+        <div class="step-nav-item active" data-step="1">
+            <div class="step-number">1</div>
+            <span>Welcome</span>
+        </div>
+        <div class="step-nav-item" data-step="2">
+            <div class="step-number">2</div>
+            <span>First Recipe</span>
+        </div>
+        <div class="step-nav-item" data-step="3">
+            <div class="step-number">3</div>
+            <span>Explore Features</span>
+        </div>
+        <div class="step-nav-item" data-step="4">
+            <div class="step-number">4</div>
+            <span>Meal Planning</span>
+        </div>
+        <div class="step-nav-item" data-step="5">
+            <div class="step-number">5</div>
+            <span>Community</span>
+        </div>
+    </div>
+    
+    <!-- Step 1: Welcome -->
+    <div class="step-content active" id="step1">
+        <div class="step-header">
+            <h2>🚀 Welcome to HomeGrubHub!</h2>
+            <p>Your comprehensive culinary companion that transforms how you discover, organize, and enjoy cooking</p>
+        </div>
+        
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h4>AI-Powered Recipe Management</h4>
+                <p>Leverage artificial intelligence to organize, categorize, and discover recipes with smart recommendations tailored to your preferences and dietary needs.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h4>Intelligent Meal Planning</h4>
+                <p>Create optimized weekly meal plans with automated shopping lists, nutritional tracking, and budget-conscious suggestions for efficient meal preparation.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-users-cog"></i>
+                </div>
+                <h4>Community Integration</h4>
+                <p>Connect with culinary enthusiasts worldwide, share recipes, participate in cooking challenges, and discover trending dishes from diverse cultures.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h4>Advanced Analytics</h4>
+                <p>Monitor nutritional intake, track cooking habits, analyze ingredient costs, and receive personalized insights to optimize your culinary journey.</p>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn btn-action" onclick="nextStep()">
+                <i class="fas fa-rocket me-2"></i>Begin Your Culinary Journey
+            </button>
+        </div>
+    </div>
+    
+    <!-- Step 2: First Recipe -->
+    <div class="step-content" id="step2">
+        <div class="step-header">
+            <h2>📝 Create Your First Recipe</h2>
+            <p>Start building your personal recipe collection with our intuitive recipe creation system</p>
+        </div>
+        
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="mb-4">
+                    <h4><i class="fas fa-plus-circle me-2 text-primary"></i>Professional Recipe Creation</h4>
+                    <p class="text-muted mb-4">Follow our comprehensive guide to create restaurant-quality recipe documentation.</p>
+                </div>
+                
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check1">
+                        <label for="check1">Navigate to "Recipes" → "Add Recipe" in the main menu</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check2">
+                        <label for="check2">Enter an engaging recipe title and detailed description</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check3">
+                        <label for="check3">Add ingredients with precise measurements and alternatives</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check4">
+                        <label for="check4">Write clear, numbered cooking instructions</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check5">
+                        <label for="check5">Set cooking time, preparation time, and serving information</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check6">
+                        <label for="check6">Add nutritional information and dietary tags</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check7">
+                        <label for="check7">Upload high-quality photos and publish your recipe</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="video-placeholder">
+                    <i class="fas fa-video"></i>
+                    <h5>Interactive Recipe Tutorial</h5>
+                    <p>Watch our step-by-step video guide to creating professional recipes that engage your audience</p>
+                    <small class="text-muted">Coming Soon: Interactive video walkthrough</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="{{ url_for('main.add_recipe') }}" class="btn btn-action">
+                <i class="fas fa-pen-fancy me-2"></i>Create My First Recipe
+            </a>
+            <button class="btn btn-action btn-secondary" onclick="nextStep()">
+                <i class="fas fa-forward me-2"></i>Skip for Now
+            </button>
+        </div>
+        
+        <div class="step-navigation-buttons">
+            <button class="btn btn-outline-secondary" onclick="prevStep()">
+                <i class="fas fa-arrow-left me-2"></i>Previous
+            </button>
+            <button class="btn btn-outline-primary" onclick="nextStep()">
+                Next <i class="fas fa-arrow-right ms-2"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Step 3: Explore Features -->
+    <div class="step-content" id="step3">
+        <div class="step-header">
+            <h2>🔍 Discover Platform Features</h2>
+            <p>Explore the powerful tools and capabilities that make HomeGrubHub your ultimate culinary companion</p>
+        </div>
+        
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-search-plus"></i>
+                </div>
+                <h4>Advanced Search Engine</h4>
+                <p>Utilize our sophisticated search algorithms to find recipes by ingredients, dietary restrictions, cooking methods, cuisine types, and preparation time.</p>
+                <a href="{{ url_for('main.ingredient_search') }}" class="btn btn-sm btn-outline-success mt-2">
+                    <i class="fas fa-search me-1"></i>Try Advanced Search
+                </a>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <h4>Smart Barcode Scanner</h4>
+                <p>Instantly identify products and add them to your pantry inventory or shopping lists using our integrated barcode scanning technology.</p>
+                <a href="{{ url_for('scanner_upload.barcode_scanner_page') }}" class="btn btn-sm btn-outline-success mt-2">
+                    <i class="fas fa-camera me-1"></i>Open Scanner
+                </a>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-warehouse"></i>
+                </div>
+                <h4>Digital Pantry Management</h4>
+                <p>Maintain a comprehensive digital inventory of your ingredients with expiration tracking and recipe suggestions based on available items.</p>
+                <a href="{{ url_for('pantry.index') }}" class="btn btn-sm btn-outline-success mt-2">
+                    <i class="fas fa-boxes me-1"></i>Manage Pantry
+                </a>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-download"></i>
+                </div>
+                <h4>Recipe Import System</h4>
+                <p>Seamlessly import recipes from popular cooking websites and blogs with automatic ingredient parsing and formatting.</p>
+                {% if current_user.is_authenticated and current_user.can_access_feature('import_recipes') %}
+                <a href="{{ url_for('main.import_recipe') }}" class="btn btn-sm btn-outline-success mt-2">
+                    <i class="fas fa-cloud-download-alt me-1"></i>Import Recipe
+                </a>
+                {% else %}
+                <span class="badge bg-warning text-dark mt-2">Premium Feature</span>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="step-navigation-buttons">
+            <button class="btn btn-outline-secondary" onclick="prevStep()">
+                <i class="fas fa-arrow-left me-2"></i>Previous
+            </button>
+            <button class="btn btn-outline-primary" onclick="nextStep()">
+                Next <i class="fas fa-arrow-right ms-2"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Step 4: Meal Planning -->
+    <div class="step-content" id="step4">
+        <div class="step-header">
+            <h2>📅 Master Meal Planning</h2>
+            <p>Transform your weekly meal preparation with our intelligent planning system that saves time, reduces waste, and optimizes nutrition</p>
+        </div>
+        
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="mb-4">
+                    <h4><i class="fas fa-calendar-alt me-2 text-primary"></i>Strategic Meal Planning Process</h4>
+                    <p class="text-muted mb-4">Follow our proven methodology for efficient weekly meal organization.</p>
+                </div>
+                
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="meal1">
+                        <label for="meal1">Access "Meal Planning" → "Weekly Planner" from the main navigation</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="meal2">
+                        <label for="meal2">Drag and drop recipes onto specific days and meal slots</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="meal3">
+                        <label for="meal3">Generate consolidated shopping lists with quantity optimization</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="meal4">
+                        <label for="meal4">Monitor nutritional balance across your entire weekly plan</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="meal5">
+                        <label for="meal5">Adjust portion sizes and servings for household requirements</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="meal6">
+                        <label for="meal6">Set dietary preferences and restriction filters</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="meal7">
+                        <label for="meal7">Schedule prep times and cooking reminders</label>
+                    </div>
+                </div>
+                
+                {% if current_user.is_authenticated and not current_user.can_access_feature('meal_planning') %}
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-star me-2"></i>
+                    <strong>Premium Feature:</strong> Unlock advanced meal planning capabilities with our Premium subscription for comprehensive weekly organization.
+                    <a href="{{ url_for('billing.pricing') }}" class="alert-link">Explore Premium Plans</a>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-lg-6">
+                <div class="video-placeholder">
+                    <i class="fas fa-utensils"></i>
+                    <h5>Meal Planning Masterclass</h5>
+                    <p>Discover professional techniques for efficient meal planning, including batch cooking strategies and nutritional optimization</p>
+                    <small class="text-muted">Premium Content: Advanced planning tutorials</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            {% if current_user.is_authenticated and current_user.can_access_feature('meal_planning') %}
+            <a href="{{ url_for('meal_planning.meal_planner') }}" class="btn btn-action">
+                <i class="fas fa-calendar-check me-2"></i>Start Planning Meals
+            </a>
+            {% else %}
+            <a href="{{ url_for('billing.pricing') }}" class="btn btn-action">
+                <i class="fas fa-crown me-2"></i>Upgrade to Premium
+            </a>
+            {% endif %}
+        </div>
+        
+        <div class="step-navigation-buttons">
+            <button class="btn btn-outline-secondary" onclick="prevStep()">
+                <i class="fas fa-arrow-left me-2"></i>Previous
+            </button>
+            <button class="btn btn-outline-primary" onclick="nextStep()">
+                Next <i class="fas fa-arrow-right ms-2"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Step 5: Community -->
+    <div class="step-content" id="step5">
+        <div class="step-header">
+            <h2>🌍 Join Our Culinary Community</h2>
+            <p>Connect with passionate food enthusiasts, share culinary expertise, and discover extraordinary recipes from around the globe</p>
+        </div>
+        
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-globe-americas"></i>
+                </div>
+                <h4>Global Recipe Discovery</h4>
+                <p>Explore an extensive library of community-contributed recipes from diverse cultures, featuring authentic dishes and modern fusion creations.</p>
+                <a href="{{ url_for('community.community_recipes') }}" class="btn btn-sm btn-outline-success mt-2">
+                    <i class="fas fa-compass me-1"></i>Explore Recipes
+                </a>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-medal"></i>
+                </div>
+                <h4>Featured Showcase</h4>
+                <p>Discover chef-curated selections, trending recipes, and award-winning dishes highlighted by our culinary experts and community votes.</p>
+                <a href="{{ url_for('community.featured_recipes') }}" class="btn btn-sm btn-outline-success mt-2">
+                    <i class="fas fa-star me-1"></i>View Featured
+                </a>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h4>Culinary Challenges</h4>
+                <p>Participate in themed cooking competitions, seasonal challenges, and skill-building contests with recognition and prizes for outstanding contributions.</p>
+                <a href="{{ url_for('community.active_challenges') }}" class="btn btn-sm btn-outline-success mt-2">
+                    <i class="fas fa-fire me-1"></i>Join Challenges
+                </a>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <h4>Curated Collections</h4>
+                <p>Create and discover themed recipe collections organized by cuisine type, dietary preferences, occasions, and cooking techniques.</p>
+                <a href="{{ url_for('community.recipe_collections') }}" class="btn btn-sm btn-outline-success mt-2">
+                    <i class="fas fa-folder-open me-1"></i>Browse Collections
+                </a>
+            </div>
+        </div>
+        
+        <div class="checklist">
+            <h5 class="mb-4"><i class="fas fa-handshake me-2 text-success"></i>Community Standards & Guidelines</h5>
+            <div class="checklist-item">
+                <input type="checkbox" id="guide1">
+                <label for="guide1">Maintain respectful and constructive communication with all community members</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="guide2">
+                <label for="guide2">Share original recipes or provide proper attribution for adapted content</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="guide3">
+                <label for="guide3">Provide thoughtful, detailed feedback when rating and reviewing recipes</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="guide4">
+                <label for="guide4">Support newcomers with helpful tips, encouragement, and culinary guidance</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="guide5">
+                <label for="guide5">Report inappropriate content and help maintain our positive environment</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="guide6">
+                <label for="guide6">Share cooking techniques, ingredient substitutions, and helpful modifications</label>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="{{ url_for('community.community_home') }}" class="btn btn-action">
+                <i class="fas fa-users me-2"></i>Explore Community Hub
+            </a>
+            <a href="{{ url_for('main.dashboard') }}" class="btn btn-action btn-secondary">
+                <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+            </a>
+        </div>
+        
+        <div class="step-navigation-buttons">
+            <button class="btn btn-outline-secondary" onclick="prevStep()">
+                <i class="fas fa-arrow-left me-2"></i>Previous
+            </button>
+            <a href="{{ url_for('main.dashboard') }}" class="btn btn-success">
+                <i class="fas fa-check-circle me-2"></i>Complete Onboarding
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentStepNum = 1;
+const totalSteps = 5;
+
+// Progress tracking
+const progressMessages = [
+    "Let's begin your culinary journey!",
+    "Ready to create your first recipe?",
+    "Discover powerful platform features!",
+    "Master meal planning techniques!",
+    "Join our vibrant community!"
+];
+
+function updateProgress() {
+    const progress = (currentStepNum / totalSteps) * 100;
+    const progressBar = document.getElementById('progressBar');
+    const currentStepElement = document.getElementById('currentStep');
+    
+    // Smooth progress bar animation
+    progressBar.style.transition = 'width 0.8s cubic-bezier(0.165, 0.84, 0.44, 1)';
+    progressBar.style.width = progress + '%';
+    currentStepElement.textContent = currentStepNum;
+    
+    // Update hero message with animation
+    const heroMessage = document.querySelector('.guide-hero p.fw-semibold');
+    if (heroMessage) {
+        heroMessage.style.opacity = '0.7';
+        setTimeout(() => {
+            heroMessage.innerHTML = `Step <span id="currentStep">${currentStepNum}</span> of 5 - ${progressMessages[currentStepNum - 1]}`;
+            heroMessage.style.opacity = '1';
+        }, 200);
+    }
+}
+
+function showStep(stepNum, direction = 'forward') {
+    const currentStep = document.querySelector('.step-content.active');
+    const nextStep = document.getElementById('step' + stepNum);
+    
+    if (!nextStep) return;
+    
+    // Enhanced loading state
+    if (currentStep) {
+        currentStep.classList.add('loading');
+        currentStep.style.transform = 'scale(0.98)';
+    }
+    
+    setTimeout(() => {
+        // Hide all steps with stagger effect
+        document.querySelectorAll('.step-content').forEach(step => {
+            step.classList.remove('active', 'loading');
+            step.style.transform = '';
+        });
+        
+        // Show current step with enhanced animation
+        nextStep.classList.add('active');
+        
+        // Enhanced navigation state management
+        document.querySelectorAll('.step-nav-item').forEach((nav, index) => {
+            nav.classList.remove('active');
+            if (index + 1 < stepNum) {
+                nav.classList.add('completed');
+                // Add completion animation
+                const stepNumber = nav.querySelector('.step-number');
+                if (stepNumber && !stepNumber.querySelector('.check-icon')) {
+                    stepNumber.innerHTML = '<i class="fas fa-check check-icon"></i>';
+                }
+            } else {
+                nav.classList.remove('completed');
+                const stepNumber = nav.querySelector('.step-number');
+                if (stepNumber) {
+                    stepNumber.textContent = index + 1;
+                }
+            }
+        });
+        
+        // Activate current step with enhanced feedback
+        const currentNav = document.querySelector(`[data-step="${stepNum}"]`);
+        if (currentNav) {
+            currentNav.classList.add('active');
+            // Pulse animation for active step
+            currentNav.style.animation = 'pulse 0.6s ease-out';
+            setTimeout(() => {
+                currentNav.style.animation = '';
+            }, 600);
+        }
+        
+        currentStepNum = stepNum;
+        updateProgress();
+        
+        // Enhanced smooth scroll with offset
+        const offset = window.innerHeight * 0.1;
+        window.scrollTo({ 
+            top: Math.max(0, nextStep.offsetTop - offset), 
+            behavior: 'smooth' 
+        });
+        
+        // Trigger step-specific enhancements
+        onStepEnter(stepNum);
+        
+    }, direction === 'forward' ? 300 : 150);
+}
+
+function nextStep() {
+    if (currentStepNum < totalSteps) {
+        // Enhanced celebration for progress
+        if (currentStepNum > 1) {
+            createAdvancedCelebration();
+        }
+        showStep(currentStepNum + 1, 'forward');
+        
+        // Analytics tracking (if available)
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'getting_started_progress', {
+                'event_category': 'onboarding',
+                'event_label': `step_${currentStepNum + 1}`,
+                'value': currentStepNum + 1
+            });
+        }
+    }
+}
+
+function prevStep() {
+    if (currentStepNum > 1) {
+        showStep(currentStepNum - 1, 'backward');
+    }
+}
+
+function onStepEnter(stepNum) {
+    // Enhanced step-specific interactions
+    switch(stepNum) {
+        case 1:
+            animateFeatureCards();
+            break;
+        case 2:
+            animateFeatureCards();
+            // Auto-focus first checkbox with delay
+            setTimeout(() => {
+                const firstCheckbox = document.getElementById('check1');
+                if (firstCheckbox) {
+                    firstCheckbox.focus();
+                }
+            }, 800);
+            break;
+        case 3:
+            animateFeatureCards();
+            break;
+        case 4:
+            animateFeatureCards();
+            break;
+        case 5:
+            animateFeatureCards();
+            prepareCompletionState();
+            break;
+    }
+}
+
+function animateFeatureCards() {
+    const featureCards = document.querySelectorAll('.step-content.active .feature-card');
+    featureCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(40px) scale(0.95)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1)';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0) scale(1)';
+        }, index * 100 + 200);
+    });
+}
+
+function createAdvancedCelebration() {
+    // Create multiple celebration elements
+    const celebrations = ['🎉', '✨', '🌟', '🎊'];
+    
+    celebrations.forEach((emoji, index) => {
+        setTimeout(() => {
+            const celebration = document.createElement('div');
+            celebration.innerHTML = emoji;
+            celebration.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: ${50 + (index - 1.5) * 10}%;
+                transform: translate(-50%, -50%);
+                font-size: 2.5rem;
+                z-index: 9999;
+                pointer-events: none;
+                animation: celebrationBurst 1.2s ease-out forwards;
+            `;
+            
+            document.body.appendChild(celebration);
+            
+            setTimeout(() => {
+                celebration.remove();
+            }, 1200);
+        }, index * 100);
+    });
+}
+
+function prepareCompletionState() {
+    // Enhanced completion step styling
+    const currentStep = document.getElementById('step5');
+    if (currentStep) {
+        currentStep.style.background = 'linear-gradient(145deg, #ffffff, #f8fafc)';
+        currentStep.style.boxShadow = '0 20px 80px rgba(102, 126, 234, 0.15)';
+    }
+    
+    // Completion tracking
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'getting_started_complete', {
+            'event_category': 'onboarding',
+            'event_label': 'tutorial_completed'
+        });
+    }
+}
+
+// Enhanced DOM ready handler
+document.addEventListener('DOMContentLoaded', function() {
+    // Navigation click handlers with enhanced feedback
+    document.querySelectorAll('.step-nav-item').forEach(nav => {
+        nav.addEventListener('click', function(e) {
+            e.preventDefault();
+            const stepNum = parseInt(this.dataset.step);
+            
+            // Ripple effect
+            const ripple = document.createElement('div');
+            ripple.style.cssText = `
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.3);
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                pointer-events: none;
+            `;
+            
+            const rect = this.getBoundingClientRect();
+            const size = 100;
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+            ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+            
+            this.style.position = 'relative';
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+            
+            showStep(stepNum);
+        });
+        
+        // Enhanced hover effects
+        nav.addEventListener('mouseenter', function() {
+            if (!this.classList.contains('active')) {
+                this.style.transform = 'translateY(-4px) scale(1.02)';
+            }
+        });
+        
+        nav.addEventListener('mouseleave', function() {
+            if (!this.classList.contains('active')) {
+                this.style.transform = '';
+            }
+        });
+    });
+    
+    // Enhanced checkbox interactions with progress tracking
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const checklistItem = this.closest('.checklist-item');
+            const checklist = this.closest('.checklist');
+            
+            if (this.checked) {
+                // Enhanced check animation
+                checklistItem.style.background = 'rgba(102, 126, 234, 0.08)';
+                checklistItem.style.borderRadius = '12px';
+                
+                // Success indicator
+                const successIndicator = document.createElement('div');
+                successIndicator.innerHTML = '<i class="fas fa-check-circle text-success"></i>';
+                successIndicator.style.cssText = `
+                    position: absolute;
+                    right: 1rem;
+                    top: 50%;
+                    transform: translateY(-50%) scale(0);
+                    animation: checkSuccess 0.5s ease-out forwards;
+                `;
+                
+                checklistItem.style.position = 'relative';
+                checklistItem.appendChild(successIndicator);
+                
+                setTimeout(() => {
+                    if (successIndicator.parentNode) {
+                        successIndicator.remove();
+                    }
+                }, 3000);
+                
+                // Haptic feedback (if supported)
+                if (navigator.vibrate) {
+                    navigator.vibrate(50);
+                }
+            } else {
+                checklistItem.style.background = '';
+                checklistItem.style.borderRadius = '';
+            }
+            
+            // Progress tracking for checklist completion
+            const checkboxes = checklist.querySelectorAll('input[type="checkbox"]');
+            const checkedBoxes = checklist.querySelectorAll('input[type="checkbox"]:checked');
+            const completionRate = (checkedBoxes.length / checkboxes.length) * 100;
+            
+            if (completionRate === 100 && checkboxes.length > 0) {
+                // Complete checklist celebration
+                setTimeout(() => {
+                    createAdvancedCelebration();
+                    
+                    // Add completion badge
+                    const completionBadge = document.createElement('div');
+                    completionBadge.innerHTML = `
+                        <div class="alert alert-success mt-3" style="border-radius: 16px; border: none;">
+                            <i class="fas fa-trophy me-2"></i>
+                            <strong>Excellent!</strong> You've completed this section.
+                        </div>
+                    `;
+                    checklist.parentNode.appendChild(completionBadge.firstElementChild);
+                }, 400);
+            }
+        });
+    });
+    
+    // Enhanced keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        // Only handle if not in input field
+        if (e.target.tagName.toLowerCase() !== 'input') {
+            switch(e.key) {
+                case 'ArrowRight':
+                case 'ArrowDown':
+                case ' ':
+                    e.preventDefault();
+                    nextStep();
+                    break;
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    e.preventDefault();
+                    prevStep();
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    showStep(1);
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    showStep(totalSteps);
+                    break;
+            }
+        }
+    });
+    
+    // Enhanced button interactions
+    document.querySelectorAll('.btn-action').forEach(btn => {
+        btn.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px) scale(1.02)';
+        });
+        
+        btn.addEventListener('mouseleave', function() {
+            this.style.transform = '';
+        });
+    });
+    
+    // Initialize with enhanced animations
+    updateProgress();
+    
+    // Delayed initial animation
+    setTimeout(() => {
+        animateFeatureCards();
+    }, 500);
+    
+    // Intersection Observer for scroll-triggered animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animation = 'fadeInUp 0.8s ease-out forwards';
+            }
+        });
+    }, observerOptions);
+    
+    // Observe elements for scroll animations
+    document.querySelectorAll('.checklist, .video-placeholder').forEach(el => {
+        observer.observe(el);
+    });
+});
+
+// Enhanced CSS animations
+const enhancedStyles = `
+    @keyframes celebrationBurst {
+        0% { 
+            transform: translate(-50%, -50%) scale(0) rotate(0deg); 
+            opacity: 0; 
+        }
+        50% { 
+            transform: translate(-50%, -50%) scale(1.3) rotate(180deg); 
+            opacity: 1; 
+        }
+        100% { 
+            transform: translate(-50%, -50%) scale(0) rotate(360deg); 
+            opacity: 0; 
+        }
+    }
+    
+    @keyframes checkSuccess {
+        0% { 
+            transform: translateY(-50%) scale(0) rotate(-180deg); 
+            opacity: 0; 
+        }
+        50% { 
+            transform: translateY(-50%) scale(1.2) rotate(0deg); 
+            opacity: 1; 
+        }
+        100% { 
+            transform: translateY(-50%) scale(1) rotate(0deg); 
+            opacity: 1; 
+        }
+    }
+    
+    @keyframes ripple {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .step-nav-item.completed .step-number {
+        background: var(--success-gradient) !important;
+        color: white !important;
+        font-size: 0.9rem;
+    }
+    
+    .check-icon {
+        font-size: 0.8rem;
+    }
+    
+    /* Enhanced focus styles */
+    .step-nav-item:focus-visible {
+        outline: 3px solid rgba(102, 126, 234, 0.5);
+        outline-offset: 4px;
+    }
+    
+    .btn-action:focus-visible {
+        outline: 3px solid rgba(102, 126, 234, 0.5);
+        outline-offset: 4px;
+    }
+`;
+
+const enhancedStyleSheet = document.createElement('style');
+enhancedStyleSheet.textContent = enhancedStyles;
+document.head.appendChild(enhancedStyleSheet);
+</script>
+{% endblock %}
