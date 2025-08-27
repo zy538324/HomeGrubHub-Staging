@@ -40,4 +40,3 @@ additional setup, but any provided environment variables will still take
 precedence.
 If the PostgreSQL variables are omitted, the application falls back to a local
 SQLite database for development.
-

@@ -201,6 +201,7 @@ def set_goals():
         goals.daily_fiber = float(data.get('daily_fiber', 25))
         goals.daily_sugar = float(data.get('daily_sugar', 50))
         goals.daily_sodium = float(data.get('daily_sodium', 2300))
+        goals.daily_cholesterol = float(data.get('daily_cholesterol', 300))
 
         db.session.commit()
 

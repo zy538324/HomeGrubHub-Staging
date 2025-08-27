@@ -51,8 +51,6 @@ class Config:
                     "AWS RDS connection failed, falling back to environment variables: %s",
                     e,
                 )
-        # Next priority: individual Postgres environment variables
-        # Primary: Use environment variables
         postgres_host = os.environ.get('POSTGRES_HOST')
         postgres_port = os.environ.get('POSTGRES_PORT')
         postgres_db = os.environ.get('POSTGRES_DB')
@@ -62,7 +60,6 @@ class Config:
         if all([postgres_host, postgres_port, postgres_db, postgres_user, postgres_password]):
             logger.info("Using environment variable database connection")
             return f'postgresql://{postgres_user}:{postgres_password}@{postgres_host}:{postgres_port}/{postgres_db}'
-
         # Final fallback to SQLite for development
         logger.warning("Using SQLite fallback for development")
         return 'sqlite:///recipes.db'
@@ -90,7 +87,6 @@ class Config:
                 'application_name': 'HomeGrubHub'  # For connection identification
             }
         }
-    }
 
     # SendGrid Configuration
     SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')

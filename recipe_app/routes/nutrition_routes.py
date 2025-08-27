@@ -6,6 +6,7 @@ from datetime import datetime, date, timedelta
 from sqlalchemy import func, and_, or_
 from recipe_app.db import db
 from recipe_app.models.nutrition_models import NutritionEntry, DailyNutritionSummary, NutritionGoal
+from recipe_app.models import WaterLog
 from recipe_app.utils.nutrition_calculator import NutritionCalculator
 import json
 
@@ -20,6 +21,7 @@ def nutrition_tracker():
         return redirect(url_for('auth.login'))
     
     user_id = str(session['_user_id'])
+    user_id_int = int(session['_user_id'])
     today = date.today()
     
     # Get or create user's nutrition goals
@@ -40,6 +42,12 @@ def nutrition_tracker():
         user_id=user_id,
         entry_date=today
     ).order_by(NutritionEntry.entry_time.desc()).all()
+
+    # Get today's water total
+    water_total = db.session.query(func.sum(WaterLog.amount_ml)).filter(
+        WaterLog.user_id == user_id_int,
+        func.date(WaterLog.log_time) == today
+    ).scalar() or 0
     
     # Get recent week summaries for charts
     week_ago = today - timedelta(days=7)
@@ -54,6 +62,7 @@ def nutrition_tracker():
                          daily_summary=daily_summary,
                          today_entries=today_entries,
                          week_summaries=week_summaries,
+                         water_total=water_total,
                          today=today)
 
 
@@ -98,6 +107,7 @@ def log_nutrition():
             fiber=float(nutrition_data.get('fiber', 0)),
             sugar=float(nutrition_data.get('sugar', 0)),
             sodium=float(nutrition_data.get('sodium', 0)),
+            cholesterol=float(nutrition_data.get('cholesterol', 0)),
             saturated_fat=float(nutrition_data.get('saturated_fat', 0)),
             meal_type=meal_type,
             notes=notes
@@ -173,6 +183,7 @@ def log_from_barcode():
             fiber=extract_numeric_value(nutrition_data, 'fiber'),
             sugar=extract_numeric_value(nutrition_data, 'sugar') or extract_numeric_value(nutrition_data, 'sugars'),
             sodium=extract_numeric_value(nutrition_data, 'sodium') * 1000 if extract_numeric_value(nutrition_data, 'sodium') else 0,  # Convert to mg
+            cholesterol=extract_numeric_value(nutrition_data, 'cholesterol') * 1000 if extract_numeric_value(nutrition_data, 'cholesterol') else 0,  # mg
             saturated_fat=extract_numeric_value(nutrition_data, 'saturated_fat') or extract_numeric_value(nutrition_data, 'saturated-fat'),
             meal_type=meal_type,
             notes=notes
@@ -230,6 +241,82 @@ def get_nutrition_entries(date_str):
         
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@nutrition_bp.route('/log-water', methods=['POST'])
+def log_water():
+    """Log water intake"""
+    if '_user_id' not in session:
+        return jsonify({'success': False, 'error': 'Not authenticated'}), 401
+
+    data = request.get_json() or {}
+    try:
+        amount = float(data.get('amount_ml', 0))
+    except (TypeError, ValueError):
+        amount = 0
+    if amount <= 0:
+        return jsonify({'success': False, 'error': 'Invalid amount'}), 400
+
+    log = WaterLog(user_id=int(session['_user_id']), amount_ml=amount)
+    db.session.add(log)
+    db.session.commit()
+
+    return jsonify({'success': True, 'log': log.to_dict()})
+
+
+@nutrition_bp.route('/water-log/<int:log_id>', methods=['PUT'])
+def edit_water_log(log_id):
+    """Edit a water log entry"""
+    if '_user_id' not in session:
+        return jsonify({'success': False, 'error': 'Not authenticated'}), 401
+
+    log = WaterLog.query.filter_by(id=log_id, user_id=int(session['_user_id'])).first()
+    if not log:
+        return jsonify({'success': False, 'error': 'Log not found'}), 404
+
+    data = request.get_json() or {}
+    try:
+        amount = float(data.get('amount_ml', log.amount_ml))
+    except (TypeError, ValueError):
+        amount = log.amount_ml
+    log.amount_ml = amount
+    db.session.commit()
+
+    return jsonify({'success': True, 'log': log.to_dict()})
+
+
+@nutrition_bp.route('/water-log/<int:log_id>', methods=['DELETE'])
+def delete_water_log(log_id):
+    """Delete a water log entry"""
+    if '_user_id' not in session:
+        return jsonify({'success': False, 'error': 'Not authenticated'}), 401
+
+    log = WaterLog.query.filter_by(id=log_id, user_id=int(session['_user_id'])).first()
+    if not log:
+        return jsonify({'success': False, 'error': 'Log not found'}), 404
+
+    db.session.delete(log)
+    db.session.commit()
+    return jsonify({'success': True})
+
+
+@nutrition_bp.route('/water-summary/<date_str>')
+def water_summary(date_str):
+    """Get total water intake for a day"""
+    if '_user_id' not in session:
+        return jsonify({'success': False, 'error': 'Not authenticated'}), 401
+
+    try:
+        summary_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    except ValueError:
+        return jsonify({'success': False, 'error': 'Invalid date'}), 400
+
+    total = db.session.query(func.sum(WaterLog.amount_ml)).filter(
+        WaterLog.user_id == int(session['_user_id']),
+        func.date(WaterLog.log_time) == summary_date
+    ).scalar() or 0
+
+    return jsonify({'success': True, 'total_ml': float(total)})
 
 
 @nutrition_bp.route('/delete-nutrition-entry/<int:entry_id>', methods=['DELETE'])
@@ -396,6 +483,7 @@ def update_daily_summary(user_id, summary_date):
         summary.total_fiber = 0
         summary.total_sugar = 0
         summary.total_sodium = 0
+        summary.total_cholesterol = 0
         summary.total_saturated_fat = 0
         summary.breakfast_calories = 0
         summary.lunch_calories = 0
@@ -412,6 +500,7 @@ def update_daily_summary(user_id, summary_date):
             summary.total_fiber += entry.fiber
             summary.total_sugar += entry.sugar
             summary.total_sodium += entry.sodium
+            summary.total_cholesterol += getattr(entry, 'cholesterol', 0)
             summary.total_saturated_fat += entry.saturated_fat
             
             # Add to meal-specific totals

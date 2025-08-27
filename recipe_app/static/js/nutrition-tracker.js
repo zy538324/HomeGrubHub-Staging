@@ -7,6 +7,7 @@ class NutritionTracker {
     constructor() {
         this.currentDate = new Date();
         this.charts = {};
+        this.waterGoal = 2000;
         this.initialize();
     }
 
@@ -15,6 +16,7 @@ class NutritionTracker {
         this.initializeCharts();
         this.loadTodayData();
         this.setupProgressAnimations();
+        this.fetchWaterSummary();
     }
 
     setupEventListeners() {
@@ -328,7 +330,8 @@ class NutritionTracker {
                 fat: parseFloat(document.getElementById('fat').value) || 0,
                 fiber: parseFloat(document.getElementById('fiber').value) || 0,
                 sugar: parseFloat(document.getElementById('sugar').value) || 0,
-                sodium: parseFloat(document.getElementById('sodium').value) || 0
+                sodium: parseFloat(document.getElementById('sodium').value) || 0,
+                cholesterol: parseFloat(document.getElementById('cholesterol').value) || 0
             }
         };
 
@@ -382,7 +385,8 @@ class NutritionTracker {
             daily_fat: getValue('goal-fat'),
             daily_fiber: getValue('goal-fiber'),
             daily_sugar: getValue('goal-sugar'),
-            daily_sodium: getValue('goal-sodium')
+            daily_sodium: getValue('goal-sodium'),
+            daily_cholesterol: getValue('goal-cholesterol')
         };
 
         try {
@@ -434,7 +438,7 @@ class NutritionTracker {
         const multiplier = (portionSize / 100) * servings;
 
         // Update all nutrition fields based on per-100g values
-        const fields = ['calories', 'protein', 'carbs', 'fat', 'fiber', 'sugar', 'sodium'];
+        const fields = ['calories', 'protein', 'carbs', 'fat', 'fiber', 'sugar', 'sodium', 'cholesterol'];
         
         fields.forEach(field => {
             const input = document.getElementById(field);
@@ -535,6 +539,45 @@ class NutritionTracker {
         });
     }
 
+    fetchWaterSummary() {
+        const dateStr = this.currentDate.toISOString().split('T')[0];
+        fetch(`/water-summary/${dateStr}`)
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    const total = data.total_ml || 0;
+                    const percent = Math.min(100, (total / this.waterGoal) * 100);
+                    const consumed = document.getElementById('water-consumed');
+                    if (consumed) consumed.textContent = `${Math.round(total)}`;
+                    const bar = document.getElementById('water-progress');
+                    if (bar) bar.style.width = `${percent}%`;
+                }
+            })
+            .catch(() => {});
+    }
+
+    logWater(amount) {
+        this.showLoading('Logging water...');
+        fetch('/log-water', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ amount_ml: amount })
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    this.showSuccess('Water logged');
+                    this.fetchWaterSummary();
+                } else {
+                    this.showError(data.error || 'Error logging water');
+                }
+            })
+            .catch(() => this.showError('Error logging water'))
+            .finally(() => this.hideLoading());
+    }
+
     loadTodayData() {
         // This would typically load today's data via AJAX
         // For now, we'll use the data already rendered in the template
@@ -615,6 +658,18 @@ function showAddEntryModal(mealType) {
 function showGoalsModal() {
     if (window.nutritionTracker) {
         window.nutritionTracker.showGoalsModal();
+    }
+}
+
+function showWaterLogPrompt() {
+    if (window.nutritionTracker) {
+        const amount = prompt('Water amount in ml', '250');
+        if (amount) {
+            const num = parseFloat(amount);
+            if (!isNaN(num)) {
+                window.nutritionTracker.logWater(num);
+            }
+        }
     }
 }
 

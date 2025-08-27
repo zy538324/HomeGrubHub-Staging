@@ -41,6 +41,9 @@ from .fitness_models import (
     WorkoutLog,
     ExerciseLog,
 )
+from .water_models import (
+    WaterLog,
+)
 from .models import (
     Follow,
     User,

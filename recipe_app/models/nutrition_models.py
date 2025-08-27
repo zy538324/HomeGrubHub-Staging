@@ -32,6 +32,7 @@ class NutritionEntry(db.Model):
     fiber = db.Column(db.Float, default=0.0)  # grams
     sugar = db.Column(db.Float, default=0.0)  # grams
     sodium = db.Column(db.Float, default=0.0)  # mg
+    cholesterol = db.Column(db.Float, default=0.0)  # mg
     saturated_fat = db.Column(db.Float, default=0.0)  # grams
     
     # Meal category
@@ -65,6 +66,7 @@ class NutritionEntry(db.Model):
             'fiber': self.fiber,
             'sugar': self.sugar,
             'sodium': self.sodium,
+            'cholesterol': self.cholesterol,
             'saturated_fat': self.saturated_fat,
             'meal_type': self.meal_type,
             'notes': self.notes,
@@ -89,6 +91,7 @@ class DailyNutritionSummary(db.Model):
     total_fiber = db.Column(db.Float, default=0.0)
     total_sugar = db.Column(db.Float, default=0.0)
     total_sodium = db.Column(db.Float, default=0.0)
+    total_cholesterol = db.Column(db.Float, default=0.0)
     total_saturated_fat = db.Column(db.Float, default=0.0)
     
     # Meal breakdown
@@ -123,6 +126,7 @@ class DailyNutritionSummary(db.Model):
             'total_fiber': self.total_fiber,
             'total_sugar': self.total_sugar,
             'total_sodium': self.total_sodium,
+            'total_cholesterol': self.total_cholesterol,
             'total_saturated_fat': self.total_saturated_fat,
             'breakfast_calories': self.breakfast_calories,
             'lunch_calories': self.lunch_calories,
@@ -149,6 +153,7 @@ class NutritionGoal(db.Model):
     daily_fiber = db.Column(db.Float, default=25.0)  # grams
     daily_sugar = db.Column(db.Float, default=50.0)  # grams (max)
     daily_sodium = db.Column(db.Float, default=2300.0)  # mg (max)
+    daily_cholesterol = db.Column(db.Float, default=300.0)  # mg (max)
     
     # User profile for goal calculation
     age = db.Column(db.Integer)
@@ -177,6 +182,7 @@ class NutritionGoal(db.Model):
             'daily_fiber': self.daily_fiber,
             'daily_sugar': self.daily_sugar,
             'daily_sodium': self.daily_sodium,
+            'daily_cholesterol': self.daily_cholesterol,
             'age': self.age,
             'gender': self.gender,
             'height': self.height,
