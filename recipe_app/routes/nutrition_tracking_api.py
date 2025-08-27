@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, session, render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
-from recipe_app.db import db
+from recipe_app.db import db, csrf
 from recipe_app.models.nutrition_tracking import Food, Meal, NutritionLog
 from datetime import datetime, date
 import requests
@@ -175,6 +175,40 @@ def add_meal():
     db.session.add(meal)
     db.session.commit()
     return jsonify(meal.to_dict()), 201
+
+# --- Nutrition Goals ---
+@nutrition_bp.route('/set-goals', methods=['POST'])
+@csrf.exempt
+def set_goals():
+    """Set or update user nutrition goals"""
+    if '_user_id' not in session:
+        return jsonify({'success': False, 'error': 'Not authenticated'}), 401
+
+    try:
+        data = request.get_json() or {}
+        user_id = str(session['_user_id'])
+        from recipe_app.models.nutrition_models import NutritionGoal
+
+        goals = NutritionGoal.query.filter_by(user_id=user_id).first()
+        if not goals:
+            goals = NutritionGoal(user_id=user_id)
+            db.session.add(goals)
+
+        goals.daily_calories = float(data.get('daily_calories', 2000))
+        goals.daily_protein = float(data.get('daily_protein', 150))
+        goals.daily_carbs = float(data.get('daily_carbs', 250))
+        goals.daily_fat = float(data.get('daily_fat', 65))
+        goals.daily_fiber = float(data.get('daily_fiber', 25))
+        goals.daily_sugar = float(data.get('daily_sugar', 50))
+        goals.daily_sodium = float(data.get('daily_sodium', 2300))
+        goals.daily_cholesterol = float(data.get('daily_cholesterol', 300))
+
+        db.session.commit()
+
+        return jsonify({'success': True, 'goals': goals.to_dict()})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 # --- Nutrition Log CRUD ---
 @nutrition_bp.route('/api/nutrition-logs', methods=['GET'])

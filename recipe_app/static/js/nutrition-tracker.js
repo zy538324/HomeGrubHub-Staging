@@ -328,7 +328,8 @@ class NutritionTracker {
                 fat: parseFloat(document.getElementById('fat').value) || 0,
                 fiber: parseFloat(document.getElementById('fiber').value) || 0,
                 sugar: parseFloat(document.getElementById('sugar').value) || 0,
-                sodium: parseFloat(document.getElementById('sodium').value) || 0
+                sodium: parseFloat(document.getElementById('sodium').value) || 0,
+                cholesterol: parseFloat(document.getElementById('cholesterol').value) || 0
             }
         };
 
@@ -370,11 +371,20 @@ class NutritionTracker {
     }
 
     async saveGoals() {
+        const getValue = (id) => {
+            const el = document.getElementById(id);
+            return el ? parseFloat(el.value) : 0;
+        };
+
         const goalsData = {
-            daily_calories: parseFloat(document.getElementById('goal-calories').value),
-            daily_protein: parseFloat(document.getElementById('goal-protein').value),
-            daily_carbs: parseFloat(document.getElementById('goal-carbs').value),
-            daily_fat: parseFloat(document.getElementById('goal-fat').value)
+            daily_calories: getValue('goal-calories'),
+            daily_protein: getValue('goal-protein'),
+            daily_carbs: getValue('goal-carbs'),
+            daily_fat: getValue('goal-fat'),
+            daily_fiber: getValue('goal-fiber'),
+            daily_sugar: getValue('goal-sugar'),
+            daily_sodium: getValue('goal-sodium'),
+            daily_cholesterol: getValue('goal-cholesterol')
         };
 
         try {
@@ -426,7 +436,7 @@ class NutritionTracker {
         const multiplier = (portionSize / 100) * servings;
 
         // Update all nutrition fields based on per-100g values
-        const fields = ['calories', 'protein', 'carbs', 'fat', 'fiber', 'sugar', 'sodium'];
+        const fields = ['calories', 'protein', 'carbs', 'fat', 'fiber', 'sugar', 'sodium', 'cholesterol'];
         
         fields.forEach(field => {
             const input = document.getElementById(field);
