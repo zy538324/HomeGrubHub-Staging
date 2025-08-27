@@ -28,10 +28,16 @@ class Config:
     # Database Configuration - Priority: Environment > AWS RDS > SQLite
     @staticmethod
     def get_database_uri():
+        logger = logging.getLogger(__name__)
+
+        # Highest priority: explicit DATABASE_URL override
+        explicit_url = os.environ.get('DATABASE_URL')
+        if explicit_url:
+            logger.info("Using DATABASE_URL override for database connection")
+            return explicit_url
+
         # Check if AWS RDS should be used (via environment variable)
         use_aws_rds = os.environ.get('USE_AWS_RDS', 'false').lower() == 'true'
-
-        logger = logging.getLogger(__name__)
 
         if use_aws_rds:
             try:
@@ -46,7 +52,6 @@ class Config:
                     e,
                 )
 
-        # Primary: Use environment variables
         postgres_host = os.environ.get('POSTGRES_HOST')
         postgres_port = os.environ.get('POSTGRES_PORT')
         postgres_db = os.environ.get('POSTGRES_DB')
@@ -56,10 +61,6 @@ class Config:
         if all([postgres_host, postgres_port, postgres_db, postgres_user, postgres_password]):
             logger.info("Using environment variable database connection")
             return f'postgresql://{postgres_user}:{postgres_password}@{postgres_host}:{postgres_port}/{postgres_db}'
-        else:
-            # Final fallback to SQLite for development
-            logger.warning("Using SQLite fallback for development")
-            return os.environ.get('DATABASE_URL', 'sqlite:///recipes.db')
 
     # Set the database URI using the priority system
     SQLALCHEMY_DATABASE_URI = get_database_uri()
@@ -80,7 +81,6 @@ class Config:
                 'application_name': 'HomeGrubHub'  # For connection identification
             }
         }
-    }
 
     # SendGrid Configuration
     SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')

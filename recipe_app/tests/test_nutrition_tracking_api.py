@@ -42,6 +42,7 @@ def test_get_foods(client):
 
 
 def test_update_nutrition_goals_micro(client):
+
 def test_update_nutrition_goals_sugar(client):
     with client.session_transaction() as sess:
         sess['_user_id'] = 'testuser'
@@ -53,6 +54,11 @@ def test_update_nutrition_goals_sugar(client):
         'daily_fat': 60,
         'daily_fiber': 30,
         'daily_sugar': 40,
+        'daily_sodium': 2000,
+        'daily_cholesterol': 300
+    }
+
+    response = client.post('/nutrition/set-goals', data=json.dumps(payload), content_type='application/json', headers=get_auth_headers())
         'daily_sodium': 2000
     }
 
@@ -64,3 +70,4 @@ def test_update_nutrition_goals_sugar(client):
     assert data['goals']['daily_sugar'] == 40.0
     assert data['goals']['daily_fiber'] == 30.0
     assert data['goals']['daily_sodium'] == 2000.0
+    assert data['goals']['daily_cholesterol'] == 300.0

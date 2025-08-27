@@ -21,7 +21,3 @@ For PostgreSQL deployments, also provide:
 - `POSTGRES_DB`
 - `POSTGRES_USER`
 - `POSTGRES_PASSWORD`
-
-If the PostgreSQL variables are omitted, the application falls back to a local
-SQLite database for development.
-

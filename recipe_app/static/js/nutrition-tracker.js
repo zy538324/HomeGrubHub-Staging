@@ -328,7 +328,8 @@ class NutritionTracker {
                 fat: parseFloat(document.getElementById('fat').value) || 0,
                 fiber: parseFloat(document.getElementById('fiber').value) || 0,
                 sugar: parseFloat(document.getElementById('sugar').value) || 0,
-                sodium: parseFloat(document.getElementById('sodium').value) || 0
+                sodium: parseFloat(document.getElementById('sodium').value) || 0,
+                cholesterol: parseFloat(document.getElementById('cholesterol').value) || 0
             }
         };
 
@@ -382,7 +383,8 @@ class NutritionTracker {
             daily_fat: getValue('goal-fat'),
             daily_fiber: getValue('goal-fiber'),
             daily_sugar: getValue('goal-sugar'),
-            daily_sodium: getValue('goal-sodium')
+            daily_sodium: getValue('goal-sodium'),
+            daily_cholesterol: getValue('goal-cholesterol')
         };
 
         try {
@@ -434,7 +436,7 @@ class NutritionTracker {
         const multiplier = (portionSize / 100) * servings;
 
         // Update all nutrition fields based on per-100g values
-        const fields = ['calories', 'protein', 'carbs', 'fat', 'fiber', 'sugar', 'sodium'];
+        const fields = ['calories', 'protein', 'carbs', 'fat', 'fiber', 'sugar', 'sodium', 'cholesterol'];
         
         fields.forEach(field => {
             const input = document.getElementById(field);
