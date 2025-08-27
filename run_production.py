@@ -3,6 +3,7 @@ Production server startup using Waitress (Windows-compatible)
 """
 import os
 import sys
+import logging
 from pathlib import Path
 
 # Add the project root to Python path
@@ -14,6 +15,12 @@ def start_production_server():
     try:
         from waitress import serve
         from wsgi import application
+
+        logger = application.logger
+        # Ensure logs also stream to console for operator visibility
+        stream_handler = logging.StreamHandler()
+        stream_handler.setLevel(logging.INFO)
+        logger.addHandler(stream_handler)
         
         # Set production environment
         os.environ['FLASK_ENV'] = 'production'
@@ -23,11 +30,11 @@ def start_production_server():
         log_dir = project_root / 'logs'
         log_dir.mkdir(exist_ok=True)
         
-        print("🚀 Starting HomeGrubHub Production Server")
-        print("=========================================")
-        print(f"Server: http://127.0.0.1:8050")
-        print("Press Ctrl+C to stop")
-        print("")
+        logger.info("Starting HomeGrubHub Production Server")
+        logger.info("=========================================")
+        logger.info("Server: http://127.0.0.1:8050")
+        logger.info("Press Ctrl+C to stop")
+        logger.info("")
         
         # Start Waitress server
         serve(
@@ -44,15 +51,13 @@ def start_production_server():
         )
         
     except KeyboardInterrupt:
-        print("\n👋 Server stopped by user")
+        logger.info("Server stopped by user")
     except ImportError as e:
-        print(f"❌ Missing dependency: {e}")
-        print("Please install: python -m pip install waitress")
+        logger.error("Missing dependency: %s", e)
+        logger.error("Please install: python -m pip install waitress")
         sys.exit(1)
     except Exception as e:
-        print(f"❌ Error starting server: {e}")
-        import traceback
-        traceback.print_exc()
+        logger.exception("Error starting server: %s", e)
         sys.exit(1)
 
 if __name__ == "__main__":
