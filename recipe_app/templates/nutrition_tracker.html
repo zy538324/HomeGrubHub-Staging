@@ -139,6 +139,69 @@
         </div>
     </div>
 
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-secondary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 id="fiber-consumed">{{ daily_summary.total_fiber|round(1) if daily_summary else 0 }}g</h4>
+                            <p class="mb-0">Fiber</p>
+                            <small>Goal: {{ goals.daily_fiber|round(0)|int }}g</small>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-seedling fa-2x"></i>
+                        </div>
+                    </div>
+                    <div class="progress mt-2" style="height: 6px;">
+                        {% set fiber_percent = ((daily_summary.total_fiber / goals.daily_fiber) * 100) if daily_summary and goals.daily_fiber > 0 else 0 %}
+                        <div class="progress-bar bg-white" style="width: {{ [fiber_percent, 100]|min }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 id="sugar-consumed">{{ daily_summary.total_sugar|round(1) if daily_summary else 0 }}g</h4>
+                            <p class="mb-0">Sugar</p>
+                            <small>Goal: {{ goals.daily_sugar|round(0)|int }}g</small>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-candy-cane fa-2x"></i>
+                        </div>
+                    </div>
+                    <div class="progress mt-2" style="height: 6px;">
+                        {% set sugar_percent = ((daily_summary.total_sugar / goals.daily_sugar) * 100) if daily_summary and goals.daily_sugar > 0 else 0 %}
+                        <div class="progress-bar bg-white" style="width: {{ [sugar_percent, 100]|min }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-dark text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 id="sodium-consumed">{{ daily_summary.total_sodium|round(0)|int if daily_summary else 0 }}mg</h4>
+                            <p class="mb-0">Sodium</p>
+                            <small>Goal: {{ goals.daily_sodium|round(0)|int }}mg</small>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-tint fa-2x"></i>
+                        </div>
+                    </div>
+                    <div class="progress mt-2" style="height: 6px;">
+                        {% set sodium_percent = ((daily_summary.total_sodium / goals.daily_sodium) * 100) if daily_summary and goals.daily_sodium > 0 else 0 %}
+                        <div class="progress-bar bg-white" style="width: {{ [sodium_percent, 100]|min }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Date Navigation -->
     <div class="row mb-3">
         <div class="col-12">
@@ -402,6 +465,14 @@
                                 <input type="number" class="form-control" id="daily-fiber" value="{{ goals.daily_fiber }}" min="10" max="100">
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="daily-sugar">Daily Sugar (g)</label>
+                                <input type="number" class="form-control" id="daily-sugar" value="{{ goals.daily_sugar }}" min="10" max="200">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="daily-sodium">Max Sodium (mg)</label>
@@ -696,6 +767,7 @@ function updateGoals() {
         daily_carbs: parseFloat(document.getElementById('daily-carbs').value),
         daily_fat: parseFloat(document.getElementById('daily-fat').value),
         daily_fiber: parseFloat(document.getElementById('daily-fiber').value),
+        daily_sugar: parseFloat(document.getElementById('daily-sugar').value),
         daily_sodium: parseFloat(document.getElementById('daily-sodium').value)
     };
     

@@ -8,7 +8,7 @@ from flask_bootstrap import Bootstrap
 from flask_wtf.csrf import CSRFProtect
 from jinja2 import FileSystemLoader, ChoiceLoader
 import flask_bootstrap
-from configs.config import Config
+from configs.config import Config, validate_config
 from configs.auth0_config import (
         AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, AUTH0_DOMAIN, AUTH0_CALLBACK_URL
     )
@@ -33,19 +33,14 @@ def create_app():
     
     app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
     app.config.from_object(Config)
-    
+    validate_config(app.config)
+
     # Add Flask-Bootstrap templates to the loader
     bootstrap_template_dir = os.path.join(os.path.dirname(flask_bootstrap.__file__), 'templates')
     app.jinja_loader = ChoiceLoader([
         FileSystemLoader(template_dir),  # Your custom templates
         FileSystemLoader(bootstrap_template_dir)  # Flask-Bootstrap templates
     ])
-    
-    # Don't override SECRET_KEY - use the one from Config class
-    # The SECRET_KEY should come from the environment or Config class
-    if not app.config.get('SECRET_KEY') or app.config.get('SECRET_KEY') == 'dev':
-        app.config['SECRET_KEY'] = 'you-will-never-guess-fallback-key-for-development'
-        print("Warning: Using fallback SECRET_KEY. Set SECRET_KEY environment variable for production.")
     
     # CSRF Configuration
     app.config['WTF_CSRF_ENABLED'] = True
@@ -56,8 +51,6 @@ def create_app():
     # app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(project_root_dir, "instance", "recipes.db")}'
     # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
-    print(f"Database URI: {app.config['SQLALCHEMY_DATABASE_URI']}")
-
     # Initialize extensions with app
     db.init_app(app)
     
@@ -214,13 +207,13 @@ def create_app():
             FamilyShoppingRequest, FamilyRecipeRating
         )
     except ImportError:
-        print("Warning: Family models not available")
+        app.logger.warning("Family models not available")
     
     # Import nutrition models to ensure tables are created
     try:
         from .models.nutrition_tracking import Food, Meal, NutritionLog
     except ImportError:
-        print("Warning: Nutrition tracking models not available")
+        app.logger.warning("Nutrition tracking models not available")
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -234,10 +227,9 @@ def create_app():
             from sqlalchemy import text
             db.session.execute(text('SELECT 1'))
             db.session.commit()
-            print("Database connection successful")
+            app.logger.info("Database connection successful")
         except Exception as e:
-            print(f"Database connection failed: {e}")
-            app.logger.error(f"Database connection failed: {e}")
+            app.logger.error("Database connection failed: %s", e)
             # Don't fail startup, but log the error
 
     # Configure logging
@@ -263,8 +255,30 @@ def create_app():
         app.logger.setLevel(logging.INFO)
         app.logger.info('HomeGrubHub startup')
 
-    print(f"Database URI: {app.config['SQLALCHEMY_DATABASE_URI']}")  # Log the database URI for debugging
-    print(f"Resolved Database Path: {os.path.join(project_root_dir, 'instance', 'recipes.db')}")  # Log the resolved database path
-    print(f"Current Working Directory: {os.getcwd()}")  # Log the current working directory
+    from urllib.parse import urlparse
+
+    def _mask_db_uri(uri: str) -> str:
+        """Mask credentials in database URI for safe logging."""
+        try:
+            parsed = urlparse(uri)
+            if "@" in parsed.netloc:
+                userinfo, host = parsed.netloc.split("@", 1)
+                if ":" in userinfo:
+                    username, _ = userinfo.split(":", 1)
+                else:
+                    username = userinfo
+                netloc = f"{username}:***@{host}"
+            else:
+                netloc = parsed.netloc
+            return parsed._replace(netloc=netloc).geturl()
+        except Exception:
+            return "***"
+
+    masked_uri = _mask_db_uri(app.config['SQLALCHEMY_DATABASE_URI'])
+    app.logger.info("Database URI: %s", masked_uri)
+    app.logger.debug(
+        "Resolved Database Path: %s", os.path.join(project_root_dir, 'instance', 'recipes.db')
+    )
+    app.logger.debug("Current Working Directory: %s", os.getcwd())
 
     return app
