@@ -1,6 +1,5 @@
 import pytest
-from recipe_app.db import db
-from recipe_app import create_app
+from recipe_app.db import db, create_app
 from flask import json
 
 def get_auth_headers():
@@ -9,7 +8,7 @@ def get_auth_headers():
 
 @pytest.fixture
 def client():
-    app = create_app('testing')
+    app = create_app()
     app.config['TESTING'] = True
     with app.test_client() as client:
         with app.app_context():
@@ -40,3 +39,26 @@ def test_get_foods(client):
     assert response.status_code == 200
     data = response.get_json()
     assert isinstance(data, list)
+
+
+def test_update_nutrition_goals_micro(client):
+    with client.session_transaction() as sess:
+        sess['_user_id'] = 'testuser'
+
+    payload = {
+        'daily_calories': 2000,
+        'daily_protein': 150,
+        'daily_carbs': 250,
+        'daily_fat': 60,
+        'daily_fiber': 30,
+        'daily_sugar': 40,
+        'daily_sodium': 2000
+    }
+
+    response = client.post('/nutrition/set-goals', data=json.dumps(payload), content_type='application/json', headers=get_auth_headers())
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data['success'] is True
+    assert data['goals']['daily_sugar'] == 40.0
+    assert data['goals']['daily_fiber'] == 30.0
+    assert data['goals']['daily_sodium'] == 2000.0
