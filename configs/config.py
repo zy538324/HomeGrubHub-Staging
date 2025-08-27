@@ -66,15 +66,19 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # SQLAlchemy Engine Configuration for better connection handling
-    SQLALCHEMY_ENGINE_OPTIONS = {
-        'pool_pre_ping': True,  # Test connections before use
-        'pool_recycle': 300,    # Recycle connections every 5 minutes
-        'pool_timeout': 20,     # Wait up to 20 seconds for a connection
-        'max_overflow': 0,      # Don't allow overflow connections
-        'pool_size': 10,        # Number of connections to maintain
-        'connect_args': {
-            'connect_timeout': 10,  # Connection timeout in seconds
-            'application_name': 'HomeGrubHub'  # For connection identification
+    if SQLALCHEMY_DATABASE_URI.startswith('sqlite'):
+        SQLALCHEMY_ENGINE_OPTIONS = {}
+    else:
+        SQLALCHEMY_ENGINE_OPTIONS = {
+            'pool_pre_ping': True,  # Test connections before use
+            'pool_recycle': 300,    # Recycle connections every 5 minutes
+            'pool_timeout': 20,     # Wait up to 20 seconds for a connection
+            'max_overflow': 0,      # Don't allow overflow connections
+            'pool_size': 10,        # Number of connections to maintain
+            'connect_args': {
+                'connect_timeout': 10,  # Connection timeout in seconds
+                'application_name': 'HomeGrubHub'  # For connection identification
+            }
         }
     }
 

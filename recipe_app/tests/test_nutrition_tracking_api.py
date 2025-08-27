@@ -41,6 +41,7 @@ def test_get_foods(client):
     assert isinstance(data, list)
 
 
+def test_update_nutrition_goals_micro(client):
 def test_update_nutrition_goals_sugar(client):
     with client.session_transaction() as sess:
         sess['_user_id'] = 'testuser'
@@ -60,3 +61,5 @@ def test_update_nutrition_goals_sugar(client):
     data = response.get_json()
     assert data['success'] is True
     assert data['goals']['daily_sugar'] == 40.0
+    assert data['goals']['daily_fiber'] == 30.0
+    assert data['goals']['daily_sodium'] == 2000.0
