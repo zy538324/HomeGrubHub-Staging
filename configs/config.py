@@ -62,11 +62,7 @@ class Config:
             return f'postgresql://{postgres_user}:{postgres_password}@{postgres_host}:{postgres_port}/{postgres_db}'
         # Final fallback to SQLite for development
         logger.warning("Using SQLite fallback for development")
-        return 'sqlite:///recipes.db'
-        else:
-            # Final fallback to SQLite for development
-            logger.warning("Using SQLite fallback for development")
-            return os.environ.get('DATABASE_URL', 'sqlite:///recipes.db')
+        return os.environ.get('DATABASE_URL', 'sqlite:///recipes.db')
 
     # Set the database URI using the priority system
     SQLALCHEMY_DATABASE_URI = get_database_uri()
@@ -98,6 +94,27 @@ class Config:
     SENDGRID_PASSWORD_RESET_TEMPLATE_ID = os.environ.get('SENDGRID_PASSWORD_RESET_TEMPLATE_ID')
     SENDGRID_WELCOME_TEMPLATE_ID = os.environ.get('SENDGRID_WELCOME_TEMPLATE_ID')
     SENDGRID_BILLING_TEMPLATE_ID = os.environ.get('SENDGRID_BILLING_TEMPLATE_ID')
+
+
+# Environment-specific configuration classes
+class DevelopmentConfig(Config):
+    DEBUG = True
+
+
+class TestingConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL', 'sqlite:///:memory:')
+
+
+class ProductionConfig(Config):
+    DEBUG = False
+
+
+config_by_name = {
+    'development': DevelopmentConfig,
+    'testing': TestingConfig,
+    'production': ProductionConfig,
+}
 
 
 # Required settings for startup validation
