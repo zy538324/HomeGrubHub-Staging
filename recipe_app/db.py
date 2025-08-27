@@ -8,7 +8,7 @@ from flask_bootstrap import Bootstrap
 from flask_wtf.csrf import CSRFProtect
 from jinja2 import FileSystemLoader, ChoiceLoader
 import flask_bootstrap
-from configs.config import Config
+from configs.config import Config, validate_config
 from configs.auth0_config import (
         AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, AUTH0_DOMAIN, AUTH0_CALLBACK_URL
     )
@@ -33,19 +33,14 @@ def create_app():
     
     app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
     app.config.from_object(Config)
-    
+    validate_config(app.config)
+
     # Add Flask-Bootstrap templates to the loader
     bootstrap_template_dir = os.path.join(os.path.dirname(flask_bootstrap.__file__), 'templates')
     app.jinja_loader = ChoiceLoader([
         FileSystemLoader(template_dir),  # Your custom templates
         FileSystemLoader(bootstrap_template_dir)  # Flask-Bootstrap templates
     ])
-    
-    # Don't override SECRET_KEY - use the one from Config class
-    # The SECRET_KEY should come from the environment or Config class
-    if not app.config.get('SECRET_KEY') or app.config.get('SECRET_KEY') == 'dev':
-        app.config['SECRET_KEY'] = 'you-will-never-guess-fallback-key-for-development'
-        print("Warning: Using fallback SECRET_KEY. Set SECRET_KEY environment variable for production.")
     
     # CSRF Configuration
     app.config['WTF_CSRF_ENABLED'] = True
@@ -56,8 +51,6 @@ def create_app():
     # app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(project_root_dir, "instance", "recipes.db")}'
     # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
-    print(f"Database URI: {app.config['SQLALCHEMY_DATABASE_URI']}")
-
     # Initialize extensions with app
     db.init_app(app)
     

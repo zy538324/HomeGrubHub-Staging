@@ -5,8 +5,10 @@ from flask_login import login_required, current_user
 from ..models.models import User
 from datetime import datetime, timedelta
 
-# Initialize Stripe
-stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', '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')  # Replace with your Stripe secret key
+# Initialize Stripe strictly from environment
+stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
+if not stripe.api_key:
+    raise RuntimeError("STRIPE_SECRET_KEY environment variable is required")
 
 billing_bp = Blueprint('billing', __name__)
 
