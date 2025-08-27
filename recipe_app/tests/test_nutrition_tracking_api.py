@@ -42,7 +42,6 @@ def test_get_foods(client):
 
 
 def test_update_nutrition_goals_micro(client):
-
 def test_update_nutrition_goals_sugar(client):
     with client.session_transaction() as sess:
         sess['_user_id'] = 'testuser'
