@@ -3,3 +3,4 @@ flask-socketio==5.5.1
 redis==5.0.1
 python-socketio==5.12.0
 eventlet==0.35.2
+recipe_scrapers==15.8.0
