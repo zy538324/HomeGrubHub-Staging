@@ -63,10 +63,6 @@ class Config:
         # Final fallback to SQLite for development
         logger.warning("Using SQLite fallback for development")
         return 'sqlite:///recipes.db'
-        else:
-            # Final fallback to SQLite for development
-            logger.warning("Using SQLite fallback for development")
-            return os.environ.get('DATABASE_URL', 'sqlite:///recipes.db')
 
     # Set the database URI using the priority system
     SQLALCHEMY_DATABASE_URI = get_database_uri()

@@ -1,0 +1,688 @@
+{% extends "base.html" %}
+
+{% block title %}🍎 Smart Nutrition Tracker – HomeGrubHub{% endblock %}
+
+{# =========================================================
+  Redesigned, accessible, responsive, and performance‑minded
+  Jinja2 template for the Nutrition dashboard
+  - Dark mode support (prefers-color-scheme)
+  - Reduced motion support (prefers-reduced-motion)
+  - Radial gauges (pure CSS conic‑gradient)
+  - Sticky header, collapsible sidebar, mobile FAB
+  - Keyboard shortcuts and local preference storage
+  - Clean BEM‑ish class naming; variables via :root
+  - No external JS libs; Font Awesome assumed globally
+========================================================= #}
+
+{% block extra_styles %}
+<style>
+  :root {
+    /* Colour palette */
+    --primary: #10b981; /* emerald */
+    --primary-600: #059669;
+    --secondary: #3b82f6; /* blue */
+    --accent: #f59e0b; /* amber */
+    --danger: #ef4444; /* red */
+    --info: #06b6d4; /* cyan */
+    --purple: #8b5cf6;
+
+    /* Surfaces */
+    --bg: #f7fafc;           /* page */
+    --bg-elev: #ffffff;      /* cards */
+    --bg-muted: #f1f5f9;     /* sections */
+    --bg-hover: #eef2f7;     /* hover */
+
+    /* Text & borders */
+    --text: #0f172a;         /* slate-900 */
+    --text-2: #334155;       /* slate-700 */
+    --text-3: #64748b;       /* slate-500 */
+    --text-inv: #ffffff;
+    --border: #e2e8f0;
+
+    /* Effects */
+    --shadow-xs: 0 1px 2px rgba(0,0,0,.06);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+    --shadow-md: 0 4px 10px rgba(0,0,0,.08);
+    --radius-sm: 10px;
+    --radius-md: 14px;
+    --radius-lg: 18px;
+    --radius-pill: 999px;
+
+    /* Layout */
+    --header-h: 68px;
+    --sidebar-w: 300px;
+    --content-max: 1400px;
+
+    /* Animation */
+    --easing: cubic-bezier(.2,.7,.2,1);
+    --t-fast: .15s var(--easing);
+    --t: .3s var(--easing);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0b1220;         /* deep navy */
+      --bg-elev: #0f1629;
+      --bg-muted: #0c1426;
+      --bg-hover: #111a31;
+      --text: #e6edf6;
+      --text-2: #c2cee0;
+      --text-3: #95a2b8;
+      --border: #1f2a44;
+      --shadow-xs: none;
+      --shadow-sm: none;
+      --shadow-md: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    line-height: 1.55;
+  }
+
+  /* ======= App Shell ======= */
+  .app {
+    min-height: 100dvh;
+    display: grid;
+    grid-template-rows: var(--header-h) 1fr;
+  }
+
+  .app__header {
+    position: sticky; top: 0; z-index: 50;
+    height: var(--header-h);
+    background: var(--bg-elev);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header {
+    max-width: var(--content-max);
+    margin: 0 auto; height: 100%;
+    display: grid; grid-template-columns: 1fr auto auto; gap: 1rem;
+    align-items: center; padding: 0 1rem;
+  }
+  .header__brand { display: flex; align-items: center; gap: .75rem; }
+  .header__logo { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: var(--shadow-sm); }
+  .header__title { font-weight: 800; letter-spacing: .2px; }
+  .header__actions { display: flex; align-items: center; gap: .5rem; }
+  .btn {
+    display: inline-flex; align-items: center; gap: .5rem;
+    border: 1px solid var(--border); background: var(--bg-elev);
+    padding: .6rem .95rem; border-radius: var(--radius-pill);
+    font-weight: 600; color: var(--text-2); cursor: pointer; text-decoration: none;
+    transition: background var(--t);
+  }
+  .btn:hover { background: var(--bg-hover); }
+  .btn--primary { background: linear-gradient(135deg, var(--primary), var(--primary-600)); border: 0; color: var(--text-inv); box-shadow: var(--shadow-md); }
+  .btn--ghost { background: transparent; }
+
+  .app__body {
+    display: grid; grid-template-columns: var(--sidebar-w) 1fr; gap: 1.5rem;
+    max-width: var(--content-max); margin: 1rem auto 2rem; padding: 0 1rem;
+  }
+
+  /* ======= Sidebar ======= */
+  .sidebar {
+    background: var(--bg-elev); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 1rem; height: fit-content; position: sticky; top: calc(var(--header-h) + 1rem);
+  }
+  .sidebar__section + .sidebar__section { margin-top: 1rem; }
+  .section__title { font-size: .9rem; color: var(--text-3); text-transform: uppercase; letter-spacing: .06em; margin: .25rem 0 .5rem; }
+  .quick-stats { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+  .stat {
+    background: var(--bg-muted); border: 1px solid var(--border); border-radius: 12px;
+    padding: .8rem; display: grid; gap: .2rem; transition: transform var(--t);
+  }
+  .stat:hover { transform: translateY(-2px); }
+  .stat__value { font-weight: 800; }
+  .stat__label { font-size: .8rem; color: var(--text-3); }
+
+  .toggle-row { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .chip {
+    border: 1px solid var(--border); background: var(--bg-elev); color: var(--text-2);
+    padding: .45rem .7rem; border-radius: var(--radius-pill); cursor: pointer; font-weight: 600;
+  }
+  .chip--on { background: var(--bg-muted); }
+
+  .date-picker { display: grid; gap: .6rem; }
+  .date-input { width: 100%; border: 1px solid var(--border); border-radius: 12px; background: var(--bg);
+    color: var(--text); padding: .65rem .8rem; }
+
+  /* ======= Content ======= */
+  .content { display: grid; gap: 1.5rem; }
+
+  /* Hero */
+  .hero {
+    background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 1.25rem 1.25rem; display: grid; gap: .8rem; position: relative; overflow: hidden; box-shadow: var(--shadow-xs);
+  }
+  .hero__title { font-size: 1.75rem; font-weight: 900; letter-spacing: .2px; }
+  .hero__subtitle { color: var(--text-2); }
+  .hero__actions { display: flex; flex-wrap: wrap; gap: .6rem; }
+
+  /* KPI grid */
+  .kpi-grid {
+    display: grid; grid-template-columns: repeat(4, minmax(220px,1fr)); gap: 1rem;
+  }
+  @media (max-width: 1100px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px)  { .kpi-grid { grid-template-columns: 1fr; } }
+
+  .kpi {
+    background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 1rem; display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: center; cursor: pointer; transition: transform var(--t), box-shadow var(--t), border-color var(--t);
+  }
+  .kpi:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--primary); }
+  .kpi__icon { width: 54px; height: 54px; display: grid; place-items: center; border-radius: 14px; color: var(--text-inv); box-shadow: var(--shadow-sm); }
+  .kpi--cal .kpi__icon { background: linear-gradient(135deg, var(--accent), #d97706); }
+  .kpi--pro .kpi__icon { background: linear-gradient(135deg, var(--primary), var(--primary-600)); }
+  .kpi--carb .kpi__icon { background: linear-gradient(135deg, var(--secondary), #1d4ed8); }
+  .kpi--fat .kpi__icon { background: linear-gradient(135deg, var(--purple), #7c3aed); }
+
+  .kpi__body { display: grid; gap: .5rem; }
+  .kpi__title { font-weight: 700; }
+  .kpi__row { display: flex; align-items: baseline; gap: .5rem; }
+  .kpi__value { font-size: 1.6rem; font-weight: 900; }
+  .kpi__goal { color: var(--text-3); }
+  .kpi__bar { height: 10px; background: var(--bg-muted); border-radius: 10px; overflow: hidden; }
+  .kpi__bar > span { display:block; height: 100%; background: currentColor; border-radius: 10px; transition: width var(--t); }
+  .kpi--cal { color: var(--accent); }
+  .kpi--pro { color: var(--primary); }
+  .kpi--carb { color: var(--secondary); }
+  .kpi--fat { color: var(--purple); }
+
+  /* Radial gauges row */
+  .gauge-row { display: grid; grid-template-columns: repeat(4, minmax(220px,1fr)); gap: 1rem; }
+  @media (max-width: 1100px) { .gauge-row { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px)  { .gauge-row { grid-template-columns: 1fr; } }
+  .gauge {
+    background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 1rem; display: grid; place-items: center; gap: .5rem;
+  }
+  .gauge__ring { --pct: 0; --size: 120px; --track: var(--bg-muted); --ring: currentColor;
+    width: var(--size); height: var(--size); border-radius: 50%;
+    background: conic-gradient(var(--ring) calc(var(--pct) * 1%), var(--track) 0);
+    mask: radial-gradient(circle at 50% 50%, transparent 54%, #000 55%);
+    position: relative; color: var(--primary);
+  }
+  .gauge__label { position: absolute; inset: 0; display:grid; place-items:center; font-weight: 800; }
+  .gauge--cal { color: var(--accent); }
+  .gauge--pro { color: var(--primary); }
+  .gauge--carb { color: var(--secondary); }
+  .gauge--fat { color: var(--purple); }
+
+  /* Meals */
+  .meals { display: grid; gap: 1rem; }
+  .meal {
+    background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    overflow: hidden; transition: box-shadow var(--t);
+  }
+  .meal:hover { box-shadow: var(--shadow-md); }
+  .meal__head { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding: 1rem 1.2rem; background: var(--bg-muted); cursor: pointer; }
+  .meal__left { display:flex; align-items:center; gap: .9rem; }
+  .meal__icon { width:48px; height:48px; border-radius: 14px; display:grid; place-items:center; color: var(--text-inv); }
+  .meal--breakfast .meal__icon { background: linear-gradient(135deg, var(--accent), #d97706); }
+  .meal--lunch .meal__icon { background: linear-gradient(135deg, var(--primary), var(--primary-600)); }
+  .meal--dinner .meal__icon { background: linear-gradient(135deg, var(--secondary), #1d4ed8); }
+  .meal--snacks .meal__icon { background: linear-gradient(135deg, var(--purple), #7c3aed); }
+  .meal__stats { display:flex; gap: 1.2rem; }
+  .meal__stat { text-align:center; }
+  .meal__stat-val { font-weight: 800; }
+  .meal__stat-lbl { font-size: .78rem; color: var(--text-3); text-transform: uppercase; letter-spacing: .06em; }
+  .meal__toggle { color: var(--text-3); transition: transform var(--t); }
+  .meal[aria-expanded="true"] .meal__toggle { transform: rotate(180deg); color: var(--primary); }
+  .meal__body { max-height: 0; overflow: hidden; transition: max-height .45s var(--easing); }
+  .meal[aria-expanded="true"] .meal__body { max-height: 2000px; }
+
+  .entries { display: grid; gap: .8rem; padding: 1rem 1.2rem 1.2rem; }
+  .entry { background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: .9rem 1rem; display:grid; gap:.7rem; transition: transform var(--t), border-color var(--t), background var(--t); cursor: pointer; }
+  .entry:hover { transform: translateX(4px); border-color: var(--primary); background: var(--bg-elev); }
+  .entry__row { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; }
+  .entry__info h4 { margin: 0 0 .15rem 0; font-size: 1rem; }
+  .entry__serv { font-size: .9rem; color: var(--text-3); }
+  .entry__kcal { background: var(--accent); color: var(--text-inv); font-weight: 700; padding: .4rem .75rem; border-radius: var(--radius-pill); }
+  .entry__nutri { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; }
+  .pill { text-align:center; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 12px; padding: .6rem; }
+  .pill__val { font-weight: 800; }
+  .pill__lbl { font-size:.75rem; color: var(--text-3); text-transform: uppercase; letter-spacing:.06em; }
+
+  .empty { text-align:center; border: 2px dashed var(--border); border-radius: 14px; padding: 2rem 1rem; margin: .8rem 1.2rem 1.2rem; background: var(--bg); }
+  .empty__title { font-weight: 800; color: var(--text-2); }
+  .empty__desc { color: var(--text-3); margin:.3rem 0 1rem; }
+
+  /* Floating Action Button (mobile) */
+  .fab { position: fixed; right: 18px; bottom: 18px; z-index: 60; display:none; }
+  .fab .btn--primary { padding: .9rem 1.1rem; border-radius: 18px; }
+  @media (max-width: 900px) {
+    .app__body { grid-template-columns: 1fr; }
+    .sidebar { order: 2; position: static; }
+    .fab { display:block; }
+  }
+
+  /* Toasts */
+  .toast { position: fixed; inset: 16px 16px auto auto; z-index: 70; display:grid; gap:.6rem; }
+  .toast__item { display:flex; gap:.7rem; align-items:center; background: var(--bg-elev); border:1px solid var(--border); border-left: 5px solid var(--info); padding:.8rem 1rem; border-radius: 12px; box-shadow: var(--shadow-md); min-width: 260px; }
+  .toast__item--success { border-left-color: var(--primary); }
+  .toast__item--error { border-left-color: var(--danger); }
+  .toast__close { margin-left:auto; border:0; background:transparent; color: var(--text-3); font-size: 1.1rem; cursor:pointer; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="app" data-page="nutrition">
+  <!-- Header -->
+  <header class="app__header" role="banner">
+    <div class="header">
+      <div class="header__brand">
+        <div class="header__logo" aria-hidden="true"></div>
+        <div class="header__title">HomeGrubHub · Nutrition</div>
+      </div>
+      <div class="header__actions" role="toolbar" aria-label="Quick actions">
+        <a class="btn btn--ghost" href="/nutrition/add-food" title="Add food (Ctrl/Cmd + A)"><i class="fas fa-plus-circle"></i> Add Food</a>
+        <button class="btn btn--primary" type="button" id="smart-plan-btn"><i class="fas fa-magic"></i> Smart Meal Plan</button>
+      </div>
+      <div class="header__actions" aria-label="User">
+        <div class="btn" title="Help (Ctrl/Cmd + ?)"><i class="fas fa-question-circle"></i></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="app__body">
+    <!-- Sidebar (left) -->
+    <aside class="sidebar" aria-label="Filters and overview">
+      <div class="sidebar__section">
+        <div class="section__title">Today</div>
+        <div class="quick-stats">
+          <div class="stat">
+            <div class="stat__value">{{ goals.calories_consumed|int }}</div>
+            <div class="stat__label">kcal eaten</div>
+          </div>
+          <div class="stat">
+            <div class="stat__value">{{ (goals.calories_goal - goals.calories_consumed)|int if goals.calories_goal > goals.calories_consumed else 0 }}</div>
+            <div class="stat__label">kcal left</div>
+          </div>
+          <div class="stat">
+            <div class="stat__value">{{ goals.protein_consumed|round(0) }}g</div>
+            <div class="stat__label">protein</div>
+          </div>
+          <div class="stat">
+            <div class="stat__value">{{ goals.carbs_consumed|round(0) }}g</div>
+            <div class="stat__label">carbs</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar__section">
+        <div class="section__title">View</div>
+        <div class="toggle-row" role="group" aria-label="View selector">
+          <button class="chip chip--on" data-view="day">Day</button>
+          <button class="chip" data-view="week">Week</button>
+          <button class="chip" data-view="month">Month</button>
+        </div>
+      </div>
+
+      <div class="sidebar__section">
+        <div class="section__title">Date</div>
+        <div class="date-picker">
+          <input class="date-input" type="date" value="{{ current_date|default('', true) }}" onchange="location.href='/nutrition?date=' + this.value" aria-label="Select date">
+        </div>
+      </div>
+
+      <div class="sidebar__section">
+        <div class="section__title">Quick actions</div>
+        <div class="toggle-row">
+          <a class="chip" href="/nutrition/log-food?meal=breakfast"><i class="fas fa-sun"></i>&nbsp;Breakfast</a>
+          <a class="chip" href="/nutrition/log-food?meal=lunch"><i class="fas fa-utensils"></i>&nbsp;Lunch</a>
+          <a class="chip" href="/nutrition/log-food?meal=dinner"><i class="fas fa-moon"></i>&nbsp;Dinner</a>
+          <a class="chip" href="/nutrition/log-food?meal=snacks"><i class="fas fa-cookie-bite"></i>&nbsp;Snack</a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main content (right) -->
+    <section class="content">
+      <!-- Hero -->
+      <div class="hero" role="region" aria-label="Overview">
+        <div class="hero__title">🍎 Smart Nutrition Tracker</div>
+        <div class="hero__subtitle">Track your daily nutrition with intelligent insights and clean analytics.</div>
+        <div class="hero__actions">
+          <a href="/nutrition/add-food" class="btn btn--primary"><i class="fas fa-plus"></i> Add Food</a>
+          <button class="btn" id="shortcut-help"><i class="fas fa-keyboard"></i> Shortcuts</button>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      {% set pct_cal = ((goals.calories_consumed / goals.calories_goal * 100) if goals.calories_goal > 0 else 0) | round(1) %}
+      {% set pct_pro = ((goals.protein_consumed / goals.protein_goal * 100) if goals.protein_goal > 0 else 0) | round(1) %}
+      {% set pct_carb = ((goals.carbs_consumed / goals.carbs_goal * 100) if goals.carbs_goal > 0 else 0) | round(1) %}
+      {% set pct_fat = ((goals.fat_consumed / goals.fat_goal * 100) if goals.fat_goal > 0 else 0) | round(1) %}
+
+      <div class="kpi-grid">
+        <div class="kpi kpi--cal" data-kpi="calories" tabindex="0" role="button" aria-pressed="false">
+          <div class="kpi__icon"><i class="fas fa-fire"></i></div>
+          <div class="kpi__body">
+            <div class="kpi__title">Calories</div>
+            <div class="kpi__row"><div class="kpi__value">{{ goals.calories_consumed|int }}</div><div class="kpi__goal">/ {{ goals.calories_goal|int }}</div></div>
+            <div class="kpi__bar" aria-label="Calories progress"><span style="width: {{ pct_cal }}%"></span></div>
+          </div>
+        </div>
+        <div class="kpi kpi--pro" data-kpi="protein" tabindex="0">
+          <div class="kpi__icon"><i class="fas fa-drumstick-bite"></i></div>
+          <div class="kpi__body">
+            <div class="kpi__title">Protein</div>
+            <div class="kpi__row"><div class="kpi__value">{{ goals.protein_consumed|round(1) }}g</div><div class="kpi__goal">/ {{ goals.protein_goal|int }}g</div></div>
+            <div class="kpi__bar"><span style="width: {{ pct_pro }}%"></span></div>
+          </div>
+        </div>
+        <div class="kpi kpi--carb" data-kpi="carbs" tabindex="0">
+          <div class="kpi__icon"><i class="fas fa-bread-slice"></i></div>
+          <div class="kpi__body">
+            <div class="kpi__title">Carbs</div>
+            <div class="kpi__row"><div class="kpi__value">{{ goals.carbs_consumed|round(1) }}g</div><div class="kpi__goal">/ {{ goals.carbs_goal|int }}g</div></div>
+            <div class="kpi__bar"><span style="width: {{ pct_carb }}%"></span></div>
+          </div>
+        </div>
+        <div class="kpi kpi--fat" data-kpi="fat" tabindex="0">
+          <div class="kpi__icon"><i class="fas fa-cheese"></i></div>
+          <div class="kpi__body">
+            <div class="kpi__title">Fat</div>
+            <div class="kpi__row"><div class="kpi__value">{{ goals.fat_consumed|round(1) }}g</div><div class="kpi__goal">/ {{ goals.fat_goal|int }}g</div></div>
+            <div class="kpi__bar"><span style="width: {{ pct_fat }}%"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Radial gauges for quick glance -->
+      <div class="gauge-row" aria-label="Macro completion">
+        <div class="gauge gauge--cal"><div class="gauge__ring" style="--pct: {{ pct_cal }}"><div class="gauge__label">{{ pct_cal }}%</div></div><div>Calories</div></div>
+        <div class="gauge gauge--pro"><div class="gauge__ring" style="--pct: {{ pct_pro }}"><div class="gauge__label">{{ pct_pro }}%</div></div><div>Protein</div></div>
+        <div class="gauge gauge--carb"><div class="gauge__ring" style="--pct: {{ pct_carb }}"><div class="gauge__label">{{ pct_carb }}%</div></div><div>Carbs</div></div>
+        <div class="gauge gauge--fat"><div class="gauge__ring" style="--pct: {{ pct_fat }}"><div class="gauge__label">{{ pct_fat }}%</div></div><div>Fat</div></div>
+      </div>
+
+      <!-- Meals -->
+      <div class="meals">
+        {# ---- Breakfast ---- #}
+        <article id="breakfast-section" class="meal meal--breakfast" aria-expanded="false">
+          <header class="meal__head" onclick="toggleMeal('breakfast')">
+            <div class="meal__left">
+              <div class="meal__icon"><i class="fas fa-sun"></i></div>
+              <div>
+                <div class="kpi__title">Breakfast</div>
+                <div class="kpi__goal">Start strong with protein</div>
+              </div>
+            </div>
+            <div class="meal__stats">
+              <div class="meal__stat">
+                <div class="meal__stat-val">{{ breakfast_calories|round(0) }}</div>
+                <div class="meal__stat-lbl">Calories</div>
+              </div>
+              <div class="meal__stat">
+                <div class="meal__stat-val">{{ breakfast_protein|round(1) }}g</div>
+                <div class="meal__stat-lbl">Protein</div>
+              </div>
+            </div>
+            <i class="fas fa-chevron-down meal__toggle" aria-hidden="true"></i>
+          </header>
+          <div class="meal__body">
+            {% if breakfast_entries %}
+            <div class="entries">
+              {% for entry in breakfast_entries %}
+                <div class="entry" onclick="editFoodEntry({{ entry.id }})" role="button" tabindex="0">
+                  <div class="entry__row">
+                    <div class="entry__info">
+                      <h4>{{ entry.food_name }}</h4>
+                      <div class="entry__serv">{{ entry.serving_amount }} {{ entry.serving_unit }}</div>
+                    </div>
+                    <div class="entry__kcal">{{ entry.calories|round(0) }} kcal</div>
+                  </div>
+                  <div class="entry__nutri">
+                    <div class="pill"><div class="pill__val">{{ entry.protein|round(1) }}g</div><div class="pill__lbl">Protein</div></div>
+                    <div class="pill"><div class="pill__val">{{ entry.carbs|round(1) }}g</div><div class="pill__lbl">Carbs</div></div>
+                    <div class="pill"><div class="pill__val">{{ entry.fat|round(1) }}g</div><div class="pill__lbl">Fat</div></div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty">
+              <div class="empty__title">No breakfast logged yet</div>
+              <div class="empty__desc">Start your day by adding your first meal</div>
+              <a class="btn btn--primary" href="/nutrition/log-food?meal=breakfast"><i class="fas fa-plus"></i> Add Breakfast</a>
+            </div>
+            {% endif %}
+          </div>
+        </article>
+
+        {# ---- Lunch ---- #}
+        <article id="lunch-section" class="meal meal--lunch" aria-expanded="false">
+          <header class="meal__head" onclick="toggleMeal('lunch')">
+            <div class="meal__left">
+              <div class="meal__icon"><i class="fas fa-utensils"></i></div>
+              <div><div class="kpi__title">Lunch</div><div class="kpi__goal">Keep the momentum</div></div>
+            </div>
+            <div class="meal__stats">
+              <div class="meal__stat"><div class="meal__stat-val">{{ lunch_calories|round(0) }}</div><div class="meal__stat-lbl">Calories</div></div>
+              <div class="meal__stat"><div class="meal__stat-val">{{ lunch_protein|round(1) }}g</div><div class="meal__stat-lbl">Protein</div></div>
+            </div>
+            <i class="fas fa-chevron-down meal__toggle" aria-hidden="true"></i>
+          </header>
+          <div class="meal__body">
+            {% if lunch_entries %}
+            <div class="entries">
+              {% for entry in lunch_entries %}
+                <div class="entry" onclick="editFoodEntry({{ entry.id }})" role="button" tabindex="0">
+                  <div class="entry__row">
+                    <div class="entry__info"><h4>{{ entry.food_name }}</h4><div class="entry__serv">{{ entry.serving_amount }} {{ entry.serving_unit }}</div></div>
+                    <div class="entry__kcal">{{ entry.calories|round(0) }} kcal</div>
+                  </div>
+                  <div class="entry__nutri">
+                    <div class="pill"><div class="pill__val">{{ entry.protein|round(1) }}g</div><div class="pill__lbl">Protein</div></div>
+                    <div class="pill"><div class="pill__val">{{ entry.carbs|round(1) }}g</div><div class="pill__lbl">Carbs</div></div>
+                    <div class="pill"><div class="pill__val">{{ entry.fat|round(1) }}g</div><div class="pill__lbl">Fat</div></div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty">
+              <div class="empty__title">No lunch logged yet</div>
+              <div class="empty__desc">Add your midday nutrition</div>
+              <a class="btn btn--primary" href="/nutrition/log-food?meal=lunch"><i class="fas fa-plus"></i> Add Lunch</a>
+            </div>
+            {% endif %}
+          </div>
+        </article>
+
+        {# ---- Dinner ---- #}
+        <article id="dinner-section" class="meal meal--dinner" aria-expanded="false">
+          <header class="meal__head" onclick="toggleMeal('dinner')">
+            <div class="meal__left">
+              <div class="meal__icon"><i class="fas fa-moon"></i></div>
+              <div><div class="kpi__title">Dinner</div><div class="kpi__goal">Round off the day</div></div>
+            </div>
+            <div class="meal__stats">
+              <div class="meal__stat"><div class="meal__stat-val">{{ dinner_calories|round(0) }}</div><div class="meal__stat-lbl">Calories</div></div>
+              <div class="meal__stat"><div class="meal__stat-val">{{ dinner_protein|round(1) }}g</div><div class="meal__stat-lbl">Protein</div></div>
+            </div>
+            <i class="fas fa-chevron-down meal__toggle" aria-hidden="true"></i>
+          </header>
+          <div class="meal__body">
+            {% if dinner_entries %}
+            <div class="entries">
+              {% for entry in dinner_entries %}
+                <div class="entry" onclick="editFoodEntry({{ entry.id }})" role="button" tabindex="0">
+                  <div class="entry__row">
+                    <div class="entry__info"><h4>{{ entry.food_name }}</h4><div class="entry__serv">{{ entry.serving_amount }} {{ entry.serving_unit }}</div></div>
+                    <div class="entry__kcal">{{ entry.calories|round(0) }} kcal</div>
+                  </div>
+                  <div class="entry__nutri">
+                    <div class="pill"><div class="pill__val">{{ entry.protein|round(1) }}g</div><div class="pill__lbl">Protein</div></div>
+                    <div class="pill"><div class="pill__val">{{ entry.carbs|round(1) }}g</div><div class="pill__lbl">Carbs</div></div>
+                    <div class="pill"><div class="pill__val">{{ entry.fat|round(1) }}g</div><div class="pill__lbl">Fat</div></div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty">
+              <div class="empty__title">No dinner logged yet</div>
+              <div class="empty__desc">Complete your day with dinner</div>
+              <a class="btn btn--primary" href="/nutrition/log-food?meal=dinner"><i class="fas fa-plus"></i> Add Dinner</a>
+            </div>
+            {% endif %}
+          </div>
+        </article>
+
+        {# ---- Snacks ---- #}
+        <article id="snacks-section" class="meal meal--snacks" aria-expanded="false">
+          <header class="meal__head" onclick="toggleMeal('snacks')">
+            <div class="meal__left">
+              <div class="meal__icon"><i class="fas fa-cookie-bite"></i></div>
+              <div><div class="kpi__title">Snacks</div><div class="kpi__goal">Mindful extras</div></div>
+            </div>
+            <div class="meal__stats">
+              <div class="meal__stat"><div class="meal__stat-val">{{ snacks_calories|round(0) }}</div><div class="meal__stat-lbl">Calories</div></div>
+              <div class="meal__stat"><div class="meal__stat-val">{{ snacks_protein|round(1) }}g</div><div class="meal__stat-lbl">Protein</div></div>
+            </div>
+            <i class="fas fa-chevron-down meal__toggle" aria-hidden="true"></i>
+          </header>
+          <div class="meal__body">
+            {% if snacks_entries %}
+            <div class="entries">
+              {% for entry in snacks_entries %}
+                <div class="entry" onclick="editFoodEntry({{ entry.id }})" role="button" tabindex="0">
+                  <div class="entry__row">
+                    <div class="entry__info"><h4>{{ entry.food_name }}</h4><div class="entry__serv">{{ entry.serving_amount }} {{ entry.serving_unit }}</div></div>
+                    <div class="entry__kcal">{{ entry.calories|round(0) }} kcal</div>
+                  </div>
+                  <div class="entry__nutri">
+                    <div class="pill"><div class="pill__val">{{ entry.protein|round(1) }}g</div><div class="pill__lbl">Protein</div></div>
+                    <div class="pill"><div class="pill__val">{{ entry.carbs|round(1) }}g</div><div class="pill__lbl">Carbs</div></div>
+                    <div class="pill"><div class="pill__val">{{ entry.fat|round(1) }}g</div><div class="pill__lbl">Fat</div></div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty">
+              <div class="empty__title">No snacks logged yet</div>
+              <div class="empty__desc">Track your between‑meal nutrition</div>
+              <a class="btn btn--primary" href="/nutrition/log-food?meal=snacks"><i class="fas fa-plus"></i> Add Snack</a>
+            </div>
+            {% endif %}
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- Mobile FAB -->
+  <div class="fab"><a class="btn btn--primary" href="/nutrition/add-food"><i class="fas fa-plus"></i>&nbsp;Add food</a></div>
+
+  <!-- Toast container -->
+  <div class="toast" id="toast" aria-live="polite" aria-atomic="true"></div>
+</div>
+
+<script>
+  // ===== Utilities =====
+  const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+  const $  = (sel, root=document) => root.querySelector(sel);
+
+  const persist = {
+    get(key, fallback) {
+      try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
+    },
+    set(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+  };
+
+  // ===== Toasts =====
+  function toast(msg, type='info') {
+    const wrap = $('#toast');
+    const el = document.createElement('div');
+    el.className = `toast__item toast__item--${type}`;
+    el.innerHTML = `<span>${type==='success'?'✅':type==='error'?'❌':type==='info'?'ℹ️':'⚠️'}</span><div>${msg}</div><button class="toast__close" aria-label="Dismiss">×</button>`;
+    wrap.appendChild(el);
+    const close = () => el.remove();
+    el.querySelector('.toast__close').addEventListener('click', close);
+    setTimeout(close, 5000);
+  }
+
+  // ===== Meals expand/collapse with persistence =====
+  function toggleMeal(meal) {
+    const section = document.getElementById(`${meal}-section`);
+    const expanded = section.getAttribute('aria-expanded') === 'true';
+    section.setAttribute('aria-expanded', String(!expanded));
+    const pref = persist.get('nutrition.expanded', []);
+    const set = new Set(pref);
+    if (!expanded) set.add(meal); else set.delete(meal);
+    persist.set('nutrition.expanded', Array.from(set));
+  }
+
+  function restoreMealState() {
+    const pref = persist.get('nutrition.expanded', []);
+    pref.forEach(meal => {
+      const section = document.getElementById(`${meal}-section`);
+      if (section) section.setAttribute('aria-expanded', 'true');
+    });
+  }
+
+  // ===== Keyboard shortcuts =====
+  function bindShortcuts() {
+    document.addEventListener('keydown', (e) => {
+      const cmd = e.ctrlKey || e.metaKey;
+      if (cmd && e.key.toLowerCase() === 'a') {
+        e.preventDefault(); location.href = '/nutrition/add-food';
+      }
+      if (cmd && (e.key === '?' || e.key === '/')) {
+        e.preventDefault(); toast('⌨️ Shortcuts: Ctrl/Cmd + A → Add Food', 'info');
+      }
+    });
+  }
+
+  // ===== Smart Plan (placeholder) =====
+  function smartPlan() {
+    toast('🎯 Smart meal planning is coming soon.', 'info');
+  }
+
+  // ===== KPI interactions =====
+  function bindKpiClicks() {
+    $$('.kpi').forEach(el => el.addEventListener('click', () => {
+      const key = el.getAttribute('data-kpi');
+      toast(`📊 ${key.charAt(0).toUpperCase()+key.slice(1)} details coming soon.`, 'info');
+    }));
+  }
+
+  // ===== Sidebar view chips (visual only) =====
+  function bindViewChips() {
+    $$('.chip[data-view]').forEach(chip => chip.addEventListener('click', () => {
+      $$('.chip[data-view]').forEach(c => c.classList.remove('chip--on'));
+      chip.classList.add('chip--on');
+      persist.set('nutrition.view', chip.dataset.view);
+      toast(`Changed to ${chip.dataset.view} view`, 'success');
+    }));
+    const v = persist.get('nutrition.view', 'day');
+    const active = $(`.chip[data-view="${v}"]`);
+    if (active) { active.classList.add('chip--on'); }
+  }
+
+  // ===== Init =====
+  document.addEventListener('DOMContentLoaded', () => {
+    restoreMealState();
+    bindShortcuts();
+    bindKpiClicks();
+    bindViewChips();
+    $('#smart-plan-btn')?.addEventListener('click', smartPlan);
+    $('#shortcut-help')?.addEventListener('click', () => toast('⌨️ Ctrl/Cmd + A → Add Food · Ctrl/Cmd + ? → Help', 'info'));
+  });
+
+  // Expose for onclick in headers
+  window.toggleMeal = toggleMeal;
+  window.editFoodEntry = (id) => location.href = `/nutrition/edit-entry/${id}`;
+</script>
+{% endblock %}

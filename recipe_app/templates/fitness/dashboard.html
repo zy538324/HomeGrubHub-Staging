@@ -1,10 +1,259 @@
 {% extends "base.html" %}
 {% block title %}Fitness Dashboard{% endblock %}
 
-{% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/fitness.css') }}">
-{% endblock %}
+{% block extra_styles %}
+<style>
+    /* Fitness Dashboard Styles */
+.fitness-dashboard .card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
 
+.fitness-dashboard .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.fitness-quick-actions .card {
+    border-radius: 12px;
+    min-height: 200px;
+}
+
+.fitness-quick-actions .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Orange theme colors */
+.bg-orange {
+    background-color: #ff6b35 !important;
+}
+
+.text-orange {
+    color: #ff6b35 !important;
+}
+
+.btn-orange {
+    background-color: #ff6b35;
+    border-color: #ff6b35;
+    color: white;
+}
+
+.btn-orange:hover {
+    background-color: #e55a2d;
+    border-color: #e55a2d;
+    color: white;
+}
+
+.border-orange {
+    border-color: #ff6b35 !important;
+}
+
+/* BMI Calculator Styles */
+.bmi-result {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.bmi-value {
+    font-size: 3rem;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.bmi-category {
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+}
+
+/* Weight Tracker Styles */
+.weight-stats .card {
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.weight-stats .card-body {
+    padding: 1.5rem;
+}
+
+.weight-chart-container {
+    height: 300px;
+    position: relative;
+}
+
+/* Weight Goal Planner Styles */
+.goal-result.safe {
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+    color: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+.goal-result.unsafe {
+    background: linear-gradient(135deg, #ff512f 0%, #dd2476 100%);
+    color: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+/* Weight Converter */
+.weight-converter {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.weight-converter input {
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Safety Indicators */
+.safety-warning {
+    border-left: 4px solid #ffc107;
+    background-color: #fff3cd;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.safety-danger {
+    border-left: 4px solid #dc3545;
+    background-color: #f8d7da;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.safety-success {
+    border-left: 4px solid #28a745;
+    background-color: #d4edda;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .fitness-quick-actions .card {
+        min-height: 160px;
+        margin-bottom: 1rem;
+    }
+    
+    .bmi-value {
+        font-size: 2rem;
+    }
+    
+    .weight-chart-container {
+        height: 250px;
+    }
+}
+
+/* Animation for progress indicators */
+.progress-ring {
+    animation: progress-fill 1s ease-in-out;
+}
+
+@keyframes progress-fill {
+    0% {
+        stroke-dasharray: 0 100;
+    }
+    100% {
+        stroke-dasharray: var(--progress) 100;
+    }
+}
+
+/* Health tips styling */
+.health-tip {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.health-tip .fas {
+    color: #1976d2;
+}
+
+/* Table styling for weight history */
+.weight-history-table .table th {
+    background-color: #f8f9fa;
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+}
+
+.weight-history-table .table td {
+    vertical-align: middle;
+}
+
+.weight-change-positive {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.weight-change-negative {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.weight-change-neutral {
+    color: #6c757d;
+}
+
+/* Loading states */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-radius: 50%;
+    border-top-color: #007bff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Form enhancements */
+.form-group-enhanced {
+    position: relative;
+}
+
+.form-group-enhanced .form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.input-group-text.bg-fitness {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: #667eea;
+}
+
+/* Success animations */
+.success-bounce {
+    animation: bounce 0.5s ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 20%, 60%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-20px);
+    }
+    80% {
+        transform: translateY(-10px);
+    }
+}
+</style>
+{% endblock %}
 {% block content %}
 <div class="container-fluid py-4 fitness-dashboard">
     <div class="row">
