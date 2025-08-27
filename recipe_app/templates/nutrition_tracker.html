@@ -200,6 +200,28 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 id="water-consumed">{{ water_total|int }}</h4>
+                            <p class="mb-0">Water (ml)</p>
+                            <small>Goal: 2000ml</small>
+                        </div>
+                        <div class="align-self-center">
+                            <button class="btn btn-sm btn-outline-light" onclick="showWaterLogPrompt()">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="progress mt-2" style="height: 6px;">
+                        {% set water_percent = ((water_total / 2000) * 100) if water_total else 0 %}
+                        <div class="progress-bar bg-white" id="water-progress" style="width: {{ [water_percent, 100]|min }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Date Navigation -->

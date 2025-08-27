@@ -6,6 +6,7 @@ from datetime import datetime, date, timedelta
 from sqlalchemy import func, and_, or_
 from recipe_app.db import db
 from recipe_app.models.nutrition_models import NutritionEntry, DailyNutritionSummary, NutritionGoal
+from recipe_app.models import WaterLog
 from recipe_app.utils.nutrition_calculator import NutritionCalculator
 import json
 
@@ -20,6 +21,7 @@ def nutrition_tracker():
         return redirect(url_for('auth.login'))
     
     user_id = str(session['_user_id'])
+    user_id_int = int(session['_user_id'])
     today = date.today()
     
     # Get or create user's nutrition goals
@@ -40,6 +42,12 @@ def nutrition_tracker():
         user_id=user_id,
         entry_date=today
     ).order_by(NutritionEntry.entry_time.desc()).all()
+
+    # Get today's water total
+    water_total = db.session.query(func.sum(WaterLog.amount_ml)).filter(
+        WaterLog.user_id == user_id_int,
+        func.date(WaterLog.log_time) == today
+    ).scalar() or 0
     
     # Get recent week summaries for charts
     week_ago = today - timedelta(days=7)
@@ -54,6 +62,7 @@ def nutrition_tracker():
                          daily_summary=daily_summary,
                          today_entries=today_entries,
                          week_summaries=week_summaries,
+                         water_total=water_total,
                          today=today)
 
 
@@ -230,6 +239,82 @@ def get_nutrition_entries(date_str):
         
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@nutrition_bp.route('/log-water', methods=['POST'])
+def log_water():
+    """Log water intake"""
+    if '_user_id' not in session:
+        return jsonify({'success': False, 'error': 'Not authenticated'}), 401
+
+    data = request.get_json() or {}
+    try:
+        amount = float(data.get('amount_ml', 0))
+    except (TypeError, ValueError):
+        amount = 0
+    if amount <= 0:
+        return jsonify({'success': False, 'error': 'Invalid amount'}), 400
+
+    log = WaterLog(user_id=int(session['_user_id']), amount_ml=amount)
+    db.session.add(log)
+    db.session.commit()
+
+    return jsonify({'success': True, 'log': log.to_dict()})
+
+
+@nutrition_bp.route('/water-log/<int:log_id>', methods=['PUT'])
+def edit_water_log(log_id):
+    """Edit a water log entry"""
+    if '_user_id' not in session:
+        return jsonify({'success': False, 'error': 'Not authenticated'}), 401
+
+    log = WaterLog.query.filter_by(id=log_id, user_id=int(session['_user_id'])).first()
+    if not log:
+        return jsonify({'success': False, 'error': 'Log not found'}), 404
+
+    data = request.get_json() or {}
+    try:
+        amount = float(data.get('amount_ml', log.amount_ml))
+    except (TypeError, ValueError):
+        amount = log.amount_ml
+    log.amount_ml = amount
+    db.session.commit()
+
+    return jsonify({'success': True, 'log': log.to_dict()})
+
+
+@nutrition_bp.route('/water-log/<int:log_id>', methods=['DELETE'])
+def delete_water_log(log_id):
+    """Delete a water log entry"""
+    if '_user_id' not in session:
+        return jsonify({'success': False, 'error': 'Not authenticated'}), 401
+
+    log = WaterLog.query.filter_by(id=log_id, user_id=int(session['_user_id'])).first()
+    if not log:
+        return jsonify({'success': False, 'error': 'Log not found'}), 404
+
+    db.session.delete(log)
+    db.session.commit()
+    return jsonify({'success': True})
+
+
+@nutrition_bp.route('/water-summary/<date_str>')
+def water_summary(date_str):
+    """Get total water intake for a day"""
+    if '_user_id' not in session:
+        return jsonify({'success': False, 'error': 'Not authenticated'}), 401
+
+    try:
+        summary_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    except ValueError:
+        return jsonify({'success': False, 'error': 'Invalid date'}), 400
+
+    total = db.session.query(func.sum(WaterLog.amount_ml)).filter(
+        WaterLog.user_id == int(session['_user_id']),
+        func.date(WaterLog.log_time) == summary_date
+    ).scalar() or 0
+
+    return jsonify({'success': True, 'total_ml': float(total)})
 
 
 @nutrition_bp.route('/delete-nutrition-entry/<int:entry_id>', methods=['DELETE'])

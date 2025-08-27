@@ -7,6 +7,7 @@ class NutritionTracker {
     constructor() {
         this.currentDate = new Date();
         this.charts = {};
+        this.waterGoal = 2000;
         this.initialize();
     }
 
@@ -15,6 +16,7 @@ class NutritionTracker {
         this.initializeCharts();
         this.loadTodayData();
         this.setupProgressAnimations();
+        this.fetchWaterSummary();
     }
 
     setupEventListeners() {
@@ -535,6 +537,45 @@ class NutritionTracker {
         });
     }
 
+    fetchWaterSummary() {
+        const dateStr = this.currentDate.toISOString().split('T')[0];
+        fetch(`/water-summary/${dateStr}`)
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    const total = data.total_ml || 0;
+                    const percent = Math.min(100, (total / this.waterGoal) * 100);
+                    const consumed = document.getElementById('water-consumed');
+                    if (consumed) consumed.textContent = `${Math.round(total)}`;
+                    const bar = document.getElementById('water-progress');
+                    if (bar) bar.style.width = `${percent}%`;
+                }
+            })
+            .catch(() => {});
+    }
+
+    logWater(amount) {
+        this.showLoading('Logging water...');
+        fetch('/log-water', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ amount_ml: amount })
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    this.showSuccess('Water logged');
+                    this.fetchWaterSummary();
+                } else {
+                    this.showError(data.error || 'Error logging water');
+                }
+            })
+            .catch(() => this.showError('Error logging water'))
+            .finally(() => this.hideLoading());
+    }
+
     loadTodayData() {
         // This would typically load today's data via AJAX
         // For now, we'll use the data already rendered in the template
@@ -615,6 +656,18 @@ function showAddEntryModal(mealType) {
 function showGoalsModal() {
     if (window.nutritionTracker) {
         window.nutritionTracker.showGoalsModal();
+    }
+}
+
+function showWaterLogPrompt() {
+    if (window.nutritionTracker) {
+        const amount = prompt('Water amount in ml', '250');
+        if (amount) {
+            const num = parseFloat(amount);
+            if (!isNaN(num)) {
+                window.nutritionTracker.logWater(num);
+            }
+        }
     }
 }
 
