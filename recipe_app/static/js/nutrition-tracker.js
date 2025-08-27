@@ -700,6 +700,20 @@ function editEntry(entryId) {
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     window.nutritionTracker = new NutritionTracker();
+
+    // Theme toggle and persistence
+    const themeToggle = document.getElementById('theme-toggle');
+    const savedTheme = localStorage.getItem('nutritionTheme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+    }
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const theme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+            localStorage.setItem('nutritionTheme', theme);
+        });
+    }
     
     // Add custom CSS for dynamic elements
     const style = document.createElement('style');
