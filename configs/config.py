@@ -38,7 +38,7 @@ class Config:
 
         # Check if AWS RDS should be used (via environment variable)
         use_aws_rds = os.environ.get('USE_AWS_RDS', 'false').lower() == 'true'
-
+        logger = logging.getLogger(__name__)
         if use_aws_rds:
             try:
                 from .aws_db_config import get_aws_database_uri
@@ -51,8 +51,8 @@ class Config:
                     "AWS RDS connection failed, falling back to environment variables: %s",
                     e,
                 )
-
         # Next priority: individual Postgres environment variables
+        # Primary: Use environment variables
         postgres_host = os.environ.get('POSTGRES_HOST')
         postgres_port = os.environ.get('POSTGRES_PORT')
         postgres_db = os.environ.get('POSTGRES_DB')
@@ -66,6 +66,10 @@ class Config:
         # Final fallback to SQLite for development
         logger.warning("Using SQLite fallback for development")
         return 'sqlite:///recipes.db'
+        else:
+            # Final fallback to SQLite for development
+            logger.warning("Using SQLite fallback for development")
+            return os.environ.get('DATABASE_URL', 'sqlite:///recipes.db')
 
     # Set the database URI using the priority system
     SQLALCHEMY_DATABASE_URI = get_database_uri()
@@ -86,6 +90,7 @@ class Config:
                 'application_name': 'HomeGrubHub'  # For connection identification
             }
         }
+    }
 
     # SendGrid Configuration
     SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
