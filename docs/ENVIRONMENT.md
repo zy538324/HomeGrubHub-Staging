@@ -32,3 +32,10 @@ export DATABASE_URL=sqlite:///test.db
 If neither `DATABASE_URL` nor the PostgreSQL variables are provided, the
 application falls back to a local SQLite database for development.
 
+## Testing
+
+The test suite configures the above variables automatically and uses a
+temporary SQLite database. Running `pytest` locally therefore requires no
+additional setup, but any provided environment variables will still take
+precedence.
+
