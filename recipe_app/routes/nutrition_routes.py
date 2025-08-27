@@ -107,6 +107,7 @@ def log_nutrition():
             fiber=float(nutrition_data.get('fiber', 0)),
             sugar=float(nutrition_data.get('sugar', 0)),
             sodium=float(nutrition_data.get('sodium', 0)),
+            cholesterol=float(nutrition_data.get('cholesterol', 0)),
             saturated_fat=float(nutrition_data.get('saturated_fat', 0)),
             meal_type=meal_type,
             notes=notes
@@ -182,6 +183,7 @@ def log_from_barcode():
             fiber=extract_numeric_value(nutrition_data, 'fiber'),
             sugar=extract_numeric_value(nutrition_data, 'sugar') or extract_numeric_value(nutrition_data, 'sugars'),
             sodium=extract_numeric_value(nutrition_data, 'sodium') * 1000 if extract_numeric_value(nutrition_data, 'sodium') else 0,  # Convert to mg
+            cholesterol=extract_numeric_value(nutrition_data, 'cholesterol') * 1000 if extract_numeric_value(nutrition_data, 'cholesterol') else 0,  # mg
             saturated_fat=extract_numeric_value(nutrition_data, 'saturated_fat') or extract_numeric_value(nutrition_data, 'saturated-fat'),
             meal_type=meal_type,
             notes=notes
@@ -481,6 +483,7 @@ def update_daily_summary(user_id, summary_date):
         summary.total_fiber = 0
         summary.total_sugar = 0
         summary.total_sodium = 0
+        summary.total_cholesterol = 0
         summary.total_saturated_fat = 0
         summary.breakfast_calories = 0
         summary.lunch_calories = 0
@@ -497,6 +500,7 @@ def update_daily_summary(user_id, summary_date):
             summary.total_fiber += entry.fiber
             summary.total_sugar += entry.sugar
             summary.total_sodium += entry.sodium
+            summary.total_cholesterol += getattr(entry, 'cholesterol', 0)
             summary.total_saturated_fat += entry.saturated_fat
             
             # Add to meal-specific totals
