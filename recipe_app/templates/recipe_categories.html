@@ -1,5 +1,28 @@
 {% extends "base.html" %}
 
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cards.css') }}">
+<style>
+.cuisine-card:hover {
+  background-color: #f8f9fa;
+  transform: scale(1.05);
+  transition: all 0.3s ease;
+}
+
+.flag-emoji {
+  font-size: 2rem;
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+}
+
+.bg-gradient-success {
+  background: linear-gradient(135deg, #28a745, #1e7e34);
+}
+</style>
+{% endblock %}
+
 {% block seo_title %}Recipe Categories | Browse Healthy Family Meals by Type | HomeGrubHub{% endblock %}
 {% block seo_description %}Browse our recipe categories: Quick dinners, healthy meals, budget-friendly recipes, family favourites, and more. Find the perfect meal for every occasion and dietary need.{% endblock %}
 {% block seo_keywords %}recipe categories, quick dinner recipes, healthy family meals, budget recipes UK, vegetarian recipes, gluten free recipes, meal ideas{% endblock %}
@@ -351,29 +374,4 @@
     </div>
   </div>
 </div>
-
-<style>
-.category-card:hover {
-  transform: translateY(-5px);
-  transition: transform 0.3s ease;
-}
-
-.cuisine-card:hover {
-  background-color: #f8f9fa;
-  transform: scale(1.05);
-  transition: all 0.3s ease;
-}
-
-.flag-emoji {
-  font-size: 2rem;
-}
-
-.bg-gradient-primary {
-  background: linear-gradient(135deg, #007bff, #0056b3);
-}
-
-.bg-gradient-success {
-  background: linear-gradient(135deg, #28a745, #1e7e34);
-}
-</style>
 {% endblock %}
