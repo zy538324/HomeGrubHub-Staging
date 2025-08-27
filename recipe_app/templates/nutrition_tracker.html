@@ -357,14 +357,15 @@
 </div>
 
 <!-- Add Entry Modal -->
-<div class="modal fade" id="addEntryModal" tabindex="-1">
+<div class="modal fade" id="addEntryModal" tabindex="-1" aria-labelledby="addEntryTitle" aria-describedby="addEntryDesc">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add Nutrition Entry</h5>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h5 class="modal-title" id="addEntryTitle">Add Nutrition Entry</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
             </div>
             <div class="modal-body">
+                <p id="addEntryDesc" class="sr-only">Fill out this form to add a nutrition entry.</p>
                 <form id="addEntryForm">
                     <div class="form-group">
                         <label for="product-name">Product Name</label>
@@ -465,14 +466,15 @@
 </div>
 
 <!-- Goals Modal -->
-<div class="modal fade" id="goalsModal" tabindex="-1">
+<div class="modal fade" id="goalsModal" tabindex="-1" aria-labelledby="goalsTitle" aria-describedby="goalsDesc">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Nutrition Goals</h5>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h5 class="modal-title" id="goalsTitle">Nutrition Goals</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
             </div>
             <div class="modal-body">
+                <p id="goalsDesc" class="sr-only">Adjust your daily nutrition targets.</p>
                 <form id="goalsForm">
                     <h6>Daily Nutrition Goals</h6>
                     <div class="row">
@@ -960,7 +962,7 @@ function showNotification(message, type) {
     notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
     notification.innerHTML = `
         ${message}
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
     `;
     document.body.appendChild(notification);
     
