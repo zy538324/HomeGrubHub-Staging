@@ -370,11 +370,19 @@ class NutritionTracker {
     }
 
     async saveGoals() {
+        const getValue = (id) => {
+            const el = document.getElementById(id);
+            return el ? parseFloat(el.value) : 0;
+        };
+
         const goalsData = {
-            daily_calories: parseFloat(document.getElementById('goal-calories').value),
-            daily_protein: parseFloat(document.getElementById('goal-protein').value),
-            daily_carbs: parseFloat(document.getElementById('goal-carbs').value),
-            daily_fat: parseFloat(document.getElementById('goal-fat').value)
+            daily_calories: getValue('goal-calories'),
+            daily_protein: getValue('goal-protein'),
+            daily_carbs: getValue('goal-carbs'),
+            daily_fat: getValue('goal-fat'),
+            daily_fiber: getValue('goal-fiber'),
+            daily_sugar: getValue('goal-sugar'),
+            daily_sodium: getValue('goal-sodium')
         };
 
         try {
