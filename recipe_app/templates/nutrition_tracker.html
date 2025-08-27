@@ -180,6 +180,26 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-3">
+            <div class="card bg-dark text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 id="sodium-consumed">{{ daily_summary.total_sodium|round(0)|int if daily_summary else 0 }}mg</h4>
+                            <p class="mb-0">Sodium</p>
+                            <small>Goal: {{ goals.daily_sodium|round(0)|int }}mg</small>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-tint fa-2x"></i>
+                        </div>
+                    </div>
+                    <div class="progress mt-2" style="height: 6px;">
+                        {% set sodium_percent = ((daily_summary.total_sodium / goals.daily_sodium) * 100) if daily_summary and goals.daily_sodium > 0 else 0 %}
+                        <div class="progress-bar bg-white" style="width: {{ [sodium_percent, 100]|min }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Date Navigation -->
