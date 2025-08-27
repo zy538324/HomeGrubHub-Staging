@@ -52,7 +52,6 @@ class Config:
                     e,
                 )
 
-        # Next priority: individual Postgres environment variables
         postgres_host = os.environ.get('POSTGRES_HOST')
         postgres_port = os.environ.get('POSTGRES_PORT')
         postgres_db = os.environ.get('POSTGRES_DB')
@@ -62,10 +61,6 @@ class Config:
         if all([postgres_host, postgres_port, postgres_db, postgres_user, postgres_password]):
             logger.info("Using environment variable database connection")
             return f'postgresql://{postgres_user}:{postgres_password}@{postgres_host}:{postgres_port}/{postgres_db}'
-
-        # Final fallback to SQLite for development
-        logger.warning("Using SQLite fallback for development")
-        return 'sqlite:///recipes.db'
 
     # Set the database URI using the priority system
     SQLALCHEMY_DATABASE_URI = get_database_uri()
