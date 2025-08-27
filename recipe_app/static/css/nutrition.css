@@ -873,3 +873,34 @@
         animation: none;
     }
 }
+
+/* Summary Carousel */
+.summary-carousel {
+    display: flex;
+    gap: var(--spacing-sm);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: var(--spacing-sm);
+}
+
+.summary-card {
+    flex: 0 0 80%;
+    scroll-snap-align: start;
+}
+
+@media (min-width: 576px) {
+    .summary-card {
+        flex: 0 0 45%;
+    }
+}
+
+@media (min-width: 768px) {
+    .summary-carousel {
+        flex-wrap: wrap;
+        overflow-x: visible;
+    }
+    .summary-card {
+        flex: 0 0 calc(25% - var(--spacing-sm));
+    }
+}

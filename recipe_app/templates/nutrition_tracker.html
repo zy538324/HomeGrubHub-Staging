@@ -2,6 +2,10 @@
 
 {% block title %}Nutrition Tracker - HomeGrubHub{% endblock %}
 
+{% block extra_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/nutrition.css') }}">
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid">
     <!-- Header -->
@@ -56,191 +60,171 @@
         </div>
     </div>
     <!-- Today's Summary Cards -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card bg-primary text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 id="calories-consumed">{{ daily_summary.total_calories|round(0)|int if daily_summary else 0 }}</h4>
-                            <p class="mb-0">Calories</p>
-                            <small>Goal: {{ goals.daily_calories|round(0)|int }}</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-fire fa-2x"></i>
-                        </div>
+    <div class="summary-carousel mb-4">
+        <div class="summary-card card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 id="calories-consumed">{{ daily_summary.total_calories|round(0)|int if daily_summary else 0 }}</h4>
+                        <p class="mb-0">Calories</p>
+                        <small>Goal: {{ goals.daily_calories|round(0)|int }}</small>
                     </div>
-                    <div class="progress mt-2" style="height: 6px;">
-                        {% set calories_percent = ((daily_summary.total_calories / goals.daily_calories) * 100) if daily_summary and goals.daily_calories > 0 else 0 %}
-                        <div class="progress-bar bg-white" style="width: {{ [calories_percent, 100]|min }}%"></div>
+                    <div class="align-self-center">
+                        <i class="fas fa-fire fa-2x"></i>
                     </div>
+                </div>
+                <div class="progress mt-2" style="height: 6px;">
+                    {% set calories_percent = ((daily_summary.total_calories / goals.daily_calories) * 100) if daily_summary and goals.daily_calories > 0 else 0 %}
+                    <div class="progress-bar bg-white" style="width: {{ [calories_percent, 100]|min }}%"></div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-success text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 id="protein-consumed">{{ daily_summary.total_protein|round(1) if daily_summary else 0 }}g</h4>
-                            <p class="mb-0">Protein</p>
-                            <small>Goal: {{ goals.daily_protein|round(0)|int }}g</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-dumbbell fa-2x"></i>
-                        </div>
+        <div class="summary-card card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 id="protein-consumed">{{ daily_summary.total_protein|round(1) if daily_summary else 0 }}g</h4>
+                        <p class="mb-0">Protein</p>
+                        <small>Goal: {{ goals.daily_protein|round(0)|int }}g</small>
                     </div>
-                    <div class="progress mt-2" style="height: 6px;">
-                        {% set protein_percent = ((daily_summary.total_protein / goals.daily_protein) * 100) if daily_summary and goals.daily_protein > 0 else 0 %}
-                        <div class="progress-bar bg-white" style="width: {{ [protein_percent, 100]|min }}%"></div>
+                    <div class="align-self-center">
+                        <i class="fas fa-dumbbell fa-2x"></i>
                     </div>
+                </div>
+                <div class="progress mt-2" style="height: 6px;">
+                    {% set protein_percent = ((daily_summary.total_protein / goals.daily_protein) * 100) if daily_summary and goals.daily_protein > 0 else 0 %}
+                    <div class="progress-bar bg-white" style="width: {{ [protein_percent, 100]|min }}%"></div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-warning text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 id="carbs-consumed">{{ daily_summary.total_carbs|round(1) if daily_summary else 0 }}g</h4>
-                            <p class="mb-0">Carbs</p>
-                            <small>Goal: {{ goals.daily_carbs|round(0)|int }}g</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-bread-slice fa-2x"></i>
-                        </div>
+        <div class="summary-card card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 id="carbs-consumed">{{ daily_summary.total_carbs|round(1) if daily_summary else 0 }}g</h4>
+                        <p class="mb-0">Carbs</p>
+                        <small>Goal: {{ goals.daily_carbs|round(0)|int }}g</small>
                     </div>
-                    <div class="progress mt-2" style="height: 6px;">
-                        {% set carbs_percent = ((daily_summary.total_carbs / goals.daily_carbs) * 100) if daily_summary and goals.daily_carbs > 0 else 0 %}
-                        <div class="progress-bar bg-white" style="width: {{ [carbs_percent, 100]|min }}%"></div>
+                    <div class="align-self-center">
+                        <i class="fas fa-bread-slice fa-2x"></i>
                     </div>
+                </div>
+                <div class="progress mt-2" style="height: 6px;">
+                    {% set carbs_percent = ((daily_summary.total_carbs / goals.daily_carbs) * 100) if daily_summary and goals.daily_carbs > 0 else 0 %}
+                    <div class="progress-bar bg-white" style="width: {{ [carbs_percent, 100]|min }}%"></div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-info text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 id="fat-consumed">{{ daily_summary.total_fat|round(1) if daily_summary else 0 }}g</h4>
-                            <p class="mb-0">Fat</p>
-                            <small>Goal: {{ goals.daily_fat|round(0)|int }}g</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-cheese fa-2x"></i>
-                        </div>
+        <div class="summary-card card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 id="fat-consumed">{{ daily_summary.total_fat|round(1) if daily_summary else 0 }}g</h4>
+                        <p class="mb-0">Fat</p>
+                        <small>Goal: {{ goals.daily_fat|round(0)|int }}g</small>
                     </div>
-                    <div class="progress mt-2" style="height: 6px;">
-                        {% set fat_percent = ((daily_summary.total_fat / goals.daily_fat) * 100) if daily_summary and goals.daily_fat > 0 else 0 %}
-                        <div class="progress-bar bg-white" style="width: {{ [fat_percent, 100]|min }}%"></div>
+                    <div class="align-self-center">
+                        <i class="fas fa-cheese fa-2x"></i>
                     </div>
+                </div>
+                <div class="progress mt-2" style="height: 6px;">
+                    {% set fat_percent = ((daily_summary.total_fat / goals.daily_fat) * 100) if daily_summary and goals.daily_fat > 0 else 0 %}
+                    <div class="progress-bar bg-white" style="width: {{ [fat_percent, 100]|min }}%"></div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card bg-secondary text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 id="fiber-consumed">{{ daily_summary.total_fiber|round(1) if daily_summary else 0 }}g</h4>
-                            <p class="mb-0">Fiber</p>
-                            <small>Goal: {{ goals.daily_fiber|round(0)|int }}g</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-seedling fa-2x"></i>
-                        </div>
+        <div class="summary-card card bg-secondary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 id="fiber-consumed">{{ daily_summary.total_fiber|round(1) if daily_summary else 0 }}g</h4>
+                        <p class="mb-0">Fiber</p>
+                        <small>Goal: {{ goals.daily_fiber|round(0)|int }}g</small>
                     </div>
-                    <div class="progress mt-2" style="height: 6px;">
-                        {% set fiber_percent = ((daily_summary.total_fiber / goals.daily_fiber) * 100) if daily_summary and goals.daily_fiber > 0 else 0 %}
-                        <div class="progress-bar bg-white" style="width: {{ [fiber_percent, 100]|min }}%"></div>
+                    <div class="align-self-center">
+                        <i class="fas fa-seedling fa-2x"></i>
                     </div>
+                </div>
+                <div class="progress mt-2" style="height: 6px;">
+                    {% set fiber_percent = ((daily_summary.total_fiber / goals.daily_fiber) * 100) if daily_summary and goals.daily_fiber > 0 else 0 %}
+                    <div class="progress-bar bg-white" style="width: {{ [fiber_percent, 100]|min }}%"></div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-danger text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 id="sugar-consumed">{{ daily_summary.total_sugar|round(1) if daily_summary else 0 }}g</h4>
-                            <p class="mb-0">Sugar</p>
-                            <small>Goal: {{ goals.daily_sugar|round(0)|int }}g</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-candy-cane fa-2x"></i>
-                        </div>
+        <div class="summary-card card bg-danger text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 id="sugar-consumed">{{ daily_summary.total_sugar|round(1) if daily_summary else 0 }}g</h4>
+                        <p class="mb-0">Sugar</p>
+                        <small>Goal: {{ goals.daily_sugar|round(0)|int }}g</small>
                     </div>
-                    <div class="progress mt-2" style="height: 6px;">
-                        {% set sugar_percent = ((daily_summary.total_sugar / goals.daily_sugar) * 100) if daily_summary and goals.daily_sugar > 0 else 0 %}
-                        <div class="progress-bar bg-white" style="width: {{ [sugar_percent, 100]|min }}%"></div>
+                    <div class="align-self-center">
+                        <i class="fas fa-candy-cane fa-2x"></i>
                     </div>
+                </div>
+                <div class="progress mt-2" style="height: 6px;">
+                    {% set sugar_percent = ((daily_summary.total_sugar / goals.daily_sugar) * 100) if daily_summary and goals.daily_sugar > 0 else 0 %}
+                    <div class="progress-bar bg-white" style="width: {{ [sugar_percent, 100]|min }}%"></div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-dark text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 id="sodium-consumed">{{ daily_summary.total_sodium|round(0)|int if daily_summary else 0 }}mg</h4>
-                            <p class="mb-0">Sodium</p>
-                            <small>Goal: {{ goals.daily_sodium|round(0)|int }}mg</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-tint fa-2x"></i>
-                        </div>
+        <div class="summary-card card bg-dark text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 id="sodium-consumed">{{ daily_summary.total_sodium|round(0)|int if daily_summary else 0 }}mg</h4>
+                        <p class="mb-0">Sodium</p>
+                        <small>Goal: {{ goals.daily_sodium|round(0)|int }}mg</small>
                     </div>
-                    <div class="progress mt-2" style="height: 6px;">
-                        {% set sodium_percent = ((daily_summary.total_sodium / goals.daily_sodium) * 100) if daily_summary and goals.daily_sodium > 0 else 0 %}
-                        <div class="progress-bar bg-white" style="width: {{ [sodium_percent, 100]|min }}%"></div>
+                    <div class="align-self-center">
+                        <i class="fas fa-tint fa-2x"></i>
                     </div>
+                </div>
+                <div class="progress mt-2" style="height: 6px;">
+                    {% set sodium_percent = ((daily_summary.total_sodium / goals.daily_sodium) * 100) if daily_summary and goals.daily_sodium > 0 else 0 %}
+                    <div class="progress-bar bg-white" style="width: {{ [sodium_percent, 100]|min }}%"></div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-info text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 id="water-consumed">{{ water_total|int }}</h4>
-                            <p class="mb-0">Water (ml)</p>
-                            <small>Goal: 2000ml</small>
-                        </div>
-                        <div class="align-self-center">
-                            <button class="btn btn-sm btn-outline-light" onclick="showWaterLogPrompt()">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                        </div>
+        <div class="summary-card card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 id="water-consumed">{{ water_total|int }}</h4>
+                        <p class="mb-0">Water (ml)</p>
+                        <small>Goal: 2000ml</small>
                     </div>
-                    <div class="progress mt-2" style="height: 6px;">
-                        {% set water_percent = ((water_total / 2000) * 100) if water_total else 0 %}
-                        <div class="progress-bar bg-white" id="water-progress" style="width: {{ [water_percent, 100]|min }}%"></div>
+                    <div class="align-self-center">
+                        <button class="btn btn-sm btn-outline-light" onclick="showWaterLogPrompt()">
+                            <i class="fas fa-plus"></i>
+                        </button>
                     </div>
+                </div>
+                <div class="progress mt-2" style="height: 6px;">
+                    {% set water_percent = ((water_total / 2000) * 100) if water_total else 0 %}
+                    <div class="progress-bar bg-white" id="water-progress" style="width: {{ [water_percent, 100]|min }}%"></div>
                 </div>
             </div>
         </div>
-            <div class="card bg-primary text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 id="cholesterol-consumed">{{ daily_summary.total_cholesterol|round(0)|int if daily_summary else 0 }}mg</h4>
-                            <p class="mb-0">Cholesterol</p>
-                            <small>Goal: {{ goals.daily_cholesterol|round(0)|int }}mg</small>
-                        </div>
-                        <div class="align-self-center">
-                            <i class="fas fa-heart fa-2x"></i>
-                        </div>
+        <div class="summary-card card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4 id="cholesterol-consumed">{{ daily_summary.total_cholesterol|round(0)|int if daily_summary else 0 }}mg</h4>
+                        <p class="mb-0">Cholesterol</p>
+                        <small>Goal: {{ goals.daily_cholesterol|round(0)|int }}mg</small>
                     </div>
-                    <div class="progress mt-2" style="height: 6px;">
-                        {% set chol_percent = ((daily_summary.total_cholesterol / goals.daily_cholesterol) * 100) if daily_summary and goals.daily_cholesterol > 0 else 0 %}
-                        <div class="progress-bar bg-white" style="width: {{ [chol_percent, 100]|min }}%"></div>
+                    <div class="align-self-center">
+                        <i class="fas fa-heart fa-2x"></i>
                     </div>
                 </div>
+                <div class="progress mt-2" style="height: 6px;">
+                    {% set chol_percent = ((daily_summary.total_cholesterol / goals.daily_cholesterol) * 100) if daily_summary and goals.daily_cholesterol > 0 else 0 %}
+                    <div class="progress-bar bg-white" style="width: {{ [chol_percent, 100]|min }}%"></div>
+                </div>
             </div>
-        </div
+        </div>
     </div>
 
     <!-- Date Navigation -->
@@ -550,7 +534,36 @@ let weeklyChart = null;
 document.addEventListener('DOMContentLoaded', function() {
     loadTodaysEntries();
     loadWeeklyChart();
+    initSummaryCarousel();
 });
+
+function initSummaryCarousel() {
+    const container = document.querySelector('.summary-carousel');
+    if (!container) return;
+
+    let startX = 0;
+    let scrollStart = 0;
+
+    container.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        scrollStart = container.scrollLeft;
+    });
+
+    container.addEventListener('touchend', (e) => {
+        const delta = startX - e.changedTouches[0].clientX;
+        if (Math.abs(delta) > 50) {
+            const card = container.querySelector('.summary-card');
+            if (card) {
+                const gap = parseInt(getComputedStyle(container).gap) || 16;
+                const step = card.offsetWidth + gap;
+                container.scrollTo({
+                    left: scrollStart + (delta > 0 ? step : -step),
+                    behavior: 'smooth'
+                });
+            }
+        }
+    });
+}
 
 // Change date and reload data
 function changeDate(days) {
