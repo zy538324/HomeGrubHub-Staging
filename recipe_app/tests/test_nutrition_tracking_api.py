@@ -56,6 +56,7 @@ def test_update_nutrition_goals_sugar(client):
         'daily_sodium': 2000
     }
 
+    response = client.post('/nutrition/set-goals', data=json.dumps(payload), content_type='application/json', headers=get_auth_headers())
     response = client.post('/nutrition-goals', data=json.dumps(payload), content_type='application/json', headers=get_auth_headers())
     assert response.status_code == 200
     data = response.get_json()

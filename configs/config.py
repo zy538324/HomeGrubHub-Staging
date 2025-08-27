@@ -28,11 +28,17 @@ class Config:
     # Database Configuration - Priority: Environment > AWS RDS > SQLite
     @staticmethod
     def get_database_uri():
-        # Check if AWS RDS should be used (via environment variable)
-        use_aws_rds = os.environ.get('USE_AWS_RDS', 'false').lower() == 'true'
-
         logger = logging.getLogger(__name__)
 
+        # Highest priority: explicit DATABASE_URL override
+        explicit_url = os.environ.get('DATABASE_URL')
+        if explicit_url:
+            logger.info("Using DATABASE_URL override for database connection")
+            return explicit_url
+
+        # Check if AWS RDS should be used (via environment variable)
+        use_aws_rds = os.environ.get('USE_AWS_RDS', 'false').lower() == 'true'
+        logger = logging.getLogger(__name__)
         if use_aws_rds:
             try:
                 from .aws_db_config import get_aws_database_uri
@@ -45,7 +51,7 @@ class Config:
                     "AWS RDS connection failed, falling back to environment variables: %s",
                     e,
                 )
-
+        # Next priority: individual Postgres environment variables
         # Primary: Use environment variables
         postgres_host = os.environ.get('POSTGRES_HOST')
         postgres_port = os.environ.get('POSTGRES_PORT')
@@ -56,6 +62,10 @@ class Config:
         if all([postgres_host, postgres_port, postgres_db, postgres_user, postgres_password]):
             logger.info("Using environment variable database connection")
             return f'postgresql://{postgres_user}:{postgres_password}@{postgres_host}:{postgres_port}/{postgres_db}'
+
+        # Final fallback to SQLite for development
+        logger.warning("Using SQLite fallback for development")
+        return 'sqlite:///recipes.db'
         else:
             # Final fallback to SQLite for development
             logger.warning("Using SQLite fallback for development")
