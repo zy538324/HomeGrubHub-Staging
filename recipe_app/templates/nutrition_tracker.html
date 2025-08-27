@@ -622,6 +622,9 @@ function createEntryHTML(entry) {
                             <button class="btn btn-sm btn-outline-secondary me-1" onclick="toggleNutritionDetails(${entry.id})" title="Show/hide nutrition details">
                                 <i class="fas fa-info-circle"></i>
                             </button>
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editEntry(${entry.id})" title="Edit entry">
+                                <i class="fas fa-edit"></i>
+                            </button>
                             <button class="btn btn-sm btn-outline-danger" onclick="deleteEntry(${entry.id})" title="Delete entry">
                                 <i class="fas fa-trash"></i>
                             </button>

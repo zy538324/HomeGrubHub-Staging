@@ -296,9 +296,17 @@ class NutritionTracker {
             mealTypeSelect.value = mealType;
         }
 
-        // Reset form
-        document.getElementById('addEntryForm').reset();
-        
+        // Reset form and edit state
+        const form = document.getElementById('addEntryForm');
+        form.reset();
+        delete form.dataset.editId;
+
+        // Reset modal text
+        const title = modal.querySelector('.modal-title');
+        if (title) title.textContent = 'Add Nutrition Entry';
+        const submitBtn = modal.querySelector('.btn-primary');
+        if (submitBtn) submitBtn.textContent = 'Add Entry';
+
         // Show modal
         const bsModal = new bootstrap.Modal(modal);
         bsModal.show();
@@ -315,7 +323,7 @@ class NutritionTracker {
     async submitNutritionEntry() {
         const form = document.getElementById('addEntryForm');
         const formData = new FormData(form);
-        
+
         const entryData = {
             product_name: formData.get('product-name') || document.getElementById('product-name').value,
             brand: formData.get('brand') || document.getElementById('brand').value,
@@ -335,11 +343,15 @@ class NutritionTracker {
             }
         };
 
+        const editId = form.dataset.editId;
+        const url = editId ? `/nutrition-entry/${editId}` : '/log-nutrition';
+        const method = editId ? 'PUT' : 'POST';
+
         try {
-            this.showLoading('Adding entry...');
-            
-            const response = await fetch('/log-nutrition', {
-                method: 'POST',
+            this.showLoading(editId ? 'Updating entry...' : 'Adding entry...');
+
+            const response = await fetch(url, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': this.getCSRFToken()
@@ -348,26 +360,27 @@ class NutritionTracker {
             });
 
             const result = await response.json();
-            
+
             if (result.success) {
                 this.hideLoading();
-                this.showSuccess('Entry added successfully!');
-                
+                this.showSuccess(editId ? 'Entry updated successfully!' : 'Entry added successfully!');
+
                 // Close modal
                 const modal = bootstrap.Modal.getInstance(document.getElementById('addEntryModal'));
                 modal.hide();
-                
+                delete form.dataset.editId;
+
                 // Refresh page or update UI
                 setTimeout(() => {
                     window.location.reload();
                 }, 1000);
             } else {
                 this.hideLoading();
-                this.showError('Error adding entry: ' + result.error);
+                this.showError((editId ? 'Error updating entry: ' : 'Error adding entry: ') + result.error);
             }
         } catch (error) {
             this.hideLoading();
-            this.showError('Error adding entry. Please try again.');
+            this.showError(editId ? 'Error updating entry. Please try again.' : 'Error adding entry. Please try again.');
             console.error('Error:', error);
         }
     }
@@ -692,9 +705,41 @@ function changeDate(days) {
 }
 
 function editEntry(entryId) {
-    // Implementation for editing existing entries
-    console.log('Editing entry:', entryId);
-    // This would open an edit modal or navigate to an edit page
+    fetch(`/nutrition-entry/${entryId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) return;
+            const entry = data.entry;
+
+            const form = document.getElementById('addEntryForm');
+            if (!form) return;
+
+            form.dataset.editId = entryId;
+            document.getElementById('product-name').value = entry.product_name || '';
+            document.getElementById('brand').value = entry.brand || '';
+            document.getElementById('portion-size').value = entry.portion_size || 0;
+            document.getElementById('servings').value = entry.servings || 1;
+            document.getElementById('meal-type').value = entry.meal_type || 'snack';
+            document.getElementById('notes').value = entry.notes || '';
+
+            document.getElementById('calories').value = entry.calories || 0;
+            document.getElementById('protein').value = entry.protein || 0;
+            document.getElementById('carbs').value = entry.carbs || 0;
+            document.getElementById('fat').value = entry.fat || 0;
+            document.getElementById('fiber').value = entry.fiber || 0;
+            document.getElementById('sugar').value = entry.sugar || 0;
+            document.getElementById('sodium').value = entry.sodium || 0;
+            document.getElementById('cholesterol').value = entry.cholesterol || 0;
+
+            const modal = document.getElementById('addEntryModal');
+            const title = modal.querySelector('.modal-title');
+            if (title) title.textContent = 'Edit Nutrition Entry';
+            const submitBtn = modal.querySelector('.btn-primary');
+            if (submitBtn) submitBtn.textContent = 'Update Entry';
+            const bsModal = new bootstrap.Modal(modal);
+            bsModal.show();
+        })
+        .catch(err => console.error('Error loading entry for edit:', err));
 }
 
 // Initialize when DOM is loaded

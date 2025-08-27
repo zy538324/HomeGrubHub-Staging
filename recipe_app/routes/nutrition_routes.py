@@ -130,6 +130,64 @@ def log_nutrition():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
+@nutrition_bp.route('/nutrition-entry/<int:entry_id>', methods=['GET'])
+def get_nutrition_entry(entry_id):
+    """Retrieve a single nutrition entry"""
+    if '_user_id' not in session:
+        return jsonify({'success': False, 'error': 'Not authenticated'}), 401
+
+    user_id = session['_user_id']
+    entry = NutritionEntry.query.filter_by(id=entry_id, user_id=user_id).first()
+    if not entry:
+        return jsonify({'success': False, 'error': 'Entry not found'}), 404
+
+    return jsonify({'success': True, 'entry': entry.to_dict()})
+
+
+@nutrition_bp.route('/nutrition-entry/<int:entry_id>', methods=['PUT'])
+def update_nutrition_entry(entry_id):
+    """Update an existing nutrition entry"""
+    if '_user_id' not in session:
+        return jsonify({'success': False, 'error': 'Not authenticated'}), 401
+
+    user_id = session['_user_id']
+    entry = NutritionEntry.query.filter_by(id=entry_id, user_id=user_id).first()
+    if not entry:
+        return jsonify({'success': False, 'error': 'Entry not found'}), 404
+
+    try:
+        data = request.get_json()
+        entry.product_name = data.get('product_name', entry.product_name)
+        entry.brand = data.get('brand', entry.brand)
+        portion_size = float(data.get('portion_size', entry.portion_size))
+        servings = float(data.get('servings', entry.servings))
+        entry.portion_size = portion_size
+        entry.servings = servings
+        entry.total_weight = portion_size * servings
+        entry.meal_type = data.get('meal_type', entry.meal_type)
+        entry.notes = data.get('notes', entry.notes)
+
+        nutrition_data = data.get('nutrition', {})
+        entry.calories = float(nutrition_data.get('calories', entry.calories))
+        entry.protein = float(nutrition_data.get('protein', entry.protein))
+        entry.carbs = float(nutrition_data.get('carbs', entry.carbs))
+        entry.fat = float(nutrition_data.get('fat', entry.fat))
+        entry.fiber = float(nutrition_data.get('fiber', entry.fiber))
+        entry.sugar = float(nutrition_data.get('sugar', entry.sugar))
+        entry.sodium = float(nutrition_data.get('sodium', entry.sodium))
+        entry.cholesterol = float(nutrition_data.get('cholesterol', entry.cholesterol))
+        entry.saturated_fat = float(nutrition_data.get('saturated_fat', entry.saturated_fat))
+
+        db.session.commit()
+        update_daily_summary(user_id, entry.entry_date)
+
+        return jsonify({'success': True, 'message': 'Entry updated successfully', 'entry': entry.to_dict()})
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 @nutrition_bp.route('/log-from-barcode', methods=['POST'])
 def log_from_barcode():
     """Log nutrition from barcode scan with calculated values"""
