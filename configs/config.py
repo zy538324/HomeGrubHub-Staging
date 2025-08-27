@@ -80,6 +80,7 @@ class Config:
                 'application_name': 'HomeGrubHub'  # For connection identification
             }
         }
+    }
 
     # SendGrid Configuration
     SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
