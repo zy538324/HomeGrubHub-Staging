@@ -57,7 +57,7 @@ def require_home_features():
                 flash('Please log in to access this feature.', 'warning')
                 return redirect(url_for('main.login'))
             
-            if current_user.current_plan not in ['Home']:
+            if current_user.current_plan not in ['Home', 'Family', 'Pro']:
                 if request.is_json or 'application/json' in request.headers.get('Accept', ''):
                     return jsonify({
                         'error': 'Home subscription required',
@@ -171,7 +171,7 @@ def subscription_info_context():
     if current_user.is_authenticated:
         return {
             'user_plan': current_user.current_plan,
-            'has_home_features': current_user.can_access_feature('pantry_tracker_predictive'),
+            'has_home_features': current_user.current_plan in ['Home', 'Family', 'Pro'],
             'has_family_features': current_user.current_plan in ['Family', 'Pro'],
             'has_pro_features': current_user.current_plan == 'Pro',
             'has_barcode_scanning': current_user.can_access_feature('barcode_scanning'),
