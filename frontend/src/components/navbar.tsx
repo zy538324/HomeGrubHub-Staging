@@ -18,6 +18,13 @@ export function Navbar() {
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
+              <Link href="/favourites" className="font-semibold">
+                Favourites
+              </Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild>
               <Link href="/legal/privacy-policy" className="font-semibold">
                 Privacy
               </Link>
@@ -32,6 +39,7 @@ export function Navbar() {
             <NavigationMenuLink asChild>
               <Link href="/register" className="font-semibold">Register</Link>
             </NavigationMenuLink>
+          </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
     </nav>
