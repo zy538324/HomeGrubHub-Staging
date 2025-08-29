@@ -383,8 +383,18 @@ def progress_chart():
 def progress_chart_extended():
     from recipe_app.models.nutrition_tracking import NutritionLog
     user_id = session.get('_user_id')
-    days = int(request.args.get('days', 30))
-    logs = NutritionLog.query.filter_by(user_id=user_id).order_by(NutritionLog.log_date.desc()).limit(days).all()[::-1]
+    allowed_days = {30, 90}
+    try:
+        days = int(request.args.get('days', 30))
+    except ValueError:
+        days = 30
+    if days not in allowed_days:
+        days = 30
+    logs = (NutritionLog.query
+            .filter_by(user_id=user_id)
+            .order_by(NutritionLog.log_date.desc())
+            .limit(days)
+            .all()[::-1])
     chart_data = {
         'dates': [log.log_date.isoformat() for log in logs],
         'calories': [log.daily_calories or 0 for log in logs],
@@ -392,7 +402,7 @@ def progress_chart_extended():
         'carbs': [log.daily_carbs or 0 for log in logs],
         'fat': [log.daily_fat or 0 for log in logs]
     }
-    return render_template('nutrition/progress_chart.html', chart_data=chart_data)
+    return render_template('nutrition/progress_chart.html', chart_data=chart_data, selected_days=days)
 
 @nutrition_bp.route('/export-nutrition-logs', methods=['GET'])
 @require_tier(['Home', 'Family', 'Pro', 'Student'])

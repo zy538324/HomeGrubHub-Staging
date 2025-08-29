@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Member Details - HomeGrubHub{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">{{ member.display_name }} Overview</h2>
+
+    <h4>Upcoming Meal Plans</h4>
+    {% if upcoming_meals %}
+        <ul class="list-group mb-4">
+        {% for meal in upcoming_meals %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ meal.date.strftime('%m/%d') }} - {{ meal.meal_type.title() }}
+                {% if meal.recipe_name %}
+                    <span class="text-muted">{{ meal.recipe_name }}</span>
+                {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-muted">No upcoming meals.</p>
+    {% endif %}
+
+    <h4>Recent Nutrition Logs</h4>
+    {% if recent_nutrition %}
+        <ul class="list-group mb-4">
+        {% for log in recent_nutrition %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ log.log_date.strftime('%m/%d') }}
+                <span>{{ (log.daily_calories or 0)|round }} kcal</span>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-muted">No recent nutrition data.</p>
+    {% endif %}
+
+    <h4>Recent Weight Logs</h4>
+    {% if recent_weights %}
+        <ul class="list-group mb-4">
+        {% for w in recent_weights %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ w.log_date.strftime('%m/%d') }}
+                <span>{{ w.weight_kg }} kg</span>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-muted">No recent weight logs.</p>
+    {% endif %}
+
+    <h4>Recent Workouts</h4>
+    {% if recent_workouts %}
+        <ul class="list-group mb-4">
+        {% for workout in recent_workouts %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ workout.workout_date.strftime('%m/%d') }}
+                <span>{{ workout.workout_type or 'Workout' }}</span>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-muted">No recent workouts.</p>
+    {% endif %}
+</div>
+{% endblock %}

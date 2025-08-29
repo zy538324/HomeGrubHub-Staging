@@ -173,6 +173,9 @@
                                         </div>
                                         {% endif %}
                                     </div>
+                                    <div class="mt-2 text-end">
+                                        <a href="{{ url_for('family.member_detail', member_id=member.id) }}" class="btn btn-sm btn-outline-primary">View</a>
+                                    </div>
                                 </div>
                             </div>
                             {% endfor %}
