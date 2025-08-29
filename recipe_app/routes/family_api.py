@@ -19,6 +19,7 @@ from recipe_app.models.family_models import (
     FamilyChallenge, FamilyChallengeProgress, FamilyAchievement
 )
 from recipe_app.models.nutrition_tracking import Food, Meal, NutritionLog
+from recipe_app.models.fitness_models import WeightLog, WorkoutLog
 from recipe_app.routes.nutrition_tracking_api import require_tier
 
 # Create Family blueprint
@@ -74,6 +75,56 @@ def family_dashboard():
                          active_challenges=active_challenges,
                          family_nutrition=family_nutrition,
                          recent_achievements=recent_achievements)
+
+
+@family_bp.route('/member/<int:member_id>')
+@login_required
+@require_tier(['family', 'pro'])
+def member_detail(member_id):
+    """View detailed information for a specific family member"""
+    family_account = current_user.get_family_account()
+    if not family_account:
+        return redirect(url_for('family.create_family'))
+
+    member = FamilyMember.query.filter_by(
+        id=member_id, family_id=family_account.id
+    ).first_or_404()
+
+    viewer = FamilyMember.query.filter_by(
+        family_id=family_account.id, user_id=current_user.id
+    ).first()
+
+    is_owner = family_account.primary_user_id == current_user.id
+    if not (is_owner or (viewer and viewer.has_permission('view_all_data')) or (viewer and viewer.id == member.id)):
+        flash('You do not have permission to view this member.', 'danger')
+        return redirect(url_for('family.family_dashboard'))
+
+    upcoming_meals = FamilyMealPlan.query.filter(
+        FamilyMealPlan.family_id == family_account.id,
+        FamilyMealPlan.assigned_cook == member.id,
+        FamilyMealPlan.date >= date.today()
+    ).order_by(FamilyMealPlan.date.asc()).limit(7).all()
+
+    recent_nutrition = NutritionLog.query.filter_by(
+        user_id=member.user_id
+    ).order_by(NutritionLog.log_date.desc()).limit(7).all()
+
+    recent_weights = WeightLog.query.filter_by(
+        user_id=member.user_id
+    ).order_by(WeightLog.log_date.desc()).limit(7).all()
+
+    recent_workouts = WorkoutLog.query.filter_by(
+        user_id=member.user_id
+    ).order_by(WorkoutLog.workout_date.desc()).limit(7).all()
+
+    return render_template(
+        'family/member_detail.html',
+        member=member,
+        upcoming_meals=upcoming_meals,
+        recent_nutrition=recent_nutrition,
+        recent_weights=recent_weights,
+        recent_workouts=recent_workouts
+    )
 
 @family_bp.route('/create-family')
 @login_required

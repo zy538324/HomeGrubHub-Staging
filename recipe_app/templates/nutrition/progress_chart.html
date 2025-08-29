@@ -8,6 +8,14 @@
 </head>
 <body>
     <h1>Nutrition Progress Chart</h1>
+    <p>
+        View last
+        <a href="{{ url_for('nutrition.progress_chart_extended', days=30) }}"
+           {% if selected_days == 30 %}class="active"{% endif %}>30 days</a>
+        |
+        <a href="{{ url_for('nutrition.progress_chart_extended', days=90) }}"
+           {% if selected_days == 90 %}class="active"{% endif %}>90 days</a>
+    </p>
     <canvas id="nutritionChart" width="800" height="400"></canvas>
     <script>
     const chartData = {{ chart_data|tojson|safe }};

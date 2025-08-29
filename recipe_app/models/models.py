@@ -179,18 +179,22 @@ class User(UserMixin, db.Model):
                 'meal_planning_basic'
             ],
             'Family': [
-                'basic_recipes', 'search', 'unlimited_recipes', 'private_recipes', 
-                'basic_tools', 'multi_user', 'family_sharing', 'import_recipes',
+                # Free tier features
+                'basic_recipes', 'search', 'public_recipes', 'basic_filtering',
+                'recipe_reviews_read',
+                # Home tier features
+                'unlimited_recipes', 'private_recipes', 'basic_tools', 'import_recipes',
                 'advanced_filtering', 'nutrition_analysis', 'equipment_filtering',
-                'smart_substitutions', 'price_comparison_multi', 'budget_suggestions',
-                'meal_planning_advanced', 'batch_cooking', 'pantry_tracker_family',
-                'voice_assistant', 'offline_recipes_themed', 'recipe_reviews',
-                'community_photos', 'seasonal_suggestions', 'upload_recipes',
-                'priority_support', 'url_import', 'dynamic_budget_alerts',
-                # Additional features for routes
-                'meal_planning', 'shopping_list_generation', 'community_features',
-                'recipe_collections', 'cooking_challenges', 'social_features',
-                'meal_planning_basic'
+                'smart_substitutions', 'price_comparison_trends', 'budget_suggestions_dynamic',
+                'meal_planning_advanced', 'batch_cooking', 'voice_assistant',
+                'offline_recipes_themed', 'recipe_reviews', 'community_photos',
+                'seasonal_suggestions', 'upload_recipes', 'priority_support',
+                'pantry_tracker', 'url_import', 'meal_planning', 'shopping_list_generation',
+                'community_features', 'recipe_collections', 'cooking_challenges',
+                'social_features', 'meal_planning_basic',
+                # Family-specific additions
+                'multi_user', 'family_sharing', 'price_comparison_multi',
+                'budget_suggestions', 'pantry_tracker_family', 'dynamic_budget_alerts'
             ],
             'Pro': [
                 'basic_recipes', 'search', 'unlimited_recipes', 'private_recipes', 
