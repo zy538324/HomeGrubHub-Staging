@@ -16,6 +16,22 @@ export function Navbar() {
               <Link href="/about" className="font-semibold">About</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild>
+              <Link href="/legal/privacy-policy" className="font-semibold">
+                Privacy
+              </Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild>
+              <Link href="/login" className="font-semibold">Login</Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild>
+              <Link href="/register" className="font-semibold">Register</Link>
+            </NavigationMenuLink>
         </NavigationMenuList>
       </NavigationMenu>
     </nav>
