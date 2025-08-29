@@ -32,7 +32,6 @@ export function Navbar() {
             <NavigationMenuLink asChild>
               <Link href="/register" className="font-semibold">Register</Link>
             </NavigationMenuLink>
-          </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
     </nav>
