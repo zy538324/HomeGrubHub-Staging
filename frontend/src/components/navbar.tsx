@@ -8,43 +8,22 @@ export function Navbar() {
         <NavigationMenuList className="flex gap-4 p-4">
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
-              <Link href="/" className="font-semibold hover:text-secondary">
-                Home
-              </Link>
+              <Link href="/" className="font-semibold">Home</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
               <Link href="/about" className="font-semibold hover:text-secondary">
                 About
-              </Link>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link href="/recipes" className="font-semibold hover:text-secondary">
-                  Recipes
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link href="/recipes/add" className="font-semibold hover:text-secondary">
-                  Add Recipe
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link href="/favourites" className="font-semibold hover:text-secondary">
-                  Favourites
-                </Link>
+             
+              <Link href="/about" className="font-semibold">About</Link>
+
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
-              <Link href="/legal/privacy-policy" className="font-semibold hover:text-secondary">
-                Privacy
+              <Link href="/favourites" className="font-semibold">
+                Favourites
               </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
@@ -52,6 +31,8 @@ export function Navbar() {
             <NavigationMenuLink asChild>
               <Link href="/legal/terms-of-service" className="font-semibold hover:text-secondary">
                 Terms
+              <Link href="/legal/privacy-policy" className="font-semibold">
+                Privacy
               </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
@@ -60,6 +41,7 @@ export function Navbar() {
               <Link href="/login" className="font-semibold hover:text-secondary">
                 Login
               </Link>
+              <Link href="/login" className="font-semibold">Login</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
@@ -67,6 +49,7 @@ export function Navbar() {
               <Link href="/register" className="font-semibold hover:text-secondary">
                 Register
               </Link>
+              <Link href="/register" className="font-semibold">Register</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
