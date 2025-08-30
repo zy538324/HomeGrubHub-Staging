@@ -22,6 +22,13 @@ export function Navbar() {
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
+              <Link href="/recipes" className="font-semibold hover:text-secondary">
+                Recipes
+              </Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild>
               <Link href="/favourites" className="font-semibold hover:text-secondary">
                 Favourites
               </Link>
