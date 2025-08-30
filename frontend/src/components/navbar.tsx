@@ -8,9 +8,7 @@ export function Navbar() {
         <NavigationMenuList className="flex gap-4 p-4">
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
-              <Link href="/" className="font-semibold hover:text-secondary">
-                Home
-              </Link>
+              <Link href="/" className="font-semibold">Home</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
@@ -30,6 +28,7 @@ export function Navbar() {
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
               <Link href="/favourites" className="font-semibold hover:text-secondary">
+              <Link href="/favourites" className="font-semibold">
                 Favourites
               </Link>
             </NavigationMenuLink>
@@ -53,6 +52,7 @@ export function Navbar() {
               <Link href="/login" className="font-semibold hover:text-secondary">
                 Login
               </Link>
+              <Link href="/login" className="font-semibold">Login</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
