@@ -3,12 +3,13 @@ import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuL
 
 export function Navbar() {
   return (
-    <nav className="border-b">
+    <nav className="bg-primary text-primary-foreground">
       <NavigationMenu className="container mx-auto">
         <NavigationMenuList className="flex gap-4 p-4">
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
               <Link href="/" className="font-semibold">Home</Link>
+
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
