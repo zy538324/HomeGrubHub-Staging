@@ -9,12 +9,15 @@ export function Navbar() {
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
               <Link href="/" className="font-semibold">Home</Link>
-
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
+              <Link href="/about" className="font-semibold hover:text-secondary">
+                About
+             
               <Link href="/about" className="font-semibold">About</Link>
+
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
@@ -26,6 +29,8 @@ export function Navbar() {
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
+              <Link href="/legal/terms-of-service" className="font-semibold hover:text-secondary">
+                Terms
               <Link href="/legal/privacy-policy" className="font-semibold">
                 Privacy
               </Link>
@@ -33,11 +38,17 @@ export function Navbar() {
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
+              <Link href="/login" className="font-semibold hover:text-secondary">
+                Login
+              </Link>
               <Link href="/login" className="font-semibold">Login</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
+              <Link href="/register" className="font-semibold hover:text-secondary">
+                Register
+              </Link>
               <Link href="/register" className="font-semibold">Register</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
