@@ -15,13 +15,19 @@ export function Navbar() {
             <NavigationMenuLink asChild>
               <Link href="/about" className="font-semibold hover:text-secondary">
                 About
-             
-              <Link href="/about" className="font-semibold">About</Link>
-
+              </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
+              <Link href="/recipes" className="font-semibold hover:text-secondary">
+                Recipes
+              </Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild>
+              <Link href="/favourites" className="font-semibold hover:text-secondary">
               <Link href="/favourites" className="font-semibold">
                 Favourites
               </Link>
@@ -29,10 +35,15 @@ export function Navbar() {
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
+              <Link href="/legal/privacy-policy" className="font-semibold hover:text-secondary">
+                Privacy
+              </Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild>
               <Link href="/legal/terms-of-service" className="font-semibold hover:text-secondary">
                 Terms
-              <Link href="/legal/privacy-policy" className="font-semibold">
-                Privacy
               </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
@@ -49,7 +60,6 @@ export function Navbar() {
               <Link href="/register" className="font-semibold hover:text-secondary">
                 Register
               </Link>
-              <Link href="/register" className="font-semibold">Register</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
