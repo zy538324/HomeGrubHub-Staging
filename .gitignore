@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+instance/
+venv/
+.env
+
+# Node
+node_modules/
+npm-debug.log
+
+# Build
+.next/
+dist/
