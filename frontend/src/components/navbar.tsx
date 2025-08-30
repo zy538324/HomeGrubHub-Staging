@@ -43,6 +43,13 @@ export function Navbar() {
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
+              <Link href="/legal/terms-of-service" className="font-semibold hover:text-secondary">
+                Terms
+              </Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild>
               <Link href="/login" className="font-semibold hover:text-secondary">
                 Login
               </Link>
