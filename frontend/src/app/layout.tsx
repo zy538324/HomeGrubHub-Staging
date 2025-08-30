@@ -5,7 +5,7 @@ import { Navbar } from "@/components/navbar"
 export const metadata: Metadata = {
   title: {
     default: "HomeGrubHub - Smart Meal Planning & Recipe Organization App",
-    template: "%s - HomeGrubHub",
+    template: "%s - HomeGrubHub"
   },
   description: "Plan meals, track nutrition, and organize recipes with HomeGrubHub.",
 }

@@ -50,6 +50,14 @@ const config: Config = {
         sans: ["Poppins", ...defaultTheme.fontFamily.sans],
       },
     },
+import animate from "tailwindcss-animate"
+
+const config: Config = {
+  content: [
+    "./src/**/*.{ts,tsx}",
+  ],
+  theme: {
+    extend: {},
   },
   plugins: [animate],
 }

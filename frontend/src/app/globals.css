@@ -39,4 +39,3 @@
     color: hsl(var(--foreground));
     @apply antialiased;
   }
-}
