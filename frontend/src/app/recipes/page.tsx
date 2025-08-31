@@ -1,22 +1,15 @@
 import Link from "next/link"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-
-interface Recipe {
-  id: number
-  title: string
-  description?: string
-  difficulty?: string
-  total_time?: number
-  country?: string
-}
+import { apiClient, type Recipe } from "@/lib/api"
 
 async function getRecipes(): Promise<Recipe[]> {
-  const res = await fetch("/api/recipes", { cache: "no-store" })
-  if (!res.ok) {
+  try {
+    return await apiClient.getRecipes()
+  } catch (error) {
+    console.error('Failed to fetch recipes:', error)
     return []
   }
-  return res.json()
 }
 
 export const metadata = {
@@ -26,7 +19,10 @@ export const metadata = {
 export default async function RecipesPage() {
   const recipes = await getRecipes()
 
-  if (recipes.length === 0) {
+  // Ensure recipes is an array
+  const recipesArray = Array.isArray(recipes) ? recipes : []
+
+  if (recipesArray.length === 0) {
     return (
       <section className="container mx-auto py-10">
         <div className="flex flex-col items-center text-center gap-4">
@@ -51,7 +47,7 @@ export default async function RecipesPage() {
         </p>
       </div>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {recipes.map((recipe) => (
+        {recipesArray.map((recipe) => (
           <Card key={recipe.id} className="flex flex-col">
             <CardHeader>
               <CardTitle>{recipe.title}</CardTitle>

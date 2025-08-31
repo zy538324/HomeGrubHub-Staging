@@ -4,8 +4,9 @@ import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuL
 export function Navbar() {
   return (
     <nav className="bg-primary text-primary-foreground">
-      <NavigationMenu className="container mx-auto">
-        <NavigationMenuList className="flex gap-4 p-4">
+      <div className="container mx-auto">
+        <NavigationMenu>
+          <NavigationMenuList className="flex gap-4 p-4">
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
               <Link href="/" className="font-semibold">Home</Link>
@@ -28,7 +29,6 @@ export function Navbar() {
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
               <Link href="/favourites" className="font-semibold hover:text-secondary">
-              <Link href="/favourites" className="font-semibold">
                 Favourites
               </Link>
             </NavigationMenuLink>
@@ -52,7 +52,6 @@ export function Navbar() {
               <Link href="/login" className="font-semibold hover:text-secondary">
                 Login
               </Link>
-              <Link href="/login" className="font-semibold">Login</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
@@ -62,8 +61,9 @@ export function Navbar() {
               </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
-        </NavigationMenuList>
-      </NavigationMenu>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
     </nav>
   )
 }

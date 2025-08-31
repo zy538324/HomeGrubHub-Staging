@@ -83,3 +83,71 @@
 2025-08-27 19:33:31,349 - 127.0.0.1 - - [27/Aug/2025 19:33:31] "[36mGET /static/sw.js HTTP/1.1[0m" 304 -
 2025-08-27 19:33:31,376 - 127.0.0.1 - - [27/Aug/2025 19:33:31] "[36mGET /static/manifest.json HTTP/1.1[0m" 304 -
 2025-08-27 19:33:31,393 - 127.0.0.1 - - [27/Aug/2025 19:33:31] "[36mGET /static/icons/icon-144x144.png HTTP/1.1[0m" 304 -
+2025-08-29 23:27:09,468 - SendGrid API client initialized successfully
+2025-08-29 23:27:10,432 - Phi-3 engine import failed: No module named 'recipe_app.ai_engine'
+2025-08-29 23:27:13,735 - Family models not available
+2025-08-29 23:27:13,780 - Database connection successful
+2025-08-29 23:27:13,785 - HomeGrubHub startup
+2025-08-29 23:27:13,786 - Database URI: sqlite:/recipes.db
+2025-08-29 23:27:13,990 - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8050
+ * Running on http://10.252.10.12:8050
+2025-08-29 23:27:13,990 - [33mPress CTRL+C to quit[0m
+2025-08-31 18:31:27,985 - Request: GET http://localhost:8050/ | IP: 127.0.0.1 | User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0 | Referer: None
+2025-08-31 18:31:28,144 - 127.0.0.1 - - [31/Aug/2025 18:31:28] "GET / HTTP/1.1" 200 -
+2025-08-31 18:31:28,297 - 127.0.0.1 - - [31/Aug/2025 18:31:28] "GET /static/style.css HTTP/1.1" 200 -
+2025-08-31 18:31:28,349 - 127.0.0.1 - - [31/Aug/2025 18:31:28] "GET /static/HomeGrubHub.png HTTP/1.1" 200 -
+2025-08-31 18:31:28,710 - 127.0.0.1 - - [31/Aug/2025 18:31:28] "GET /static/js/recipe-voting.js HTTP/1.1" 200 -
+2025-08-31 18:31:29,754 - 127.0.0.1 - - [31/Aug/2025 18:31:29] "GET /static/HomeGrubHub.ico HTTP/1.1" 200 -
+2025-08-31 18:31:30,057 - 127.0.0.1 - - [31/Aug/2025 18:31:30] "GET /static/manifest.json HTTP/1.1" 200 -
+2025-08-31 18:31:30,090 - 127.0.0.1 - - [31/Aug/2025 18:31:30] "GET /static/favicon.ico HTTP/1.1" 200 -
+2025-08-31 18:31:30,169 - 127.0.0.1 - - [31/Aug/2025 18:31:30] "GET /static/icons/icon-144x144.png HTTP/1.1" 200 -
+2025-08-31 18:31:30,338 - 127.0.0.1 - - [31/Aug/2025 18:31:30] "GET /static/sw.js HTTP/1.1" 200 -
+2025-08-31 18:31:52,826 - 127.0.0.1 - - [31/Aug/2025 18:31:52] "[33mGET /api/favourites HTTP/1.1[0m" 404 -
+2025-08-31 18:31:55,672 - Request: GET http://localhost:8050/api/recipes | IP: 127.0.0.1 | User-Agent: node | Referer: None
+2025-08-31 18:31:56,708 - 127.0.0.1 - - [31/Aug/2025 18:31:56] "GET /api/recipes HTTP/1.1" 200 -
+2025-08-31 18:32:09,574 - Request: GET http://localhost:8050/api/recipes | IP: 127.0.0.1 | User-Agent: node | Referer: None
+2025-08-31 18:32:09,583 - 127.0.0.1 - - [31/Aug/2025 18:32:09] "GET /api/recipes HTTP/1.1" 200 -
+2025-08-31 18:32:28,755 - Request: GET http://localhost:8050/api/recipes | IP: 127.0.0.1 | User-Agent: node | Referer: None
+2025-08-31 18:32:28,760 - 127.0.0.1 - - [31/Aug/2025 18:32:28] "GET /api/recipes HTTP/1.1" 200 -
+2025-08-31 18:32:35,063 - Request: GET http://localhost:8050/api/recipes | IP: 127.0.0.1 | User-Agent: node | Referer: None
+2025-08-31 18:32:35,069 - 127.0.0.1 - - [31/Aug/2025 18:32:35] "GET /api/recipes HTTP/1.1" 200 -
+2025-08-31 18:32:39,577 - Request: GET http://localhost:8050/api/recipes | IP: 127.0.0.1 | User-Agent: node | Referer: None
+2025-08-31 18:32:39,585 - 127.0.0.1 - - [31/Aug/2025 18:32:39] "GET /api/recipes HTTP/1.1" 200 -
+2025-08-31 18:32:43,840 - Request: GET http://localhost:8050/api/recipes | IP: 127.0.0.1 | User-Agent: node | Referer: None
+2025-08-31 18:32:43,852 - 127.0.0.1 - - [31/Aug/2025 18:32:43] "GET /api/recipes HTTP/1.1" 200 -
+2025-08-31 18:32:48,158 - Request: GET http://localhost:8050/api/recipes | IP: 127.0.0.1 | User-Agent: node | Referer: None
+2025-08-31 18:32:48,164 - 127.0.0.1 - - [31/Aug/2025 18:32:48] "GET /api/recipes HTTP/1.1" 200 -
+2025-08-31 18:33:02,494 - Request: GET http://localhost:8050/api/recipes | IP: 127.0.0.1 | User-Agent: node | Referer: None
+2025-08-31 18:33:02,500 - 127.0.0.1 - - [31/Aug/2025 18:33:02] "GET /api/recipes HTTP/1.1" 200 -
+2025-08-31 18:35:04,242 - Request: GET http://localhost:8050/api/recipes | IP: 127.0.0.1 | User-Agent: node | Referer: None
+2025-08-31 18:35:04,250 - 127.0.0.1 - - [31/Aug/2025 18:35:04] "GET /api/recipes HTTP/1.1" 200 -
+2025-08-31 18:36:04,803 - Request: GET http://localhost:8050/api/recipes | IP: 127.0.0.1 | User-Agent: node | Referer: None
+2025-08-31 18:36:04,810 - 127.0.0.1 - - [31/Aug/2025 18:36:04] "GET /api/recipes HTTP/1.1" 200 -
+2025-08-31 18:37:04,391 - Request: GET http://localhost:8050/api/recipes | IP: 127.0.0.1 | User-Agent: node | Referer: None
+2025-08-31 18:37:04,397 - 127.0.0.1 - - [31/Aug/2025 18:37:04] "GET /api/recipes HTTP/1.1" 200 -
+2025-08-31 18:37:06,700 - 127.0.0.1 - - [31/Aug/2025 18:37:06] "[33mGET /api/favourites HTTP/1.1[0m" 404 -
+2025-08-31 18:58:52,536 - Request: GET http://localhost:8050/api/recipes | IP: 127.0.0.1 | User-Agent: node | Referer: None
+2025-08-31 18:58:52,543 - 127.0.0.1 - - [31/Aug/2025 18:58:52] "GET /api/recipes HTTP/1.1" 200 -
+2025-08-31 18:58:55,605 - 127.0.0.1 - - [31/Aug/2025 18:58:55] "[33mGET /api/favourites HTTP/1.1[0m" 404 -
+2025-08-31 19:04:53,459 - Request: GET http://localhost:8050/api/recipes | IP: 127.0.0.1 | User-Agent: node | Referer: None
+2025-08-31 19:04:53,467 - 127.0.0.1 - - [31/Aug/2025 19:04:53] "GET /api/recipes HTTP/1.1" 200 -
+2025-08-31 19:14:24,023 - 127.0.0.1 - - [31/Aug/2025 19:14:24] "[33mGET /api/favourites HTTP/1.1[0m" 404 -
+2025-08-31 19:16:37,290 - 127.0.0.1 - - [31/Aug/2025 19:16:37] "[33mGET /api/favourites HTTP/1.1[0m" 404 -
+2025-08-31 19:16:37,777 - 127.0.0.1 - - [31/Aug/2025 19:16:37] "[33mGET /api/favourites HTTP/1.1[0m" 404 -
+2025-08-31 19:16:38,407 - 127.0.0.1 - - [31/Aug/2025 19:16:38] "[33mGET /api/favourites HTTP/1.1[0m" 404 -
+2025-08-31 19:16:38,844 - 127.0.0.1 - - [31/Aug/2025 19:16:38] "[33mGET /api/favourites HTTP/1.1[0m" 404 -
+2025-08-31 19:16:39,299 - 127.0.0.1 - - [31/Aug/2025 19:16:39] "[33mGET /api/favourites HTTP/1.1[0m" 404 -
+2025-08-31 19:16:39,794 - 127.0.0.1 - - [31/Aug/2025 19:16:39] "[33mGET /api/favourites HTTP/1.1[0m" 404 -
+2025-08-31 19:16:40,469 - 127.0.0.1 - - [31/Aug/2025 19:16:40] "[33mGET /api/favourites HTTP/1.1[0m" 404 -
+2025-08-31 19:16:41,217 - 127.0.0.1 - - [31/Aug/2025 19:16:41] "[33mGET /api/favourites HTTP/1.1[0m" 404 -
+2025-08-31 19:16:41,708 - 127.0.0.1 - - [31/Aug/2025 19:16:41] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-08-31 19:17:00,179 - 127.0.0.1 - - [31/Aug/2025 19:17:00] "[33mGET /api/favourites HTTP/1.1[0m" 404 -
+2025-08-31 19:17:32,206 - 127.0.0.1 - - [31/Aug/2025 19:17:32] "[33mGET /api/favourites HTTP/1.1[0m" 404 -
+2025-08-31 19:17:32,321 - 127.0.0.1 - - [31/Aug/2025 19:17:32] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-08-31 19:17:41,896 - 127.0.0.1 - - [31/Aug/2025 19:17:41] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-08-31 19:17:47,563 - Request: GET http://localhost:8050/api/recipes | IP: 127.0.0.1 | User-Agent: node | Referer: None
+2025-08-31 19:17:47,570 - 127.0.0.1 - - [31/Aug/2025 19:17:47] "GET /api/recipes HTTP/1.1" 200 -
+2025-08-31 19:17:49,128 - 127.0.0.1 - - [31/Aug/2025 19:17:49] "[33mGET /api/favourites HTTP/1.1[0m" 404 -
+2025-08-31 19:37:52,049 - 127.0.0.1 - - [31/Aug/2025 19:37:52] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
