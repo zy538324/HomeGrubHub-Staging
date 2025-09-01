@@ -16,12 +16,13 @@ from .shop_management_routes import shop_management_bp
 # Family routes
 try:
     from .family_api import family_bp
-    from .family_communication import family_communication
+    from .family_communication import family_communication, parental_controls_bp
     from .family_collaboration import family_collab_bp
 except ImportError:
     # Family features not available
     family_bp = None
     family_communication = None
+    parental_controls_bp = None
     family_collab_bp = None
 
 # Admin routes
