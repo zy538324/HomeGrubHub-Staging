@@ -10,7 +10,6 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 20px;
     margin: 2rem 0;
     padding: 3rem;
@@ -79,7 +78,7 @@
 
 .offline-features li i {
     margin-right: 0.5rem;
-    color: #84fab0;
+    color: var(--success-color);
 }
 
 @keyframes pulse {
@@ -96,7 +95,7 @@
 
 {% block content %}
 <div class="container py-4">
-    <div class="offline-container">
+    <div class="offline-container brand-gradient">
         <div class="offline-content">
             <div class="offline-icon pulse-animation">
                 <i class="fas fa-wifi-slash"></i>
