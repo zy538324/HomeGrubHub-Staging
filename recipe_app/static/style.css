@@ -43,6 +43,10 @@ body {
     background-color: var(--secondary-dark);
     border-color: var(--secondary-dark);
 }
+
+.text-primary {
+    color: var(--secondary-color) !important;
+}
 .contact-hero {
         background: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-dark) 100%);
         color: white;
@@ -212,13 +216,13 @@ body {
         }
     }
     :root {
-        --primary-color: #2c3e50;
-        --primary-light: #34495e;
-        --primary-dark: #1c2833;
-        --secondary-color: #e74c3c;
+        --primary-color: #8b0000;
+        --primary-light: #a83232;
+        --primary-dark: #4a0f0f;
+        --secondary-color: #e63946;
         --secondary-light: #ff6b6b;
-        --secondary-dark: #c0392b;
-        --secondary-darker: #a93226;
+        --secondary-dark: #b71c1c;
+        --secondary-darker: #7f0000;
         --accent-color: #f39c12;
         --accent-light: #ffa726;
         --accent-dark: #e67e22;

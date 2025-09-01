@@ -22,32 +22,32 @@
 
 /* Orange theme colors */
 .bg-orange {
-    background-color: #ff6b35 !important;
+    background-color: var(--accent-color) !important;
 }
 
 .text-orange {
-    color: #ff6b35 !important;
+    color: var(--accent-color) !important;
 }
 
 .btn-orange {
-    background-color: #ff6b35;
-    border-color: #ff6b35;
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
     color: white;
 }
 
 .btn-orange:hover {
-    background-color: #e55a2d;
-    border-color: #e55a2d;
+    background-color: var(--accent-dark);
+    border-color: var(--accent-dark);
     color: white;
 }
 
 .border-orange {
-    border-color: #ff6b35 !important;
+    border-color: var(--accent-color) !important;
 }
 
 /* BMI Calculator Styles */
 .bmi-result {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     color: white;
     border-radius: 15px;
     padding: 2rem;
@@ -226,9 +226,9 @@
 }
 
 .input-group-text.bg-fitness {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     color: white;
-    border-color: #667eea;
+    border-color: var(--primary-color);
 }
 
 /* Success animations */

@@ -6,7 +6,7 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 <style>
     .messages-container {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         min-height: 100vh;
         padding: 20px 0;
     }
@@ -51,9 +51,9 @@
     }
     
     .filter-select:focus {
-        border-color: #667eea;
+        border-color: var(--primary-color);
         outline: none;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
     }
     
     .search-box {
@@ -67,8 +67,8 @@
     }
     
     .search-box:focus-within {
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
     }
     
     .search-box input {
@@ -85,7 +85,7 @@
     }
     
     .compose-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         color: white;
         border: none;
         padding: 12px 25px;
@@ -130,8 +130,8 @@
     }
     
     .message-thread.unread {
-        border-left: 5px solid #667eea;
-        background: linear-gradient(90deg, #f8f9ff 0%, #ffffff 100%);
+        border-left: 5px solid var(--primary-color);
+        background: linear-gradient(90deg, #ffe5e5 0%, #ffffff 100%);
     }
     
     .message-thread.priority-high {
@@ -168,7 +168,7 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         display: flex;
         align-items: center;
         justify-content: center;
@@ -213,7 +213,7 @@
     }
     
     .badge-primary {
-        background-color: #667eea;
+        background-color: var(--primary-color);
         color: white;
     }
     
@@ -272,7 +272,7 @@
     }
     
     .action-link {
-        color: #667eea;
+        color: var(--secondary-color);
         text-decoration: none;
         font-size: 0.9rem;
         display: flex;
@@ -282,7 +282,7 @@
     }
     
     .action-link:hover {
-        color: #764ba2;
+        color: var(--secondary-dark);
         text-decoration: underline;
     }
     
@@ -293,7 +293,7 @@
     }
     
     .compose-modal .modal-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         color: white;
         border-radius: 15px 15px 0 0;
         border: none;
@@ -306,12 +306,12 @@
     }
     
     .form-control:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
     }
     
     .btn-send {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         border: none;
         border-radius: 8px;
         padding: 12px 25px;
@@ -319,7 +319,7 @@
     }
     
     .btn-send:hover {
-        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+        background: linear-gradient(135deg, var(--secondary-dark), var(--secondary-darker));
     }
     
     .pagination-wrapper {
@@ -329,21 +329,21 @@
     }
     
     .pagination .page-link {
-        color: #667eea;
+        color: var(--primary-color);
         border-color: #dee2e6;
         border-radius: 8px;
         margin: 0 2px;
     }
     
     .pagination .page-link:hover {
-        background-color: #667eea;
-        border-color: #667eea;
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
         color: white;
     }
     
     .pagination .page-item.active .page-link {
-        background-color: #667eea;
-        border-color: #667eea;
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
     }
     
     .empty-state {
