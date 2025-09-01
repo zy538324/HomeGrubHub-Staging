@@ -3,7 +3,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 210 17% 98%;
     --foreground: 210 29% 24%;
 
     --card: 0 0% 100%;
@@ -15,14 +15,14 @@
     --primary: 210 29% 24%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 149 64% 41%;
+    --secondary: 6 78% 57%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 210 16% 90%;
     --muted-foreground: 210 8% 40%;
 
-    --accent: 210 16% 90%;
-    --accent-foreground: 210 29% 24%;
+    --accent: 37 90% 51%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 6 78% 57%;
     --destructive-foreground: 0 0% 100%;
@@ -32,11 +32,92 @@
     --ring: 210 29% 24%;
 
     --radius: 0.5rem;
+
+    /* Legacy brand palette */
+    --primary-color: #2c3e50;
+    --secondary-color: #e74c3c;
+    --accent-color: #f39c12;
+    --success-color: #27ae60;
+    --light-bg: #f8f9fa;
+    --dark-text: #2c3e50;
+    --light-text: #6c757d;
   }
 
   body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
+    background-color: var(--light-bg);
+    color: var(--dark-text);
     @apply antialiased;
+  }
+}
+
+@layer components {
+  .navbar {
+    @apply bg-white border-b border-gray-200 shadow-sm;
+  }
+
+  .navbar-brand {
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: var(--primary-color) !important;
+    @apply flex items-center;
+  }
+
+  .nav-link {
+    font-weight: 500;
+    color: var(--dark-text) !important;
+    @apply flex flex-col items-center justify-center px-2 py-2 text-center min-w-[80px] transition-colors;
+  }
+
+  .nav-link:hover {
+    color: var(--secondary-color) !important;
+  }
+
+  .card {
+    @apply border-none shadow-md transition-transform;
+  }
+
+  .card:hover {
+    @apply -translate-y-1;
+  }
+
+  .btn-primary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    @apply font-medium;
+  }
+
+  .btn-primary:hover {
+    background-color: #c0392b;
+    border-color: #c0392b;
+  }
+
+  .btn-outline-primary {
+    color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    @apply flex items-center;
+  }
+
+  .btn-outline-primary:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: white;
+  }
+
+  .footer {
+    color: var(--dark-text) !important;
+    padding: 3rem 0 !important;
+    margin-top: auto;
+    position: relative;
+    z-index: 1000;
+  }
+
+  .footer * {
+    color: #212529 !important;
+  }
+
+  .hero-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    margin-bottom: 2rem;
   }
 }

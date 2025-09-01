@@ -71,12 +71,12 @@ export default function AboutPage() {
           <h2 className="mb-4 text-center text-2xl font-semibold">Our Story</h2>
           <p>
             I started HomeGrubHub because, like many parents, I was constantly
-            stressed about meal planning. Every week, I'd spend hours browsing
+            stressed about meal planning. Every week, I&apos;d spend hours browsing
             recipes, creating shopping lists, only to find myself throwing away
-            unused ingredients and still asking "what's for dinner?"
+            unused ingredients and still asking &quot;what&apos;s for dinner?&quot;
           </p>
           <p>
-            We at HomeGrubHub understand this struggle because we've lived it.
+            We at HomeGrubHub understand this struggle because we&apos;ve lived it.
             As busy parents ourselves, we experienced firsthand the daily
             challenge of trying to feed our families well while managing tight
             budgets and hectic schedules.
@@ -89,9 +89,9 @@ export default function AboutPage() {
           </p>
           <blockquote className="border-l-4 border-primary pl-4 mt-4 text-center">
             <p className="italic">
-              "We wanted to create a tool that would make healthy,
+              &ldquo;We wanted to create a tool that would make healthy,
               budget-friendly meal planning accessible to every UK family,
-              regardless of their cooking experience or budget constraints."
+              regardless of their cooking experience or budget constraints.&rdquo;
             </p>
             <footer className="mt-2 text-sm text-muted-foreground">
               HomeGrubHub Founding Team
@@ -160,8 +160,8 @@ export default function AboutPage() {
             <div>
               <h4 className="text-lg font-semibold">Continuous Innovation</h4>
               <p>
-                We're constantly improving our platform based on user feedback
-                and the latest technology to serve you better.
+                We&apos;re constantly improving our platform based on user
+                feedback and the latest technology to serve you better.
               </p>
             </div>
           </div>
@@ -182,7 +182,7 @@ export default function AboutPage() {
         <div className="rounded bg-muted p-8 text-center shadow">
           <h2 className="mb-3 text-2xl font-semibold">Get in Touch</h2>
           <p className="mb-8">
-            Have questions, suggestions, or just want to say hello? We'd love to
+            Have questions, suggestions, or just want to say hello? We&apos;d love to
             hear from you!
           </p>
           <div className="mb-6 flex flex-col items-center justify-center gap-4 sm:flex-row">
