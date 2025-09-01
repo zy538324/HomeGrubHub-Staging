@@ -14,10 +14,15 @@ from recipe_app.models.family_models import (
     FamilyAccount, FamilyMember, FamilyMessage, FamilyNotification, 
     MealPlanComment, ParentalControl, ApprovalRequest
 )
-from recipe_app.utils.family_decorators import family_required, family_admin_required
+from recipe_app.utils.family_decorators import (
+    family_required,
+    family_admin_required,
+    check_parental_controls,
+)
 
-# Create Blueprint
+# Create Blueprints
 family_communication = Blueprint('family_communication', __name__, url_prefix='/family/communication')
+parental_controls_bp = Blueprint('parental_controls', __name__, url_prefix='/family')
 
 # ============================================================================
 # FAMILY MESSAGING ROUTES
@@ -26,6 +31,7 @@ family_communication = Blueprint('family_communication', __name__, url_prefix='/
 @family_communication.route('/')
 @login_required
 @family_required
+@check_parental_controls
 def communication_hub():
     """Main family communication hub dashboard"""
     family = current_user.get_family_account()
@@ -76,6 +82,7 @@ def communication_hub():
 @family_communication.route('/messages')
 @login_required
 @family_required
+@check_parental_controls
 def messages():
     """Family messages page with filtering and search"""
     family = current_user.get_family_account()
@@ -119,6 +126,7 @@ def messages():
 @family_communication.route('/send_message', methods=['POST'])
 @login_required
 @family_required
+@check_parental_controls
 def send_message():
     """Send a message to family members"""
     family = current_user.get_family_account()
@@ -196,6 +204,7 @@ def send_message():
 @family_communication.route('/mark_message_read/<int:message_id>', methods=['POST'])
 @login_required
 @family_required
+@check_parental_controls
 def mark_message_read(message_id):
     """Mark a message as read"""
     family = current_user.get_family_account()
@@ -223,6 +232,7 @@ def mark_message_read(message_id):
 @family_communication.route('/notifications')
 @login_required
 @family_required
+@check_parental_controls
 def notifications():
     """View all notifications for current user"""
     family = current_user.get_family_account()
@@ -246,6 +256,7 @@ def notifications():
 @family_communication.route('/mark_notification_read/<int:notification_id>', methods=['POST'])
 @login_required
 @family_required
+@check_parental_controls
 def mark_notification_read(notification_id):
     """Mark a notification as read"""
     family = current_user.get_family_account()
@@ -268,6 +279,7 @@ def mark_notification_read(notification_id):
 @family_communication.route('/mark_all_notifications_read', methods=['POST'])
 @login_required
 @family_required
+@check_parental_controls
 def mark_all_notifications_read():
     """Mark all notifications as read for current user"""
     family = current_user.get_family_account()
@@ -295,6 +307,7 @@ def mark_all_notifications_read():
 @family_communication.route('/meal_comments/<int:meal_plan_id>')
 @login_required
 @family_required
+@check_parental_controls
 def meal_comments(meal_plan_id):
     """Get comments for a specific meal plan"""
     family = current_user.get_family_account()
@@ -327,6 +340,7 @@ def meal_comments(meal_plan_id):
 @family_communication.route('/add_meal_comment', methods=['POST'])
 @login_required
 @family_required
+@check_parental_controls
 def add_meal_comment():
     """Add a comment to a meal plan"""
     family = current_user.get_family_account()
@@ -365,8 +379,133 @@ def add_meal_comment():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 # ============================================================================
+# PARENTAL CONTROLS ROUTES
+# ============================================================================
+
+@parental_controls_bp.route('/parental-controls')
+@login_required
+@family_required
+def parental_controls():
+    """View and manage parental control settings"""
+    family = current_user.get_family_account()
+    current_member = next((m for m in family.members if m.user_id == current_user.id), None)
+
+    if current_member.role not in ['admin', 'parent']:
+        flash('Access denied. Only parents can manage parental controls.', 'error')
+        return redirect(url_for('family_communication.communication_hub'))
+
+    children = [m for m in family.members if m.role == 'child' and m.is_active]
+    controls = {c.child_id: c for c in ParentalControl.query.filter_by(family_id=family.id).all()}
+
+    return render_template(
+        'family/parental_controls.html',
+        family=family,
+        current_member=current_member,
+        children=children,
+        controls=controls,
+    )
+
+
+@parental_controls_bp.route('/parental-controls/<int:child_id>', methods=['POST'])
+@login_required
+@family_required
+def update_parental_control(child_id):
+    """Create or update parental control settings for a child"""
+    family = current_user.get_family_account()
+    current_member = next((m for m in family.members if m.user_id == current_user.id), None)
+
+    if current_member.role not in ['admin', 'parent']:
+        return jsonify({'success': False, 'error': 'Access denied'}), 403
+
+    child = FamilyMember.query.filter_by(id=child_id, family_id=family.id).first_or_404()
+    data = request.get_json() if request.is_json else request.form
+
+    control = ParentalControl.query.filter_by(family_id=family.id, child_id=child.id).first()
+    if not control:
+        control = ParentalControl(
+            family_id=family.id,
+            child_id=child.id,
+            parent_id=current_member.id,
+        )
+        db.session.add(control)
+
+    control.screen_time_limit = int(data.get('screen_time_limit') or 0) or None
+    control.allowed_hours_start = data.get('allowed_hours_start') or None
+    control.allowed_hours_end = data.get('allowed_hours_end') or None
+    control.content_filter_level = data.get('content_filter_level', 'moderate')
+    control.requires_meal_approval = bool(data.get('requires_meal_approval'))
+    control.requires_shopping_approval = bool(data.get('requires_shopping_approval'))
+    control.requires_challenge_approval = bool(data.get('requires_challenge_approval'))
+
+    try:
+        db.session.commit()
+
+        notification = FamilyNotification(
+            family_id=family.id,
+            recipient_id=child.id,
+            notification_type='parental_controls_updated',
+            title='Parental controls updated',
+            content='Your parental control settings have been updated.',
+            action_url='/family/communication/hub',
+        )
+        db.session.add(notification)
+        db.session.commit()
+
+        return jsonify({'success': True})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+# ============================================================================
 # APPROVAL REQUESTS ROUTES
 # ============================================================================
+
+@family_communication.route('/request_approval', methods=['POST'])
+@login_required
+@family_required
+@check_parental_controls
+def request_approval():
+    """Submit an approval request (child view)"""
+    family = current_user.get_family_account()
+    current_member = next((m for m in family.members if m.user_id == current_user.id), None)
+
+    if current_member.role != 'child':
+        return jsonify({'success': False, 'error': 'Only children can submit requests'}), 403
+
+    data = request.get_json() or {}
+    if not data.get('request_title'):
+        return jsonify({'success': False, 'error': 'Request title is required'}), 400
+
+    approval = ApprovalRequest(
+        family_id=family.id,
+        child_id=current_member.id,
+        request_type=data.get('request_type', 'general'),
+        request_title=data['request_title'],
+        request_description=data.get('request_description'),
+        request_data=data.get('request_data'),
+    )
+
+    try:
+        db.session.add(approval)
+        db.session.flush()
+
+        for member in family.members:
+            if member.role in ['admin', 'parent']:
+                notification = FamilyNotification(
+                    family_id=family.id,
+                    recipient_id=member.id,
+                    notification_type='approval_request',
+                    title=f'New request from {current_member.display_name}',
+                    content=approval.request_title,
+                    action_url='/family/communication/approvals',
+                )
+                db.session.add(notification)
+
+        db.session.commit()
+        return jsonify({'success': True, 'request_id': approval.id})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 @family_communication.route('/approvals')
 @login_required
@@ -494,6 +633,7 @@ def reject_request(request_id):
 @family_communication.route('/api/unread_counts')
 @login_required
 @family_required
+@check_parental_controls
 def api_unread_counts():
     """Get unread message and notification counts"""
     family = current_user.get_family_account()
@@ -531,6 +671,7 @@ def api_unread_counts():
 @family_communication.route('/api/recent_activity')
 @login_required
 @family_required
+@check_parental_controls
 def api_recent_activity():
     """Get recent family communication activity"""
     family = current_user.get_family_account()

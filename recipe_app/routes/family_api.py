@@ -21,6 +21,7 @@ from recipe_app.models.family_models import (
 from recipe_app.models.nutrition_tracking import Food, Meal, NutritionLog
 from recipe_app.models.fitness_models import WeightLog, WorkoutLog
 from recipe_app.routes.nutrition_tracking_api import require_tier
+from recipe_app.utils.family_decorators import check_parental_controls
 
 # Create Family blueprint
 family_bp = Blueprint('family', __name__, url_prefix='/family')
@@ -32,6 +33,7 @@ family_bp = Blueprint('family', __name__, url_prefix='/family')
 @family_bp.route('/dashboard')
 @login_required
 @require_tier(['family', 'pro'])
+@check_parental_controls
 def family_dashboard():
     """Main family dashboard with overview of all family members and activities"""
     family_account = current_user.get_family_account()
@@ -80,6 +82,7 @@ def family_dashboard():
 @family_bp.route('/member/<int:member_id>')
 @login_required
 @require_tier(['family', 'pro'])
+@check_parental_controls
 def member_detail(member_id):
     """View detailed information for a specific family member"""
     family_account = current_user.get_family_account()
