@@ -1,5 +1,32 @@
 {% extends "base.html" %}
 
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cards.css') }}">
+<style>
+.category-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+}
+
+.badge {
+  font-size: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .d-flex.gap-2.flex-wrap {
+    gap: 0.5rem !important;
+  }
+
+  .btn-sm {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container">
   <!-- Page Header -->
@@ -374,37 +401,4 @@
     </div>
   </div>
 </div>
-
-<style>
-.category-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.category-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
-}
-
-.category-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 80px;
-}
-
-.badge {
-  font-size: 0.75rem;
-}
-
-@media (max-width: 768px) {
-  .d-flex.gap-2.flex-wrap {
-    gap: 0.5rem !important;
-  }
-  
-  .btn-sm {
-    font-size: 0.8rem;
-    padding: 0.4rem 0.8rem;
-  }
-}
-</style>
 {% endblock %}
