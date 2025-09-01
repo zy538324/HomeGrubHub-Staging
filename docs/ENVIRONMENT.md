@@ -40,3 +40,9 @@ additional setup, but any provided environment variables will still take
 precedence.
 If the PostgreSQL variables are omitted, the application falls back to a local
 SQLite database for development.
+
+## Logging
+
+Runtime logs are stored under the `logs/` directory. This folder is ignored by
+version control; ensure it exists on the deployment environment before running
+application processes.
