@@ -6,7 +6,7 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 <style>
     .notifications-container {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         min-height: 100vh;
         padding: 20px 0;
     }
@@ -34,7 +34,7 @@
     }
     
     .mark-all-read-btn {
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         color: white;
         border: none;
         padding: 10px 20px;
@@ -80,8 +80,8 @@
     }
     
     .notification-item.unread {
-        border-left: 5px solid #667eea;
-        background: linear-gradient(90deg, #f8f9ff 0%, #ffffff 100%);
+        border-left: 5px solid var(--primary-color);
+        background: linear-gradient(90deg, #ffe5e5 0%, #ffffff 100%);
     }
     
     .notification-item.notification-achievement {
@@ -141,7 +141,7 @@
     }
     
     .notification-icon.new-message {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     }
     
     .notification-icon.approval-granted {
@@ -204,7 +204,7 @@
     }
     
     .badge-unread {
-        background-color: #667eea;
+        background-color: var(--primary-color);
         color: white;
     }
     
@@ -225,7 +225,7 @@
     }
     
     .action-button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         color: white;
         border: none;
         padding: 8px 16px;
@@ -275,21 +275,21 @@
     }
     
     .pagination .page-link {
-        color: #667eea;
+        color: var(--primary-color);
         border-color: #dee2e6;
         border-radius: 8px;
         margin: 0 2px;
     }
     
     .pagination .page-link:hover {
-        background-color: #667eea;
-        border-color: #667eea;
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
         color: white;
     }
     
     .pagination .page-item.active .page-link {
-        background-color: #667eea;
-        border-color: #667eea;
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
     }
     
     .notification-summary {
@@ -300,7 +300,7 @@
     }
     
     .summary-card {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         color: white;
         padding: 20px;
         border-radius: 12px;
