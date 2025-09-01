@@ -2,22 +2,16 @@ import Link from "next/link"
 import { HeartIcon } from "@radix-ui/react-icons"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-
-interface Recipe {
-  id: number
-  title: string
-  description?: string
-  difficulty?: string
-  total_time?: number
-  country?: string
-}
+import { apiClient, type Recipe } from "@/lib/api"
 
 async function getFavourites(): Promise<Recipe[]> {
-  const res = await fetch("/api/favourites", { cache: "no-store" })
-  if (!res.ok) {
+  try {
+    return await apiClient.getFavourites()
+  } catch (error) {
+    console.error('Failed to fetch favourites:', error)
+    // Return empty array for now - favourites endpoint might not be implemented yet
     return []
   }
-  return res.json()
 }
 
 export default async function FavouritesPage() {
@@ -31,6 +25,9 @@ export default async function FavouritesPage() {
           <h2 className="text-2xl font-semibold">No Favourite Recipes Yet</h2>
           <p className="text-muted-foreground">
             Start building your favourites collection by hearting recipes you love!
+          </p>
+          <p className="text-sm text-muted-foreground mt-2">
+            Note: Favourites feature may not be fully implemented on the backend yet.
           </p>
           <Button asChild>
             <Link href="/">Browse Recipes</Link>

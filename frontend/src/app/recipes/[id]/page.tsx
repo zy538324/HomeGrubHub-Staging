@@ -5,16 +5,19 @@ interface RecipeDetail {
   id: number
   title: string
   description?: string
+
   ingredients?: string[]
   instructions?: string
 }
 
 async function getRecipe(id: string): Promise<RecipeDetail | null> {
-  const res = await fetch(`/api/recipes/${id}`, { cache: "no-store" })
-  if (!res.ok) {
+
+  try {
+    return await apiClient.getRecipe(id)
+  } catch (error) {
+    console.error('Failed to fetch recipe:', error)
     return null
   }
-  return res.json()
 }
 
 export default async function RecipePage({ params }: { params: { id: string } }) {

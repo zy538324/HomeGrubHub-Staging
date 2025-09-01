@@ -4,13 +4,13 @@ import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuL
 export function Navbar() {
   return (
     <nav className="bg-primary text-primary-foreground">
-      <NavigationMenu className="container mx-auto">
-        <NavigationMenuList className="flex gap-4 p-4">
+      <div className="container mx-auto">
+        <NavigationMenu>
+          <NavigationMenuList className="flex gap-4 p-4">
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
-              <Link href="/" className="font-semibold hover:text-secondary">
-                Home
-              </Link>
+              <Link href="/" className="font-semibold">Home</Link>
+
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
@@ -20,32 +20,18 @@ export function Navbar() {
               </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link href="/recipes" className="font-semibold hover:text-secondary">
-                  Recipes
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link href="/recipes/add" className="font-semibold hover:text-secondary">
-                  Add Recipe
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link href="/ingredient-search" className="font-semibold hover:text-secondary">
-                  Ingredient Search
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link href="/favourites" className="font-semibold hover:text-secondary">
-                  Favourites
-                </Link>
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild>
+              <Link href="/recipes" className="font-semibold hover:text-secondary">
+                Recipes
+              </Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild>
+              <Link href="/favourites" className="font-semibold hover:text-secondary">
+                Favourites
+              </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
@@ -76,8 +62,9 @@ export function Navbar() {
               </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
-        </NavigationMenuList>
-      </NavigationMenu>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
     </nav>
   )
 }

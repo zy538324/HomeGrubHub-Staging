@@ -1,2 +1,4 @@
 2025-08-27 19:18:57,783 INFO: HomeGrubHub startup [in D:\Dev\HomeGrubHub-Staging\recipe_app\db.py:256]
 2025-08-27 19:18:57,784 INFO: Database URI: sqlite:/recipes.db [in D:\Dev\HomeGrubHub-Staging\recipe_app\db.py:278]
+2025-08-29 23:27:13,785 INFO: HomeGrubHub startup [in C:\Users\Dev\Documents\GitHub\HomeGrubHub-Staging\recipe_app\db.py:256]
+2025-08-29 23:27:13,786 INFO: Database URI: sqlite:/recipes.db [in C:\Users\Dev\Documents\GitHub\HomeGrubHub-Staging\recipe_app\db.py:278]

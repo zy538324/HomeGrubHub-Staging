@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import "./globals.css"
 import { Navbar } from "@/components/navbar"
 
+
 export const metadata: Metadata = {
   title: {
     default: "HomeGrubHub - Smart Meal Planning & Recipe Organization App",
@@ -64,6 +65,8 @@ export default function RootLayout({
       <body className="min-h-screen bg-background font-sans antialiased">
         <Navbar />
         {children}
+        {/* Load bootstrap JS at end of body for interactive components (optional) */}
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
       </body>
     </html>
   )

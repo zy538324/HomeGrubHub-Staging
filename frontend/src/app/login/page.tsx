@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 
 export default function LoginPage() {
   return (
+
     <main className="container mx-auto p-6">
       <Card className="mx-auto max-w-md space-y-6 p-6">
         <h1 className="text-2xl font-bold">Login</h1>
@@ -22,6 +23,7 @@ export default function LoginPage() {
           </Button>
         </form>
       </Card>
+
     </main>
   )
 }

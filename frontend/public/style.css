@@ -1,0 +1,277 @@
+/* Copied from recipe_app/static/style.css for UI parity */
+
+/* Global Styles for HomeGrubHub Recipe App */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    border-bottom: 1px solid #e7e7e7;
+}
+
+.card {
+    border: none;
+    transition: transform .2s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+.footer {        
+        color: #2c3e50 !important; /* dark grey text */
+        padding: 3rem 0 !important;
+        margin-top: auto;
+        position: relative;
+        z-index: 1000;
+      }
+
+      /* Make sure all children inherit dark text */
+      .footer * {
+        color: #212529 !important;
+      }
+
+      
+      .footer .text-white {
+        color: #212529 !important;
+      }
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+}
+.contact-hero {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+        padding: 3rem 0;
+        border-radius: 0 0 30px 30px;
+        margin-bottom: 3rem;
+    }
+    
+    .contact-card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        background: white;
+    }
+    
+    .form-floating {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-floating > .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 15px;
+        padding: 1rem 0.75rem;
+        height: auto;
+        min-height: 58px;
+        transition: all 0.3s ease;
+    }
+    
+    .form-floating > .form-control:focus {
+        border-color: #e74c3c;
+        box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25);
+    }
+    
+    .form-floating > label {
+        color: #6c757d;
+        padding: 1rem 0.75rem;
+    }
+    
+    .form-floating > .form-control:focus ~ label,
+    .form-floating > .form-control:not(:placeholder-shown) ~ label {
+        color: #e74c3c;
+        transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+    }
+    
+    .category-selector {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .category-option {
+        flex: 1;
+        min-width: 120px;
+    }
+    
+    .category-option input[type="radio"] {
+        display: none;
+    }
+    
+    .category-label {
+        display: block;
+        padding: 1rem;
+        border: 2px solid #e9ecef;
+        border-radius: 15px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: white;
+        color: #6c757d;
+        font-weight: 500;
+    }
+    
+    .category-option input:checked + .category-label {
+        border-color: #e74c3c;
+        background: linear-gradient(45deg, #e74c3c, #c0392b);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+    }
+    
+    .category-label i {
+        display: block;
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .btn-submit {
+        background: linear-gradient(45deg, #e74c3c, #c0392b);
+        border: none;
+        color: white;
+        border-radius: 25px;
+        padding: 1rem 3rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+    
+    .btn-submit:hover {
+        background: linear-gradient(45deg, #c0392b, #a93226);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);
+    }
+    
+    .contact-info {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 20px;
+        padding: 2rem;
+        height: 100%;
+    }
+    
+    .contact-info-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .contact-info-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #e74c3c, #c0392b);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+    
+    .contact-info-content h6 {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    
+    .contact-info-content p {
+        color: #6c757d;
+        margin: 0;
+        font-size: 0.9rem;
+    }
+    
+    @media (max-width: 768px) {
+        .category-selector {
+            flex-direction: column;
+        }
+        
+        .category-option {
+            min-width: auto;
+        }
+        
+        .contact-hero {
+            padding: 2rem 0;
+        }
+        
+        .btn-submit {
+            padding: 0.875rem 2rem;
+            font-size: 1rem;
+        }
+    }
+    :root {
+        --primary-color: #2c3e50;
+        --secondary-color: #e74c3c;
+        --accent-color: #f39c12;
+        --success-color: #27ae60;
+        --light-bg: #f8f9fa;
+        --dark-text: #2c3e50;
+        --light-text: #6c757d;
+      }
+      
+      body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--light-bg);
+        color: var(--dark-text);
+      }
+      
+      .navbar-brand {
+        font-weight: 700;
+        font-size: 1.8rem;
+        color: var(--primary-color) !important;
+        display: flex;
+        align-items: center;
+      }
+      
+      .navbar-logo {
+        height: 48px;
+        width: auto;
+        margin-right: 0.5rem;
+      }
+      
+      .navbar {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        background: white !important;
+      }
+      
+      .nav-link {
+        font-weight: 500;
+        color: var(--dark-text) !important;
+        transition: color 0.3s ease;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0.5rem 0.5rem !important;
+        line-height: 1.2 !important;
+        text-align: center !important;
+        min-width: 80px;
+      }
+      
+      .nav-link i {
+        display: block !important;
+        font-size: 16px !important;
+        margin-bottom: 2px !important;
+        margin-right: 0 !important;
+      }
+      
+      .nav-link .nav-text {
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+/* ... file continues ... */

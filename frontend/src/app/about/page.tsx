@@ -1,3 +1,4 @@
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
@@ -174,64 +175,8 @@ export default function AboutPage() {
                 support to help every family succeed.
               </p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-3xl">
-        <div className="rounded bg-muted p-8 text-center shadow">
-          <h2 className="mb-3 text-2xl font-semibold">Get in Touch</h2>
-          <p className="mb-8">
-            Have questions, suggestions, or just want to say hello? We&apos;d love to
-            hear from you!
-          </p>
-          <div className="mb-6 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button asChild className="flex items-center gap-2">
-              <Link href="/support/contact">
-                <i className="fas fa-envelope" />
-                Contact Support
-              </Link>
-            </Button>
-            <Button
-              variant="outline"
-              asChild
-              className="flex items-center gap-2"
-            >
-              <Link href="/community">
-                <i className="fas fa-users" />
-                Join Community
-              </Link>
-            </Button>
-          </div>
-          <div className="flex justify-center gap-6 text-muted-foreground">
-            <Link
-              href="https://facebook.com/homegrubhub"
-              className="hover:text-foreground"
-            >
-              <i className="fab fa-facebook fa-2x" />
-            </Link>
-            <Link
-              href="https://twitter.com/homegrubhub"
-              className="hover:text-foreground"
-            >
-              <i className="fab fa-twitter fa-2x" />
-            </Link>
-            <Link
-              href="https://instagram.com/homegrubhub"
-              className="hover:text-foreground"
-            >
-              <i className="fab fa-instagram fa-2x" />
-            </Link>
-            <Link
-              href="https://linkedin.com/company/homegrubhub"
-              className="hover:text-foreground"
-            >
-              <i className="fab fa-linkedin fa-2x" />
-            </Link>
-          </div>
         </div>
       </section>
     </div>
   )
 }
-
