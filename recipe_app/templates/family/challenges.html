@@ -11,7 +11,6 @@
     }
     
     .challenges-header {
-        background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%);
         color: white;
         padding: 30px;
         border-radius: 15px;
@@ -55,18 +54,18 @@
     
     .nav-btn {
         padding: 10px 20px;
-        border: 2px solid #ff6b6b;
+        border: 2px solid var(--secondary-color);
         background: white;
-        color: #ff6b6b;
+        color: var(--secondary-color);
         border-radius: 25px;
         cursor: pointer;
         font-weight: 500;
         transition: all 0.3s ease;
     }
-    
+
     .nav-btn.active,
     .nav-btn:hover {
-        background: #ff6b6b;
+        background: var(--secondary-color);
         color: white;
         transform: translateY(-2px);
     }
@@ -170,7 +169,7 @@
     
     .progress-fill {
         height: 100%;
-        background: linear-gradient(90deg, #ff6b6b 0%, #ffa726 100%);
+        background: linear-gradient(90deg, var(--secondary-color) 0%, var(--accent-color) 100%);
         border-radius: 10px;
         transition: width 0.3s ease;
     }
@@ -198,8 +197,8 @@
     }
     
     .participant-active {
-        border-color: #28a745;
-        color: #28a745;
+        border-color: var(--success-color);
+        color: var(--success-color);
     }
     
     .challenge-rewards {
@@ -236,22 +235,22 @@
     }
     
     .btn-primary {
-        background: #ff6b6b;
+        background: var(--secondary-color);
         color: white;
     }
-    
+
     .btn-primary:hover {
-        background: #ff5252;
+        background: var(--secondary-dark);
         transform: translateY(-1px);
     }
     
     .btn-success {
-        background: #28a745;
+        background: var(--success-color);
         color: white;
     }
-    
+
     .btn-success:hover {
-        background: #218838;
+        background: var(--success-dark);
     }
     
     .btn-secondary {
@@ -335,7 +334,7 @@
     }
     
     .form-control:focus {
-        border-color: #ff6b6b;
+        border-color: var(--secondary-color);
         outline: none;
     }
     
@@ -405,7 +404,7 @@
 {% block content %}
 <div class="challenges-container">
     <!-- Header -->
-    <div class="challenges-header">
+    <div class="challenges-header brand-gradient">
         <h1><i class="fas fa-trophy"></i> Family Challenges & Achievements</h1>
         <p>Work together to build healthy habits and have fun!</p>
         

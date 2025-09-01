@@ -11,7 +11,6 @@
     }
     
     .shopping-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         padding: 30px;
         border-radius: 15px;
@@ -60,21 +59,6 @@
         align-items: center;
     }
     
-    .btn-primary {
-        background: #667eea;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
-        color: white;
-        cursor: pointer;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-primary:hover {
-        background: #5a6fd8;
-        transform: translateY(-2px);
-    }
     
     .shopping-grid {
         display: grid;
@@ -271,7 +255,7 @@
     }
     
     .form-control:focus {
-        border-color: #667eea;
+        border-color: var(--secondary-color);
         outline: none;
     }
     
@@ -389,7 +373,7 @@
 {% block content %}
 <div class="shopping-container">
     <!-- Header -->
-    <div class="shopping-header">
+    <div class="shopping-header brand-gradient">
         <h1><i class="fas fa-shopping-cart"></i> {{ family_account.family_name }} Shopping List</h1>
         <p>Collaborative shopping for the whole family</p>
         

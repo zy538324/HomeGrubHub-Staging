@@ -34,8 +34,17 @@ body {
       .footer .text-white {
         color: #212529 !important;
       }
+.btn-primary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--secondary-dark);
+    border-color: var(--secondary-dark);
+}
 .contact-hero {
-        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        background: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-dark) 100%);
         color: white;
         padding: 3rem 0;
         border-radius: 0 0 30px 30px;
@@ -64,7 +73,7 @@ body {
     }
     
     .form-floating > .form-control:focus {
-        border-color: #e74c3c;
+        border-color: var(--secondary-color);
         box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25);
     }
     
@@ -75,7 +84,7 @@ body {
     
     .form-floating > .form-control:focus ~ label,
     .form-floating > .form-control:not(:placeholder-shown) ~ label {
-        color: #e74c3c;
+        color: var(--secondary-color);
         transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
     }
     
@@ -109,8 +118,8 @@ body {
     }
     
     .category-option input:checked + .category-label {
-        border-color: #e74c3c;
-        background: linear-gradient(45deg, #e74c3c, #c0392b);
+        border-color: var(--secondary-color);
+        background: linear-gradient(45deg, var(--secondary-color), var(--secondary-dark));
         color: white;
         transform: translateY(-2px);
         box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
@@ -123,7 +132,7 @@ body {
     }
     
     .btn-submit {
-        background: linear-gradient(45deg, #e74c3c, #c0392b);
+        background: linear-gradient(45deg, var(--secondary-color), var(--secondary-dark));
         border: none;
         color: white;
         border-radius: 25px;
@@ -135,7 +144,7 @@ body {
     }
     
     .btn-submit:hover {
-        background: linear-gradient(45deg, #c0392b, #a93226);
+        background: linear-gradient(45deg, var(--secondary-dark), var(--secondary-darker));
         color: white;
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);
@@ -162,7 +171,7 @@ body {
         width: 50px;
         height: 50px;
         border-radius: 50%;
-        background: linear-gradient(45deg, #e74c3c, #c0392b);
+        background: linear-gradient(45deg, var(--secondary-color), var(--secondary-dark));
         display: flex;
         align-items: center;
         justify-content: center;
@@ -204,12 +213,37 @@ body {
     }
     :root {
         --primary-color: #2c3e50;
+        --primary-light: #34495e;
+        --primary-dark: #1c2833;
         --secondary-color: #e74c3c;
+        --secondary-light: #ff6b6b;
+        --secondary-dark: #c0392b;
+        --secondary-darker: #a93226;
         --accent-color: #f39c12;
+        --accent-light: #ffa726;
+        --accent-dark: #e67e22;
         --success-color: #27ae60;
+        --success-dark: #218838;
         --light-bg: #f8f9fa;
         --dark-text: #2c3e50;
         --light-text: #6c757d;
+      }
+
+      /* Reusable brand helpers */
+      .brand-gradient {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+      }
+
+      .brand-btn {
+        background: linear-gradient(45deg, var(--secondary-color), var(--secondary-dark));
+        color: white;
+        border: none;
+      }
+
+      .brand-btn:hover {
+        background: linear-gradient(45deg, var(--secondary-dark), var(--secondary-darker));
+        color: white;
       }
       
       body {
@@ -314,8 +348,8 @@ body {
       }
       
       .btn-primary:hover {
-        background-color: #c0392b;
-        border-color: #c0392b;
+        background-color: var(--secondary-dark);
+        border-color: var(--secondary-dark);
       }
       
       .btn-outline-primary {
@@ -858,7 +892,7 @@ body {
     }
     
     .chat-header {
-        background: linear-gradient(45deg, #f39c12, #e67e22);
+        background: linear-gradient(45deg, var(--accent-color), var(--accent-dark));
         color: white;
         padding: 2rem;
         text-align: center;
@@ -875,7 +909,7 @@ body {
         width: 12px;
         height: 12px;
         border-radius: 50%;
-        background: #e74c3c;
+        background: var(--secondary-color);
         margin-right: 0.5rem;
         animation: pulse 2s infinite;
     }
@@ -1123,7 +1157,7 @@ body {
   transform: translateX(-50%);
   width: 60px;
   height: 4px;
-  background: linear-gradient(135deg, #007bff, #0056b3);
+  background: linear-gradient(135deg, var(--secondary-color), var(--secondary-dark));
   border-radius: 2px;
 }
 
@@ -1351,8 +1385,8 @@ body {
 
 .login-prompt .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
-  background: linear-gradient(135deg, #0056b3, #004085);
+  box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+  background: linear-gradient(135deg, var(--secondary-dark), var(--secondary-darker));
 }
 
 /* Responsive Design */
@@ -1391,7 +1425,7 @@ body {
 
 /* Additional global styles can be added here */
 .faq-hero {
-        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
         color: white;
         padding: 3rem 0;
         border-radius: 0 0 30px 30px;
@@ -1418,6 +1452,11 @@ body {
     .faq-search .form-control::placeholder {
         color: rgba(255, 255, 255, 0.7);
     }
+
+    .faq-search .btn {
+        border: none;
+        border-radius: 0 50px 50px 0;
+    }
     
     .faq-categories {
         display: flex;
@@ -1441,8 +1480,8 @@ body {
     
     .faq-category.active,
     .faq-category:hover {
-        background: linear-gradient(45deg, #3498db, #2980b9);
-        border-color: #3498db;
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        border-color: var(--primary-color);
         color: white;
         text-decoration: none;
         transform: translateY(-2px);
@@ -1457,7 +1496,7 @@ body {
         font-weight: 600;
         margin-bottom: 1.5rem;
         padding-bottom: 0.5rem;
-        border-bottom: 3px solid #3498db;
+        border-bottom: 3px solid var(--primary-color);
         display: inline-block;
     }
     
@@ -1482,7 +1521,7 @@ body {
     }
     
     .faq-accordion .accordion-header button:not(.collapsed) {
-        background: linear-gradient(45deg, #3498db, #2980b9);
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
         color: white;
     }
     
@@ -1526,7 +1565,7 @@ body {
     }
     
     .btn-contact {
-        background: linear-gradient(45deg, #e74c3c, #c0392b);
+        background: linear-gradient(45deg, var(--secondary-color), var(--secondary-dark));
         border: none;
         color: white;
         border-radius: 25px;
@@ -1535,9 +1574,9 @@ body {
         transition: all 0.3s ease;
         margin: 0 0.5rem;
     }
-    
+
     .btn-contact:hover {
-        background: linear-gradient(45deg, #c0392b, #a93226);
+        background: linear-gradient(45deg, var(--secondary-dark), var(--secondary-darker));
         color: white;
         transform: translateY(-2px);
     }
