@@ -42,11 +42,10 @@ def require_home_tier(f=None):
     """Decorator specifically for Home tier features"""
     if f is None:
         # Called with parentheses: @require_home_tier()
-        return require_subscription_feature('pantry_tracker_predictive')
+        return require_home_features()
     else:
         # Called without parentheses: @require_home_tier
-        return require_subscription_feature('pantry_tracker_predictive')(f)
-
+        return require_home_features()(f)
 
 def require_home_features():
     """Decorator for Home tier features"""
