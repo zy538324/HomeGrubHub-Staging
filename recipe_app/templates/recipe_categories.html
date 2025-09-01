@@ -322,7 +322,7 @@
           <div class="card-body">
             <h4 class="card-title">🌟 This Week's Favourites</h4>
             <p class="card-text">Our most popular recipes this week, voted by the HomeGrubHub community.</p>
-            <a href="{{ url_for('main.search', featured='weekly') }}" class="btn btn-light">View Collection</a>
+            <a href="{{ url_for('main.search', featured='weekly') }}" class="btn btn-primary">View Collection</a>
           </div>
         </div>
       </div>
@@ -332,7 +332,7 @@
           <div class="card-body">
             <h4 class="card-title">🎯 Meal Prep Friendly</h4>
             <p class="card-text">Recipes perfect for batch cooking and meal prep. Save time during busy weeks.</p>
-            <a href="{{ url_for('main.search', tags='meal-prep') }}" class="btn btn-light">View Collection</a>
+            <a href="{{ url_for('main.search', tags='meal-prep') }}" class="btn btn-primary">View Collection</a>
           </div>
         </div>
       </div>
@@ -346,7 +346,7 @@
         <h3>Can't Find What You're Looking For?</h3>
         <p class="mb-4">Our recipe recommendation engine learns your preferences and suggests meals you'll love.</p>
         <a href="{{ url_for('main.register') }}" class="btn btn-primary btn-lg me-3">Get Personalized Recommendations</a>
-        <a href="{{ url_for('support.contact_form') }}" class="btn btn-outline-secondary">Request a Recipe</a>
+        <a href="{{ url_for('support.contact_form') }}" class="btn btn-outline-primary">Request a Recipe</a>
       </div>
     </div>
   </div>

@@ -371,8 +371,9 @@ body {
       }
       
       .btn-outline-primary:hover {
-        background-color: var(--secondary-color);
-        border-color: var(--secondary-color);
+        color: #fff;
+        background-color: #c0392b;
+        border-color: #c0392b;
       }
       
       .card {
@@ -2152,14 +2153,14 @@ body {
     }
     
     .step-navigation-buttons .btn-outline-primary {
-        border-color: #667eea;
-        color: #667eea;
+        border-color: var(--secondary-color);
+        color: var(--secondary-color);
     }
-    
+
     .step-navigation-buttons .btn-outline-primary:hover {
-        background: var(--primary-gradient);
-        border-color: transparent;
         color: white;
+        background-color: #c0392b;
+        border-color: #c0392b;
         transform: translateY(-2px);
     }
     
