@@ -142,7 +142,8 @@
 
 {% block content %}
 <div class="container-fluid py-4">
-  {% include "_breadcrumb.html" with breadcrumbs=[("Home", url_for('main.index')), ("Pantry", url_for('pantry.index'))] %}
+  {% set breadcrumbs = [("Home", url_for('main.index')), ("Pantry", url_for('pantry.index'))] %}
+  {% include "_breadcrumb.html" %}
 
   <!-- Dashboard Overview -->
   <div class="pantry-dashboard">
