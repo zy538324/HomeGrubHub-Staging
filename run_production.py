@@ -12,11 +12,13 @@ sys.path.insert(0, str(project_root))
 
 def start_production_server():
     """Start the production server with Waitress"""
+    logger = logging.getLogger("HomeGrubHub")
     try:
         from waitress import serve
         from wsgi import application
 
-        logger = application.logger
+        # Reuse application's logging handlers
+        logger.handlers = application.logger.handlers
         # Ensure logs also stream to console for operator visibility
         stream_handler = logging.StreamHandler()
         stream_handler.setLevel(logging.INFO)
@@ -53,11 +55,14 @@ def start_production_server():
     except KeyboardInterrupt:
         logger.info("Server stopped by user")
     except ImportError as e:
-        logger.error("Missing dependency: %s", e)
+        # Fallback logger in case application failed to import
+        logger.error("Failed to import application or dependencies: %s", e)
         logger.error("Please install: python -m pip install waitress")
         sys.exit(1)
     except Exception as e:
-        logger.exception("Error starting server: %s", e)
+        # Ensure unexpected exceptions are logged
+        logger.error("Error starting server: %s", e)
+        logger.exception("Error starting server")
         sys.exit(1)
 
 if __name__ == "__main__":
