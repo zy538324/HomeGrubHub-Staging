@@ -31,9 +31,17 @@
     </div>
 
     <h3>Ingredients</h3>
-    <pre>{{ recipe.ingredients }}</pre>
+    <ul class="recipe-ingredients">
+        {% for item in recipe.ingredients.splitlines() %}
+        <li>{{ item }}</li>
+        {% endfor %}
+    </ul>
     <h3>Method</h3>
-    <pre>{{ recipe.method }}</pre>
+    <ol class="recipe-method">
+        {% for step in recipe.method.splitlines() %}
+        <li>{{ step }}</li>
+        {% endfor %}
+    </ol>
 
     <div id="comments" class="mt-5">
         <h3>Comments</h3>

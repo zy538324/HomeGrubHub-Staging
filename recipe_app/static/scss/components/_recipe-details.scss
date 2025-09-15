@@ -1,0 +1,19 @@
+@use '../variables' as *;
+
+.recipe-ingredients,
+.recipe-method {
+  margin: $space-md 0;
+  padding-left: $space-lg;
+
+  li {
+    margin-bottom: $space-xs;
+  }
+}
+
+.recipe-ingredients {
+  list-style: disc;
+}
+
+.recipe-method {
+  list-style: decimal;
+}
