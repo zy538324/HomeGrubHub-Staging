@@ -1,0 +1,63 @@
+@use 'variables' as *;
+
+.card {
+  border: none;
+  transition: transform .2s;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.btn-primary {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--secondary-dark);
+  border-color: var(--secondary-dark);
+}
+
+.text-primary {
+  color: var(--secondary-color) !important;
+}
+
+.contact-hero {
+  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-dark) 100%);
+  color: white;
+  padding: $space-xl 0;
+  border-radius: 0 0 $radius-lg $radius-lg;
+  margin-bottom: $space-xl;
+}
+
+.contact-card {
+  border: none;
+  border-radius: $radius-lg;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  background: white;
+}
+
+.form-floating {
+  margin-bottom: $space-md;
+}
+
+.form-floating > .form-control {
+  border: 2px solid $border-light;
+  border-radius: $radius-md;
+  padding: $space-sm 0.75rem;
+  height: auto;
+  min-height: 58px;
+  transition: all 0.3s ease;
+}
+
+.form-floating > .form-control:focus {
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25);
+}
+
+.form-floating > label {
+  color: $light-text;
+  padding: $space-sm 0.75rem;
+}

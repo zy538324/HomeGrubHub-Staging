@@ -1,0 +1,44 @@
+@use 'variables' as *;
+
+/* Base layout */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: $light-bg;
+  color: $dark-text;
+}
+
+.navbar {
+  border-bottom: 1px solid $border-muted;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: white !important;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: $primary-color !important;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo {
+  height: 48px;
+  width: auto;
+  margin-right: $space-xs;
+}
+
+.footer {
+  color: $dark-text !important;
+  padding: $space-xl 0 !important;
+  margin-top: auto;
+  position: relative;
+  z-index: 1000;
+}
+
+.footer * {
+  color: $dark-text !important;
+}
+
+.footer .text-white {
+  color: $dark-text !important;
+}

@@ -1,3 +1,4 @@
+
 :root {
   --bg-color: #f8f9fa;
   --text-color: #212529;
@@ -6,4 +7,52 @@
 [data-theme="dark"] {
   --bg-color: #121212;
   --text-color: #f8f9fa;
+
+// Color palette
+$primary-color: #8b0000;
+$primary-light: #a83232;
+$primary-dark: #4a0f0f;
+$secondary-color: #e63946;
+$secondary-light: #ff6b6b;
+$secondary-dark: #b71c1c;
+$secondary-darker: #7f0000;
+$accent-color: #f39c12;
+$accent-light: #ffa726;
+$accent-dark: #e67e22;
+$success-color: #27ae60;
+$success-dark: #218838;
+$light-bg: #f8f9fa;
+$dark-text: #2c3e50;
+$light-text: #6c757d;
+$border-light: #e9ecef;
+$border-muted: #e7e7e7;
+
+// Spacing scale
+$space-xs: 0.5rem;
+$space-sm: 1rem;
+$space-md: 1.5rem;
+$space-lg: 2rem;
+$space-xl: 3rem;
+
+// Border radii
+$radius-md: 15px;
+$radius-lg: 20px;
+
+// CSS variable export for global usage
+:root {
+  --primary-color: #{$primary-color};
+  --primary-light: #{$primary-light};
+  --primary-dark: #{$primary-dark};
+  --secondary-color: #{$secondary-color};
+  --secondary-light: #{$secondary-light};
+  --secondary-dark: #{$secondary-dark};
+  --secondary-darker: #{$secondary-darker};
+  --accent-color: #{$accent-color};
+  --accent-light: #{$accent-light};
+  --accent-dark: #{$accent-dark};
+  --success-color: #{$success-color};
+  --success-dark: #{$success-dark};
+  --light-bg: #{$light-bg};
+  --dark-text: #{$dark-text};
+  --light-text: #{$light-text};
 }
