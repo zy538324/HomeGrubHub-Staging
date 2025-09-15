@@ -3,7 +3,7 @@
 {% block title %}{{ recipe.title }} - HomeGrubHub{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container mt-4" id="recipe-data" data-rate-url="{{ url_for('main.rate_recipe', recipe_id=recipe.id) }}" data-comment-url="{{ url_for('community.add_comment', recipe_id=recipe.id) }}">
     <h1>{{ recipe.title }}</h1>
     {% if recipe.description %}
     <p class="text-muted">{{ recipe.description }}</p>
@@ -52,56 +52,10 @@
         <p><a href="{{ url_for('main.login') }}">Log in</a> to comment.</p>
         {% endif %}
     </div>
-</div>
+    </div>
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.rate-star').forEach(star => {
-        star.addEventListener('click', function() {
-            const rating = this.dataset.value;
-            fetch('{{ url_for('main.rate_recipe', recipe_id=recipe.id) }}', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({rating: rating})
-            }).then(r => r.json()).then(data => {
-                if (data.success) { window.location.reload(); }
-            });
-        });
-    });
-
-    const submitBtn = document.getElementById('submit-comment');
-    if (submitBtn) {
-        submitBtn.addEventListener('click', function() {
-            const content = document.getElementById('new-comment').value.trim();
-            if (!content) return;
-            fetch('{{ url_for('community.add_comment', recipe_id=recipe.id) }}', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({content: content})
-            }).then(r => r.json()).then(data => {
-                if (data.success) { window.location.reload(); }
-            });
-        });
-    }
-
-    document.querySelectorAll('.reply-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const parentId = this.dataset.parent;
-            const textarea = this.previousElementSibling;
-            const content = textarea.value.trim();
-            if (!content) return;
-            fetch('{{ url_for('community.add_comment', recipe_id=recipe.id) }}', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({content: content, parent_id: parentId})
-            }).then(r => r.json()).then(data => {
-                if (data.success) { window.location.reload(); }
-            });
-        });
-    });
-});
-</script>
+<script src="{{ url_for('static', filename='js/recipe-detail.js') }}" defer></script>
 {% endblock %}
