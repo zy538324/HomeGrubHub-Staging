@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from recipe_app.db import db, csrf
 from recipe_app.models.nutrition_tracking import Food, Meal, NutritionLog
 from datetime import datetime, date
+from recipe_app.forms.forms import LogWaterForm, LogMealForm, LogStepsForm, LogWeightForm
 import requests
 import csv
 import re
@@ -239,30 +240,32 @@ def add_nutrition_log():
 @require_tier(['Free', 'Home', 'Family', 'Pro', 'Student'])
 def log_meal():
     from recipe_app.models.nutrition_tracking import Food, Meal
-    from datetime import date
     user_id = session.get('_user_id')
-    if request.method == 'POST':
-        meal_type = request.form['meal_type']
-        meal_date = request.form['meal_date']
-        food_ids = request.form.getlist('food_ids')
-        foods = Food.query.filter(Food.id.in_(food_ids)).all()
+    form = LogMealForm()
+    foods = Food.query.all()
+    form.food_ids.choices = [(f.id, f"{f.name} ({f.brand})") for f in foods]
+
+    if form.validate_on_submit():
+        selected_foods = Food.query.filter(Food.id.in_(form.food_ids.data)).all()
         meal = Meal(
             user_id=user_id,
-            meal_type=meal_type,
-            meal_date=date.fromisoformat(meal_date),
-            foods=foods,
-            total_calories=sum(f.calories for f in foods),
-            total_protein=sum(f.protein for f in foods),
-            total_carbs=sum(f.carbs for f in foods),
-            total_fat=sum(f.fat for f in foods)
+            meal_type=form.meal_type.data,
+            meal_date=form.meal_date.data,
+            foods=selected_foods,
+            total_calories=sum(f.calories for f in selected_foods),
+            total_protein=sum(f.protein for f in selected_foods),
+            total_carbs=sum(f.carbs for f in selected_foods),
+            total_fat=sum(f.fat for f in selected_foods),
         )
         db.session.add(meal)
         db.session.commit()
         flash('Meal logged successfully!', 'success')
         return redirect(url_for('nutrition.log_meal'))
-    foods = Food.query.all()
-    today = date.today().isoformat()
-    return render_template('nutrition/log_meal.html', foods=foods, today=today)
+
+    if not form.meal_date.data:
+        form.meal_date.data = date.today()
+
+    return render_template('nutrition/log_meal.html', form=form, foods=foods)
 
 @nutrition_bp.route('/daily-summary', methods=['GET'])
 def daily_summary():
@@ -428,18 +431,24 @@ def export_nutrition_logs():
 @require_tier(['Free', 'Home', 'Family', 'Pro', 'Student'])
 def log_weight():
     from recipe_app.models.fitness_models import WeightLog
-    from datetime import date
     user_id = session.get('_user_id')
-    if request.method == 'POST':
-        weight = float(request.form['weight'])
-        log_date = date.fromisoformat(request.form['log_date'])
-        log = WeightLog(user_id=user_id, weight=weight, log_date=log_date)
+    form = LogWeightForm()
+
+    if form.validate_on_submit():
+        log = WeightLog(
+            user_id=user_id,
+            weight=form.weight.data,
+            log_date=form.log_date.data,
+        )
         db.session.add(log)
         db.session.commit()
         flash('Weight logged successfully!', 'success')
         return redirect(url_for('nutrition.weight_history'))
-    today = date.today().isoformat()
-    return render_template('nutrition/log_weight.html', today=today)
+
+    if not form.log_date.data:
+        form.log_date.data = date.today()
+
+    return render_template('nutrition/log_weight.html', form=form)
 
 @nutrition_bp.route('/weight-history', methods=['GET'])
 @require_tier(['Free', 'Home', 'Family', 'Pro', 'Student'])
@@ -457,18 +466,24 @@ def weight_history():
 @require_tier(['Free', 'Home', 'Family', 'Pro', 'Student'])
 def log_steps():
     from recipe_app.models.fitness_models import StepLog
-    from datetime import date
     user_id = session.get('_user_id')
-    if request.method == 'POST':
-        steps = int(request.form['steps'])
-        log_date = date.fromisoformat(request.form['log_date'])
-        log = StepLog(user_id=user_id, steps=steps, log_date=log_date)
+    form = LogStepsForm()
+
+    if form.validate_on_submit():
+        log = StepLog(
+            user_id=user_id,
+            steps=form.steps.data,
+            log_date=form.log_date.data,
+        )
         db.session.add(log)
         db.session.commit()
         flash('Steps logged successfully!', 'success')
         return redirect(url_for('nutrition.step_history'))
-    today = date.today().isoformat()
-    return render_template('nutrition/log_steps.html', today=today)
+
+    if not form.log_date.data:
+        form.log_date.data = date.today()
+
+    return render_template('nutrition/log_steps.html', form=form)
 
 @nutrition_bp.route('/recipe-search', methods=['GET', 'POST'])
 @require_tier(['Free', 'Home', 'Family', 'Pro', 'Student'])
@@ -563,18 +578,24 @@ def delete_shopping_item():
 @require_tier(['Free', 'Home', 'Family', 'Pro', 'Student'])
 def log_water():
     from recipe_app.models.nutrition_tracking import WaterLog
-    from datetime import date
     user_id = session.get('_user_id')
-    if request.method == 'POST':
-        amount = int(request.form['amount'])
-        log_date = date.fromisoformat(request.form['log_date'])
-        log = WaterLog(user_id=user_id, amount=amount, log_date=log_date)
+    form = LogWaterForm()
+
+    if form.validate_on_submit():
+        log = WaterLog(
+            user_id=user_id,
+            amount=form.amount.data,
+            log_date=form.log_date.data,
+        )
         db.session.add(log)
         db.session.commit()
         flash('Water intake logged successfully!', 'success')
         return redirect(url_for('nutrition.water_history'))
-    today = date.today().isoformat()
-    return render_template('nutrition/log_water.html', today=today)
+
+    if not form.log_date.data:
+        form.log_date.data = date.today()
+
+    return render_template('nutrition/log_water.html', form=form)
 
 @nutrition_bp.route('/water-history', methods=['GET'])
 @require_tier(['Free', 'Home', 'Family', 'Pro', 'Student'])

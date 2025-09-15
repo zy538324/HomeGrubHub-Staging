@@ -1,8 +1,20 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, IntegerField, SelectField, FloatField
+from wtforms import (
+    StringField,
+    PasswordField,
+    BooleanField,
+    SubmitField,
+    TextAreaField,
+    IntegerField,
+    SelectField,
+    FloatField,
+    SelectMultipleField,
+    DateField,
+)
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Optional, NumberRange, Regexp, Length
 from recipe_app.models.models import User
+from datetime import date
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -200,3 +212,37 @@ class UserProfileForm(FlaskForm):
             user = User.query.filter_by(email=email.data).first()
             if user is not None:
                 raise ValidationError('Please use a different email address.')
+
+
+class LogWaterForm(FlaskForm):
+    amount = IntegerField('Amount (ml)', validators=[DataRequired(), NumberRange(min=1)])
+    log_date = DateField('Date', default=date.today, validators=[DataRequired()])
+    submit = SubmitField('Log Water')
+
+
+class LogMealForm(FlaskForm):
+    meal_type = SelectField(
+        'Meal Type',
+        choices=[
+            ('breakfast', 'Breakfast'),
+            ('lunch', 'Lunch'),
+            ('dinner', 'Dinner'),
+            ('snack', 'Snack'),
+        ],
+        validators=[DataRequired()],
+    )
+    meal_date = DateField('Date', default=date.today, validators=[DataRequired()])
+    food_ids = SelectMultipleField('Foods', coerce=int, validators=[DataRequired()])
+    submit = SubmitField('Log Meal')
+
+
+class LogStepsForm(FlaskForm):
+    steps = IntegerField('Steps', validators=[DataRequired(), NumberRange(min=0)])
+    log_date = DateField('Date', default=date.today, validators=[DataRequired()])
+    submit = SubmitField('Log Steps')
+
+
+class LogWeightForm(FlaskForm):
+    weight = FloatField('Weight (kg)', validators=[DataRequired(), NumberRange(min=0)])
+    log_date = DateField('Date', default=date.today, validators=[DataRequired()])
+    submit = SubmitField('Log Weight')
