@@ -20,7 +20,7 @@
     </div>
     <div class="mb-3">
       <label for="foods" class="form-label">Foods:</label>
-      <select name="food_ids" id="foods" multiple class="form-select">
+      <select name="food_ids" id="foods" multiple class="form-select" data-foods='{{ foods|tojson|safe }}'>
         {% for food in foods %}
         <option value="{{ food.id }}">{{ food.name }} ({{ food.brand }})</option>
         {% endfor %}
@@ -36,24 +36,8 @@
     <p>Fat: <span id="totalFat">0</span></p>
   </div>
 </div>
-<script>
-// JS to update meal totals when foods are selected
-const foodsData = {{ foods|tojson|safe }};
-document.getElementById('foods').addEventListener('change', function() {
-    let selected = Array.from(this.selectedOptions).map(opt => parseInt(opt.value));
-    let totals = {calories: 0, protein: 0, carbs: 0, fat: 0};
-    foodsData.forEach(food => {
-        if (selected.includes(food.id)) {
-            totals.calories += food.calories;
-            totals.protein += food.protein;
-            totals.carbs += food.carbs;
-            totals.fat += food.fat;
-        }
-    });
-    document.getElementById('totalCalories').textContent = totals.calories;
-    document.getElementById('totalProtein').textContent = totals.protein;
-    document.getElementById('totalCarbs').textContent = totals.carbs;
-    document.getElementById('totalFat').textContent = totals.fat;
-});
-</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/nutrition-log-meal.js') }}"></script>
 {% endblock %}
