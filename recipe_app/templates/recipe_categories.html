@@ -24,7 +24,7 @@
 {% endblock %}
 
 {% block seo_title %}Recipe Categories | Browse Healthy Family Meals by Type | HomeGrubHub{% endblock %}
-{% block seo_description %}Browse our recipe categories: Quick dinners, healthy meals, budget-friendly recipes, family favourites, and more. Find the perfect meal for every occasion and dietary need.{% endblock %}
+{% block seo_description %}Browse our recipe categories: Quick dinners, healthy meals, budget-friendly recipes, family favorites, and more. Find the perfect meal for every occasion and dietary need.{% endblock %}
 {% block seo_keywords %}recipe categories, quick dinner recipes, healthy family meals, budget recipes UK, vegetarian recipes, gluten free recipes, meal ideas{% endblock %}
 
 {% block structured_data %}
@@ -179,7 +179,7 @@
           <div class="card-body">
             <i class="fas fa-leaf fa-2x text-success mb-3"></i>
             <h4 class="card-title h6">Vegetarian</h4>
-            <p class="card-text small">Plant-based meals full of flavour</p>
+            <p class="card-text small">Plant-based meals full of flavor</p>
             <a href="{{ url_for('main.search', diet='vegetarian') }}" class="btn btn-sm btn-outline-success">95+ Recipes</a>
           </div>
         </div>
@@ -250,7 +250,7 @@
         <div class="card border-0 shadow-sm">
           <div class="card-body text-center">
             <i class="fas fa-moon fa-3x text-dark mb-3"></i>
-            <h4 class="card-title">Dinner Favourites</h4>
+            <h4 class="card-title">Dinner Favorites</h4>
             <p class="card-text text-muted">Family dinners that bring everyone to the table</p>
             <a href="{{ url_for('main.search', meal_type='dinner') }}" class="btn btn-outline-primary">195+ Recipes</a>
           </div>
@@ -344,7 +344,7 @@
       <div class="col-md-6">
         <div class="card bg-gradient-primary text-white">
           <div class="card-body">
-            <h4 class="card-title">🌟 This Week's Favourites</h4>
+            <h4 class="card-title">🌟 This Week's Favorites</h4>
             <p class="card-text">Our most popular recipes this week, voted by the HomeGrubHub community.</p>
             <a href="{{ url_for('main.search', featured='weekly') }}" class="btn btn-primary">View Collection</a>
           </div>
