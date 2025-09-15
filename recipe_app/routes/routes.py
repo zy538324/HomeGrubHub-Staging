@@ -1987,6 +1987,27 @@ def api_list_recipes():
         'pages': pagination.pages
     })
 
+
+@main_bp.route('/api/search')
+def api_search_suggestions():
+    """Provide recipe title suggestions for autocomplete."""
+    q = (request.args.get('s') or '').strip()
+    if not q:
+        return jsonify([])
+
+    if current_user.is_authenticated and hasattr(current_user, 'can_view_private_recipes') and current_user.can_view_private_recipes():
+        query = Recipe.query
+    else:
+        query = Recipe.query.filter(
+            db.or_(
+                Recipe.is_private == False,
+                Recipe.user_id == (current_user.id if current_user.is_authenticated else -1)
+            )
+        )
+
+    results = query.filter(Recipe.title.ilike(f'%{q}%')).order_by(Recipe.title).limit(5).all()
+    return jsonify([r.title for r in results])
+
 @main_bp.route('/api/recipes/search')
 def api_search_recipes():
     """Search recipes by title, applying same privacy rules as list."""
