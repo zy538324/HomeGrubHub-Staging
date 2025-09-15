@@ -6,6 +6,8 @@ from functools import wraps
 from flask import jsonify, redirect, url_for, flash, request
 from flask_login import current_user
 
+from recipe_app.config.tiers import get_available_features
+
 
 def require_subscription_feature(feature_name):
     """
@@ -56,7 +58,7 @@ def require_home_features():
                 flash('Please log in to access this feature.', 'warning')
                 return redirect(url_for('main.login'))
             
-            if current_user.current_plan not in ['Home', 'Family', 'Pro']:
+            if 'private_recipes' not in get_available_features(current_user.current_plan):
                 if request.is_json or 'application/json' in request.headers.get('Accept', ''):
                     return jsonify({
                         'error': 'Home subscription required',
@@ -64,7 +66,7 @@ def require_home_features():
                         'upgrade_url': url_for('billing.pricing'),
                         'message': 'This feature requires a Home subscription.'
                     }), 403
-                
+
                 flash('This feature requires a Home subscription.', 'warning')
                 return redirect(url_for('billing.pricing'))
             
@@ -92,7 +94,7 @@ def require_family_tier():
                 flash('Please log in to access this feature.', 'warning')
                 return redirect(url_for('main.login'))
             
-            if current_user.current_plan not in ['Family', 'Pro']:
+            if 'family_sharing' not in get_available_features(current_user.current_plan):
                 if request.is_json or 'application/json' in request.headers.get('Accept', ''):
                     return jsonify({
                         'error': 'Family subscription required',
@@ -168,14 +170,15 @@ def subscription_info_context():
     Template context processor to provide subscription information
     """
     if current_user.is_authenticated:
+        features = get_available_features(current_user.current_plan)
         return {
             'user_plan': current_user.current_plan,
-            'has_home_features': current_user.current_plan in ['Home', 'Family', 'Pro'],
-            'has_family_features': current_user.current_plan in ['Family', 'Pro'],
-            'has_pro_features': current_user.current_plan == 'Pro',
-            'has_barcode_scanning': current_user.can_access_feature('barcode_scanning'),
-            'has_multi_store_comparison': current_user.can_access_feature('multi_store_price_comparison'),
-            'has_smart_forecasting': current_user.can_access_feature('smart_consumption_forecasting'),
+            'has_home_features': 'private_recipes' in features,
+            'has_family_features': 'family_sharing' in features,
+            'has_pro_features': 'advanced_analytics' in features,
+            'has_barcode_scanning': 'barcode_scanning' in features,
+            'has_multi_store_comparison': 'multi_store_price_comparison' in features,
+            'has_smart_forecasting': 'smart_consumption_forecasting' in features,
             'recipe_limit_reached': _check_recipe_limit_status()
         }
     return {

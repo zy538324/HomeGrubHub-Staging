@@ -6,6 +6,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from datetime import datetime
 
+from recipe_app.config.tiers import get_available_features
+
 # --- WeightGoal model for user weight goal planner ---
 class WeightGoal(db.Model):
     __tablename__ = 'weight_goals'
@@ -157,46 +159,8 @@ class User(UserMixin, db.Model):
         return (self.trial_end - datetime.utcnow()).days
     
     def can_access_feature(self, feature):
-        """Check if user can access a specific feature based on their plan"""
-
-        feature_matrix = {
-            'Free': [
-                'basic_recipes', 'search', 'public_recipes', 'basic_filtering',
-                'recipe_reviews_read', 'upload_recipes', 'community_features',
-                'recipe_reviews', 'recipe_collections', 'cooking_challenges',
-                'social_features'
-            ]
-        }
-
-        home_features = [
-            'basic_recipes', 'search', 'unlimited_recipes', 'private_recipes',
-            'basic_tools', 'import_recipes', 'advanced_filtering',
-            'nutrition_analysis', 'equipment_filtering', 'smart_substitutions',
-            'price_comparison_trends', 'budget_suggestions_dynamic',
-            'meal_planning_advanced', 'batch_cooking', 'voice_assistant',
-            'offline_recipes_themed', 'recipe_reviews', 'community_photos',
-            'seasonal_suggestions', 'upload_recipes', 'priority_support',
-            'pantry_tracker', 'url_import',
-            'meal_planning', 'shopping_list_generation', 'community_features',
-            'recipe_collections', 'cooking_challenges', 'social_features',
-            'meal_planning_basic'
-        ]
-        feature_matrix['Home'] = home_features
-
-        family_features = home_features + [
-            'multi_user', 'family_sharing', 'price_comparison_multi',
-            'budget_suggestions', 'pantry_tracker_family', 'dynamic_budget_alerts'
-        ]
-        feature_matrix['Family'] = family_features
-
-        pro_features = family_features + [
-            'pantry_tracker_predictive', 'barcode_scanning',
-            'priority_chat_support', 'smart_consumption_forecasting',
-            'multi_store_price_comparison'
-        ]
-        feature_matrix['Pro'] = pro_features
-
-        return feature in feature_matrix.get(self.current_plan, [])
+        """Check if user can access a specific feature based on their plan."""
+        return feature in get_available_features(self.current_plan)
     
     # Family connection methods removed as only supporting Home users now
     
