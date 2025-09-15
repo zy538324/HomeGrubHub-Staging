@@ -442,6 +442,10 @@ class Recipe(db.Model):
         if not self.reviews:
             return 0
         return sum(review.rating for review in self.reviews) / len(self.reviews)
+
+    def get_average_rating(self):
+        """Backward-compatible wrapper for average_rating"""
+        return self.average_rating()
     
     def rating_count(self):
         """Get total number of ratings"""
