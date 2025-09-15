@@ -83,7 +83,7 @@ class FamilyCookingAssignment(db.Model):
 class FamilyRecipeCollection(db.Model):
     """
     Shared Family Recipe Collection - Collaborative recipe management
-    Supports family favorites, member contributions, and rating system
+    Supports family favourites, member contributions, and rating system
     """
     __tablename__ = 'family_recipe_collections'
     
@@ -116,14 +116,14 @@ class FamilyRecipeCollection(db.Model):
     # Usage Tracking
     times_cooked = Column(Integer, default=0)
     last_cooked = Column(Date)
-    favorite_member = Column(Integer, ForeignKey('family_members.id'))  # Who likes it most
+    favourite_member = Column(Integer, ForeignKey('family_members.id'))  # Who likes it most
     
     # Categories & Organization
     family_tags = Column(JSON)  # Custom family tags
     meal_categories = Column(JSON)  # breakfast, lunch, dinner, snack
     occasion_tags = Column(JSON)  # birthday, holiday, quick_dinner, etc.
     
-    is_family_favorite = Column(Boolean, default=False)
+    is_family_favourite = Column(Boolean, default=False)
     is_public = Column(Boolean, default=True)  # Visible to all family members
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -132,7 +132,7 @@ class FamilyRecipeCollection(db.Model):
     family = relationship('FamilyAccount')
     recipe = relationship('Recipe', backref='family_collections')
     contributor = relationship('FamilyMember', foreign_keys=[added_by])
-    favorite_of = relationship('FamilyMember', foreign_keys=[favorite_member])
+    favourite_of = relationship('FamilyMember', foreign_keys=[favourite_member])
     
     def __repr__(self):
         return f'<FamilyRecipe {self.recipe_name}>'

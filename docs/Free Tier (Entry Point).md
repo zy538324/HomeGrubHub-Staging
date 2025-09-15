@@ -31,7 +31,7 @@ Shared Shopping Lists: Real-time sync.
 Multi-Device Meal Plan Sync
 Household Pantry Management
 Meal Planning for Multiple People: Scale servings per user.
-Group Recipe Library & Favorites
+Group Recipe Library & Favourites
 Allergy/Diet Filters: Per member.
 Family Challenges & Streaks
 Pro Tier (£12.99/month)

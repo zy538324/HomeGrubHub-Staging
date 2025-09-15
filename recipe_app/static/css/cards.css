@@ -47,13 +47,13 @@
   font-size: 0.7rem;
 }
 
-.favorite-btn.active {
+.favourite-btn.active {
   background-color: #dc3545;
   border-color: #dc3545;
   color: white;
 }
 
-.favorite-btn.active i {
+.favourite-btn.active i {
   color: white;
 }
 

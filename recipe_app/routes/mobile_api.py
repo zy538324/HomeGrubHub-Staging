@@ -271,7 +271,7 @@ def recipes_list():
     page, size = _get_pagination()
     q = request.args.get('q')
     mine = request.args.get('mine')
-    favorite = request.args.get('favorite')
+    favourite = request.args.get('favourite')
 
     # Base query per privacy
     if current_user.is_authenticated:
@@ -284,11 +284,11 @@ def recipes_list():
     else:
         base_qs = Recipe.query.filter(Recipe.is_private == False)
 
-    # Favorites filter
-    if favorite is not None and current_user.is_authenticated:
-        from recipe_app.models import user_favorites
-        qs = db.session.query(Recipe).join(user_favorites, (user_favorites.c.recipe_id == Recipe.id)) \
-            .filter(user_favorites.c.user_id == current_user.id)
+    # Favourites filter
+    if favourite is not None and current_user.is_authenticated:
+        from recipe_app.models import user_favourites
+        qs = db.session.query(Recipe).join(user_favourites, (user_favourites.c.recipe_id == Recipe.id)) \
+            .filter(user_favourites.c.user_id == current_user.id)
     # Mine filter
     elif mine is not None and current_user.is_authenticated:
         qs = base_qs.filter(Recipe.user_id == current_user.id)

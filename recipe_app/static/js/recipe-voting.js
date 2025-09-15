@@ -80,12 +80,12 @@ class RecipeVoting {
         // Update vote counts with null checks
         const loveItCount = container.querySelector('.love-it-count');
         const wantToTryCount = container.querySelector('.want-to-try-count');
-        const notFavoriteCount = container.querySelector('.not-favorite-count');
+        const notFavouriteCount = container.querySelector('.not-favourite-count');
         const totalVotes = container.querySelector('.total-votes');
 
         if (loveItCount) loveItCount.textContent = voteCounts.love_it || 0;
         if (wantToTryCount) wantToTryCount.textContent = voteCounts.want_to_try || 0;
-        if (notFavoriteCount) notFavoriteCount.textContent = voteCounts.not_favorite || 0;
+        if (notFavouriteCount) notFavouriteCount.textContent = voteCounts.not_favourite || 0;
         if (totalVotes) totalVotes.textContent = voteCounts.total || 0;
 
         // Update button states
@@ -104,7 +104,7 @@ class RecipeVoting {
                     case 'want_to_try':
                         btn.classList.add('btn-primary', 'active');
                         break;
-                    case 'not_favorite':
+                    case 'not_favourite':
                         btn.classList.add('btn-warning', 'active');
                         break;
                 }
@@ -136,9 +136,9 @@ class RecipeVoting {
                         icon = '<i class="fas fa-bookmark"></i>';
                         text = 'Want to try';
                         break;
-                    case 'not_favorite':
+                    case 'not_favourite':
                         icon = '<i class="fas fa-meh"></i>';
-                        text = 'Not my favorite';
+                        text = 'Not my favourite';
                         break;
                 }
                 

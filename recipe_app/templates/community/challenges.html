@@ -62,7 +62,7 @@
                         <!-- Challenge Type Badge -->
                         {% set type_color = 'primary' %}
                         {% set type_icon = 'fas fa-upload' %}
-                        {% if challenge.challenge_type == 'most_favorited' %}
+                        {% if challenge.challenge_type == 'most_favourited' %}
                             {% set type_color = 'danger' %}
                             {% set type_icon = 'fas fa-heart' %}
                         {% elif challenge.challenge_type == 'most_followed' %}
@@ -212,7 +212,7 @@
                     <div class="mb-3">
                         {% set type_color = 'primary' %}
                         {% set type_icon = 'fas fa-upload' %}
-                        {% if challenge.challenge_type == 'most_favorited' %}
+                        {% if challenge.challenge_type == 'most_favourited' %}
                             {% set type_color = 'danger' %}
                             {% set type_icon = 'fas fa-heart' %}
                         {% elif challenge.challenge_type == 'most_followed' %}
@@ -290,8 +290,8 @@
                             <strong>Goal:</strong> 
                             {% if challenge.criteria.get('metric') == 'recipes_uploaded' %}
                                 Upload {{ challenge.criteria.get('min_recipes', 'multiple') }} recipes
-                            {% elif challenge.criteria.get('metric') == 'recipe_favorites' %}
-                                Get {{ challenge.criteria.get('min_favorites', 'many') }} favorites
+                            {% elif challenge.criteria.get('metric') == 'recipe_favourites' %}
+                                Get {{ challenge.criteria.get('min_favourites', 'many') }} favourites
                             {% elif challenge.criteria.get('metric') == 'new_followers' %}
                                 Gain {{ challenge.criteria.get('min_followers', 'new') }} followers
                             {% elif challenge.criteria.get('metric') == 'unique_cuisines' %}
@@ -340,7 +340,7 @@
                     
                     <div class="mb-3">
                         {% set type_icon = 'fas fa-upload' %}
-                        {% if challenge.challenge_type == 'most_favorited' %}
+                        {% if challenge.challenge_type == 'most_favourited' %}
                             {% set type_icon = 'fas fa-heart' %}
                         {% elif challenge.challenge_type == 'most_followed' %}
                             {% set type_icon = 'fas fa-users' %}

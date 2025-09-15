@@ -689,11 +689,11 @@ def tag(tag_name):
 def profile():
     """User profile page"""
     user_recipes = Recipe.query.filter_by(user_id=current_user.id).order_by(Recipe.created_at.desc()).all()
-    favorite_recipes = current_user.favorites
+    favourite_recipes = current_user.favourites
     
     stats = {
         'total_recipes': len(user_recipes),
-        'favorite_count': len(favorite_recipes),
+        'favourite_count': len(favourite_recipes),
         'member_since': current_user.created_at.strftime('%B %Y') if current_user.created_at else 'Unknown',
         'current_plan': current_user.current_plan
     }
@@ -701,7 +701,7 @@ def profile():
     return render_template('profile.html', 
                          user=current_user, 
                          user_recipes=user_recipes, 
-                         favorite_recipes=favorite_recipes,
+                         favourite_recipes=favourite_recipes,
                          stats=stats)
 
 
@@ -782,14 +782,14 @@ def edit_profile():
     
     return render_template('edit_profile.html', form=form)
 
-@main_bp.route('/favorites')
+@main_bp.route('/favourites')
 @login_required
-def favorites():
-    """Show user's favorite recipes"""
-    favorite_recipes = current_user.favorites
-    return render_template('favorites.html',
-                         recipes=favorite_recipes,
-                         title='My Favorite Recipes')
+def favourites():
+    """Show user's favourite recipes"""
+    favourite_recipes = current_user.favourites
+    return render_template('favourites.html',
+                         recipes=favourite_recipes,
+                         title='My Favourite Recipes')
 
 @main_bp.route('/chat')
 @login_required
@@ -935,10 +935,10 @@ def recipe(recipe_id):
     average_rating = sum(r.rating for r in ratings) / len(ratings) if ratings else 0
     rating_count = len(ratings)
     
-    # Check if user has favorited this recipe
-    is_favorite = False
+    # Check if user has favourited this recipe
+    is_favourite = False
     if current_user.is_authenticated:
-        is_favorite = recipe in current_user.favorites
+        is_favourite = recipe in current_user.favourites
 
     comments = RecipeComment.query.filter_by(recipe_id=recipe_id, parent_id=None)\
         .order_by(RecipeComment.created_at.asc()).all()
@@ -950,7 +950,7 @@ def recipe(recipe_id):
                          average_rating=average_rating,
                          avg_rating=average_rating,
                          rating_count=rating_count,
-                         is_favorite=is_favorite,
+                         is_favourite=is_favourite,
                          comments=comments)
 
 @main_bp.route('/recipe/<int:recipe_id>/rate', methods=['POST'])
@@ -1033,33 +1033,33 @@ def get_user_rating(recipe_id):
     else:
         return jsonify({'user_rating': None})
 
-@main_bp.route('/toggle_favorite/<int:recipe_id>', methods=['POST'])
+@main_bp.route('/toggle_favourite/<int:recipe_id>', methods=['POST'])
 @login_required
-def toggle_favorite(recipe_id):
-    """Toggle favorite status for a recipe"""
+def toggle_favourite(recipe_id):
+    """Toggle favourite status for a recipe"""
     recipe = Recipe.query.get_or_404(recipe_id)
 
-    if current_user.is_favorite(recipe):
-        current_user.remove_favorite(recipe)
-        is_favorite = False
-        message = 'Recipe removed from favorites'
+    if current_user.is_favourite(recipe):
+        current_user.remove_favourite(recipe)
+        is_favourite = False
+        message = 'Recipe removed from favourites'
     else:
-        current_user.add_favorite(recipe)
-        is_favorite = True
-        message = 'Recipe added to favorites'
+        current_user.add_favourite(recipe)
+        is_favourite = True
+        message = 'Recipe added to favourites'
 
     try:
         db.session.commit()
 
-        # Get total favorite count for this recipe
-        total_favorites = len(recipe.favorited_by)
+        # Get total favourite count for this recipe
+        total_favourites = len(recipe.favourited_by)
 
         if request.headers.get('Content-Type') == 'application/json' or request.is_json:
             return jsonify({
                 'success': True,
-                'is_favorite': is_favorite,
+                'is_favourite': is_favourite,
                 'message': message,
-                'total_favorites': total_favorites
+                'total_favourites': total_favourites
             })
         else:
             flash(message, 'success')
@@ -1067,7 +1067,7 @@ def toggle_favorite(recipe_id):
 
     except Exception as e:
         db.session.rollback()
-        return jsonify({'success': False, 'error': 'Failed to update favorite status'}), 500
+        return jsonify({'success': False, 'error': 'Failed to update favourite status'}), 500
 
 @main_bp.route('/import_recipe', methods=['GET', 'POST'])
 @login_required

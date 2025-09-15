@@ -297,7 +297,7 @@ class SendGridEmailService:
                 <div class="features">
                     <h3 style="color: #28a745; margin-top: 0;">What you can do with HomeGrubHub:</h3>
                     <ul>
-                        <li><strong>Save & organize recipes</strong> - Build your personal recipe collection</li>
+                        <li><strong>Save & organise recipes</strong> - Build your personal recipe collection</li>
                         <li><strong>Smart meal planning</strong> - Plan your week with ease</li>
                         <li><strong>Automated shopping lists</strong> - Never forget an ingredient</li>
                         <li><strong>Nutrition tracking</strong> - Monitor your health goals</li>
@@ -333,7 +333,7 @@ To get started, please confirm your email address by visiting this link:
 {confirmation_link}
 
 What you can do with HomeGrubHub:
-• Save & organize recipes - Build your personal recipe collection
+• Save & organise recipes - Build your personal recipe collection
 • Smart meal planning - Plan your week with ease  
 • Automated shopping lists - Never forget an ingredient
 • Nutrition tracking - Monitor your health goals
@@ -383,7 +383,7 @@ HomeGrubHub • Making cooking easier, one recipe at a time
                     <ol style="margin: 0; padding-left: 20px;">
                         <li><strong>Browse recipes</strong> - Discover thousands of delicious recipes</li>
                         <li><strong>Create meal plans</strong> - Plan your week in minutes</li>
-                        <li><strong>Generate shopping lists</strong> - Get organized grocery lists automatically</li>
+                        <li><strong>Generate shopping lists</strong> - Get organised grocery lists automatically</li>
                         <li><strong>Track nutrition</strong> - Monitor your dietary goals</li>
                     </ol>
                 </div>
@@ -416,7 +416,7 @@ Your HomeGrubHub account is ready! You now have access to all our features to ma
 Quick Start Guide:
 1. Browse recipes - Discover thousands of delicious recipes
 2. Create meal plans - Plan your week in minutes  
-3. Generate shopping lists - Get organized grocery lists automatically
+3. Generate shopping lists - Get organised grocery lists automatically
 4. Track nutrition - Monitor your dietary goals
 
 Go to your dashboard: https://homegrubhub.co.uk/dashboard
@@ -620,7 +620,7 @@ Questions about your billing? Contact us at support@homegrubhub.co.uk
                             <li><strong>Smart meal planning</strong> - Plan weeks in advance</li>
                             <li><strong>Automated shopping lists</strong> - Never forget ingredients</li>
                             <li><strong>Nutrition tracking</strong> - Monitor your health goals</li>
-                            <li><strong>Recipe collections</strong> - Organize your favorites</li>
+                            <li><strong>Recipe collections</strong> - Organise your favourites</li>
                         </ul>
                     </div>
                     
@@ -650,7 +650,7 @@ Don't lose access to:
 • Smart meal planning - Plan weeks in advance  
 • Automated shopping lists - Never forget ingredients
 • Nutrition tracking - Monitor your health goals
-• Recipe collections - Organize your favorites
+• Recipe collections - Organise your favourites
 
 Continue your culinary journey: https://homegrubhub.co.uk/billing/upgrade
 

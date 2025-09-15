@@ -211,7 +211,7 @@ Search thousands of family-friendly recipes by ingredient, cuisine, dietary need
               {% endif %}
             </small>
             <div class="btn-group btn-group-sm" role="group">
-              <button type="button" class="btn btn-outline-danger btn-sm favorite-btn" 
+              <button type="button" class="btn btn-outline-danger btn-sm favourite-btn" 
                       data-recipe-id="{{ recipe.id }}">
                 <i class="far fa-heart"></i>
               </button>
@@ -340,13 +340,13 @@ Search thousands of family-friendly recipes by ingredient, cuisine, dietary need
   font-size: 0.7rem;
 }
 
-.favorite-btn.active {
+.favourite-btn.active {
   background-color: #dc3545;
   border-color: #dc3545;
   color: white;
 }
 
-.favorite-btn.active i {
+.favourite-btn.active i {
   color: white;
 }
 
@@ -361,8 +361,8 @@ Search thousands of family-friendly recipes by ingredient, cuisine, dietary need
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Favorite button functionality
-    document.querySelectorAll('.favorite-btn').forEach(btn => {
+    // Favourite button functionality
+    document.querySelectorAll('.favourite-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -387,7 +387,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Card click handling
     document.querySelectorAll('.recipe-card').forEach(card => {
         card.addEventListener('click', function(e) {
-            if (!e.target.closest('.btn') && !e.target.closest('.favorite-btn')) {
+            if (!e.target.closest('.btn') && !e.target.closest('.favourite-btn')) {
                 const link = this.querySelector('a.stretched-link');
                 if (link) {
                     window.location.href = link.href;

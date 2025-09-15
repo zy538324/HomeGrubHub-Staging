@@ -32,10 +32,10 @@ def community_home():
         is_private=False  # Only public recipes
     ).order_by(Recipe.created_at.desc()).limit(6).all()
     
-    # Add vote counts and favorites count to recipes
+    # Add vote counts and favourites count to recipes
     for recipe in featured_recipes + trending_recipes:
         recipe.vote_counts = get_recipe_vote_counts(recipe.id)
-        recipe.favorites_count = get_recipe_favorites_count(recipe.id)
+        recipe.favourites_count = get_recipe_favourites_count(recipe.id)
     
     # Get user's recent activity
     recent_reviews = []
@@ -97,7 +97,7 @@ def recipe_collections():
 
 @community_bp.route('/recipes')
 def community_recipes():
-    """Community recipes page - all public recipes with ratings and favorites"""
+    """Community recipes page - all public recipes with ratings and favourites"""
     if not current_user.is_authenticated:
         flash('Please log in to access community features', 'info')
         return redirect(url_for('main.login'))
@@ -106,7 +106,7 @@ def community_recipes():
     per_page = 12
     
     # Get filter parameters
-    sort_by = request.args.get('sort', 'newest')  # newest, popular, favorites
+    sort_by = request.args.get('sort', 'newest')  # newest, popular, favourites
     cuisine_filter = request.args.get('cuisine', '')
     difficulty_filter = request.args.get('difficulty', '')
     search_query = request.args.get('search', '')
@@ -142,28 +142,28 @@ def community_recipes():
         
         query = query.outerjoin(love_votes_subquery, Recipe.id == love_votes_subquery.c.recipe_id)\
                     .order_by(love_votes_subquery.c.love_count.desc().nullslast(), Recipe.created_at.desc())
-    elif sort_by == 'favorites':
-        # Sort by number of favorites
+    elif sort_by == 'favourites':
+        # Sort by number of favourites
         from sqlalchemy import func
-        from recipe_app.models.models import user_favorites
+        from recipe_app.models.models import user_favourites
         
-        favorites_subquery = db.session.query(
-            user_favorites.c.recipe_id,
-            func.count(user_favorites.c.user_id).label('favorites_count')
-        ).group_by(user_favorites.c.recipe_id).subquery()
+        favourites_subquery = db.session.query(
+            user_favourites.c.recipe_id,
+            func.count(user_favourites.c.user_id).label('favourites_count')
+        ).group_by(user_favourites.c.recipe_id).subquery()
         
-        query = query.outerjoin(favorites_subquery, Recipe.id == favorites_subquery.c.recipe_id)\
-                    .order_by(favorites_subquery.c.favorites_count.desc().nullslast(), Recipe.created_at.desc())
+        query = query.outerjoin(favourites_subquery, Recipe.id == favourites_subquery.c.recipe_id)\
+                    .order_by(favourites_subquery.c.favourites_count.desc().nullslast(), Recipe.created_at.desc())
     
     # Paginate results
     recipes = query.paginate(
         page=page, per_page=per_page, error_out=False
     )
     
-    # Add vote counts and favorites count to each recipe
+    # Add vote counts and favourites count to each recipe
     for recipe in recipes.items:
         recipe.vote_counts = get_recipe_vote_counts(recipe.id)
-        recipe.favorites_count = get_recipe_favorites_count(recipe.id)
+        recipe.favourites_count = get_recipe_favourites_count(recipe.id)
     
     # Get unique cuisines for filter dropdown (from public recipes only)
     cuisines = db.session.query(Recipe.cuisine_type).filter(
@@ -190,13 +190,13 @@ def community_recipes():
                          current_difficulty=difficulty_filter,
                          current_search=search_query)
 
-def get_recipe_favorites_count(recipe_id):
-    """Helper function to get favorites count for a recipe"""
-    from recipe_app.models.models import user_favorites
+def get_recipe_favourites_count(recipe_id):
+    """Helper function to get favourites count for a recipe"""
+    from recipe_app.models.models import user_favourites
     from sqlalchemy import func
     
-    count = db.session.query(func.count(user_favorites.c.user_id))\
-                     .filter(user_favorites.c.recipe_id == recipe_id)\
+    count = db.session.query(func.count(user_favourites.c.user_id))\
+                     .filter(user_favourites.c.recipe_id == recipe_id)\
                      .scalar()
     return count or 0
 
@@ -516,7 +516,7 @@ def featured_recipes_legacy():
 @community_bp.route('/api/recipes/trending')
 def trending_recipes():
     """API endpoint for trending recipes"""
-    # Get recipes with most recent activity (reviews, photos, favorites)
+    # Get recipes with most recent activity (reviews, photos, favourites)
     trending = Recipe.query.join(RecipeReview).group_by(Recipe.id).order_by(
         db.func.count(RecipeReview.id).desc()
     ).limit(10).all()
@@ -583,7 +583,7 @@ def vote_recipe():
         return jsonify({'error': 'Invalid recipe ID'}), 400
     
     # Validate vote type
-    valid_votes = ['love_it', 'want_to_try', 'not_favorite']
+    valid_votes = ['love_it', 'want_to_try', 'not_favourite']
     if vote_type not in valid_votes:
         return jsonify({'error': 'Invalid vote type'}), 400
     
@@ -648,7 +648,7 @@ def get_recipe_vote_counts(recipe_id):
     counts = {
         'love_it': 0,
         'want_to_try': 0,
-        'not_favorite': 0,
+        'not_favourite': 0,
         'total': len(votes)
     }
     

@@ -38,7 +38,7 @@ The Family Tier builds upon the complete Home Tier foundation to provide advance
 
 ### 3. **Collaborative Meal Planning** 🍽️
 - **Shared Weekly Calendar:** Family-wide meal planning with member preferences
-- **Member Meal Preferences:** Individual dietary restrictions and favorites
+- **Member Meal Preferences:** Individual dietary restrictions and favourites
 - **Family Recipe Collection:** Shared recipe database with member ratings
 - **Meal Assignment:** Assign cooking responsibilities to family members
 

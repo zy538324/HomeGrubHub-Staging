@@ -5,15 +5,15 @@
   <!-- Page Header -->
   <div class="text-center mb-5">
     <h1 class="display-5 text-primary mb-3">
-      <i class="fas fa-heart me-3"></i>My Favorite Recipes
+      <i class="fas fa-heart me-3"></i>My Favourite Recipes
     </h1>
     <p class="lead text-muted">
-      Your personally curated collection of favorite recipes
+      Your personally curated collection of favourite recipes
     </p>
   </div>
 
   {% if recipes %}
-  <!-- Favorites Grid -->
+  <!-- Favourites Grid -->
   <div class="row">
     {% for recipe in recipes %}
     <div class="col-lg-4 col-md-6 mb-4">
@@ -27,7 +27,7 @@
             {% if recipe.description %}
               {{ recipe.description[:100] }}{{ '...' if recipe.description|length > 100 }}
             {% else %}
-              A delicious recipe in your favorites collection.
+              A delicious recipe in your favourites collection.
             {% endif %}
           </p>
           <div class="mt-auto">
@@ -57,15 +57,15 @@
   </div>
   
   {% else %}
-  <!-- No Favorites -->
+  <!-- No Favourites -->
   <div class="row justify-content-center">
     <div class="col-lg-6">
       <div class="card text-center">
         <div class="card-body py-5">
           <i class="fas fa-heart fa-4x text-muted mb-4"></i>
-          <h4 class="text-muted">No Favorite Recipes Yet</h4>
+          <h4 class="text-muted">No Favourite Recipes Yet</h4>
           <p class="text-muted">
-            Start building your favorites collection by hearting recipes you love!
+            Start building your favourites collection by hearting recipes you love!
           </p>
           <a href="{{ url_for('main.index') }}" class="btn btn-primary">
             <i class="fas fa-search me-2"></i>Browse Recipes

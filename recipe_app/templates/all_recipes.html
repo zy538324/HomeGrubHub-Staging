@@ -164,7 +164,7 @@
                 <i class="fas fa-calculator"></i>
               </a>
               {% if current_user.is_authenticated %}
-              <button class="btn btn-outline-danger btn-sm favorite-btn" 
+              <button class="btn btn-outline-danger btn-sm favourite-btn" 
                       data-recipe-id="{{ recipe.id }}">
                 <i class="fas fa-heart"></i>
               </button>
@@ -268,7 +268,7 @@
   position: relative;
 }
 
-.favorite-btn {
+.favourite-btn {
   width: 40px;
   height: 32px;
 }
@@ -284,13 +284,13 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Favorite button functionality
-    document.querySelectorAll('.favorite-btn').forEach(btn => {
+    // Favourite button functionality
+    document.querySelectorAll('.favourite-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
             const recipeId = this.dataset.recipeId;
             
-            fetch(`/toggle_favorite/${recipeId}`, {
+            fetch(`/toggle_favourite/${recipeId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -299,7 +299,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 const icon = this.querySelector('i');
-                if (data.is_favorite) {
+                if (data.is_favourite) {
                     icon.className = 'fas fa-heart';
                     this.classList.remove('btn-outline-danger');
                     this.classList.add('btn-danger');

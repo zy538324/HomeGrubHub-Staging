@@ -18,13 +18,13 @@ The Fitness & Weight Tracking feature provides comprehensive tools for users to 
 - **BMI category classification**: Underweight, Normal, Overweight, Obese
 - **Educational BMI information** with health risk indicators
 - **Unit conversion helpers** for pounds/feet to metric
-- **Color-coded results** for easy interpretation
+- **Colour-coded results** for easy interpretation
 
 ### 3. Safe Weight Goal Planner (`/fitness/weight-goal-planner`)
 - **Safety enforcement**: Maximum 2 lbs (0.9kg) per week change
 - **Automatic goal validation** with recommendations for unsafe goals
 - **Uses current weight** from recent logs automatically
-- **Visual feedback** on goal safety with color coding
+- **Visual feedback** on goal safety with colour coding
 - **Educational content** on safe weight management
 - **Alternative goal suggestions** when user goals are too aggressive
 
@@ -175,7 +175,7 @@ The fitness feature is integrated into the main navigation under the "Meal Plann
 ### Advanced Features:
 - **Predictive analytics** for goal achievement
 - **Integration with fitness wearables**
-- **Personalized recommendations** based on progress
+- **Personalised recommendations** based on progress
 - **Medical professional dashboard** for healthcare providers
 
 ## Safety Disclaimer

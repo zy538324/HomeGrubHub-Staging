@@ -23,7 +23,7 @@
 #### 3. Professional UI Templates
 - **Communication Hub**: Modern dashboard with gradient design and activity overview
 - **Messages Interface**: Gmail-style messaging with advanced filtering and search
-- **Notifications Panel**: Clean notification center with categorization and read status
+- **Notifications Panel**: Clean notification centre with categorization and read status
 - **Approval Dashboard**: Comprehensive parent control panel for managing requests
 
 #### 4. User Model Integration
@@ -71,7 +71,7 @@ family_cost_tracking (14 columns) - Expense tracking
 ```
 /family/communication/                 - Main hub dashboard
 /family/communication/messages         - Messaging interface
-/family/communication/notifications    - Notification center
+/family/communication/notifications    - Notification centre
 /family/communication/approvals        - Parent approval panel
 /family/communication/api/*            - JSON APIs for mobile
 ```

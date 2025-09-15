@@ -58,7 +58,7 @@
 - ❌ Multi-Device Meal Plan Sync
 - ❌ Household Pantry Management (shared inventory)
 - ❌ Meal Planning for Multiple People: Scale servings per user
-- ❌ Group Recipe Library & Favorites (shared across family)
+- ❌ Group Recipe Library & Favourites (shared across family)
 - ❌ Allergy/Diet Filters: Per family member
 - ❌ Family Challenges & Streaks (gamification)
 
@@ -116,7 +116,7 @@
 ### Medium Priority (Enhanced Features)
 1. **Pantry Sync** (Home+) - Ingredient inventory management
 2. **Body Composition Tracking** (Pro+) - Smart scale integration
-3. **AI Recipe Recommendations** (Home+) - Personalized suggestions
+3. **AI Recipe Recommendations** (Home+) - Personalised suggestions
 4. **Restaurant Nutrition Lookup** (Pro+) - Dining out tracking
 5. **Family Challenges** (Family+) - Gamification features
 6. **Voice Shopping List** (Home+) - Voice command integration

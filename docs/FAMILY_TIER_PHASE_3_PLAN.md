@@ -10,7 +10,7 @@ Building advanced family communication, parental controls, analytics, and social
 
 ### 1. **Family Communication Hub** 🗨️
 **Goal**: Enable seamless family communication around meal planning and nutrition
-- **Family Message Center**: In-app messaging between family members
+- **Family Message Centre**: In-app messaging between family members
 - **Meal Plan Comments**: Comment system on specific meals/days
 - **Family Notifications**: Real-time alerts for meal reminders, shopping lists
 - **Family Announcements**: Admin can post family-wide announcements
@@ -104,7 +104,7 @@ recipe_exchanges (id, sender_family_id, recipient_family_id, recipe_data)
 
 ### **Week 1: Communication Hub**
 - [ ] Family messaging system backend
-- [ ] Message center UI design
+- [ ] Message centre UI design
 - [ ] Notification system implementation
 - [ ] Meal plan commenting feature
 

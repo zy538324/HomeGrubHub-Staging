@@ -80,7 +80,7 @@
 - ✅ Key micronutrient breakdown (Vitamin C, Iron, Calcium, etc.)
 - ✅ Interactive macronutrient pie charts (Chart.js)
 - ✅ Health scoring algorithm (1-10 scale)
-- ✅ Personalized recommendations
+- ✅ Personalised recommendations
 - ✅ Analysis history and management
 - ✅ Per-serving and total recipe breakdowns
 
@@ -198,7 +198,7 @@
 
 ### Exceptional User Value Delivered:
 - **Smart Shopping Lists** save users 15-20 minutes per grocery trip
-- **AI Meal Planning** provides personalized nutrition guidance worth $50+/month consulting
+- **AI Meal Planning** provides personalised nutrition guidance worth $50+/month consulting
 - **Recipe Analysis** enables informed dietary choices with professional-grade insights  
 - **Enhanced Progress Charts** deliver fitness app-level analytics
 - **Weekly Calendar** provides meal prep efficiency gains
