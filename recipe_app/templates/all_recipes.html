@@ -47,21 +47,45 @@
         <div class="card-img-wrapper" style="height: 200px; overflow: hidden;">
           {% if recipe.image_file %}
           {% if recipe.image_file.startswith('imported_') %}
-          <img src="{{ url_for('static', filename='uploads/imported_' + recipe.image_file[9:]) }}" 
-               class="card-img-top w-100 h-100" style="object-fit: cover;" 
-               alt="{{ recipe.title }}">
+          <div class="image-placeholder"></div>
+          <img src="{{ url_for('static', filename='uploads/imported_' + recipe.image_file[9:]) }}"
+               class="card-img-top w-100 h-100 d-none" style="object-fit: cover;"
+               loading="lazy" alt="{{ recipe.title }}"
+               onload="this.classList.remove('d-none'); this.previousElementSibling.remove();">
           {% else %}
-          <img src="{{ url_for('static', filename='uploads/' + recipe.image_file) }}" 
-               class="card-img-top w-100 h-100" style="object-fit: cover;" 
-               alt="{{ recipe.title }}">
+          <div class="image-placeholder"></div>
+          <img src="{{ url_for('static', filename='uploads/' + recipe.image_file) }}"
+               class="card-img-top w-100 h-100 d-none" style="object-fit: cover;"
+               loading="lazy" alt="{{ recipe.title }}"
+               onload="this.classList.remove('d-none'); this.previousElementSibling.remove();">
           {% endif %}
           {% else %}
           <div class="card-img-top w-100 h-100 bg-light d-flex align-items-center justify-content-center">
             <i class="fas fa-utensils fa-3x text-muted"></i>
           </div>
           {% endif %}
-          
-          <!-- Quick Info Overlay -->
+
+          <!-- Badges Overlay -->
+          <div class="position-absolute top-0 start-0 p-2 d-flex flex-column gap-1">
+            {% if recipe.cook_time %}
+            <span class="badge bg-dark bg-opacity-75">
+              <i class="fas fa-clock me-1"></i>{{ recipe.cook_time }}m
+            </span>
+            {% endif %}
+            {% if recipe.difficulty %}
+            <span class="badge bg-info bg-opacity-75">
+              <i class="fas fa-signal me-1"></i>{{ recipe.difficulty }}
+            </span>
+            {% endif %}
+            {% set avg_rating = recipe.get_average_rating() %}
+            {% if avg_rating %}
+            <span class="badge bg-warning text-dark">
+              <i class="fas fa-star me-1"></i>{{ avg_rating|round(1) }}
+            </span>
+            {% endif %}
+          </div>
+
+          <!-- Country Badge -->
           <div class="position-absolute top-0 end-0 p-2">
             {% if recipe.country %}
             <span class="badge bg-primary">
@@ -69,16 +93,6 @@
             </span>
             {% endif %}
           </div>
-          
-          {% if recipe.prep_time or recipe.cook_time %}
-          <div class="position-absolute bottom-0 start-0 p-2">
-            {% if recipe.prep_time %}
-            <span class="badge bg-dark bg-opacity-75">
-              <i class="fas fa-clock me-1"></i>{{ recipe.prep_time }}min
-            </span>
-            {% endif %}
-          </div>
-          {% endif %}
         </div>
 
         <!-- Recipe Content -->
