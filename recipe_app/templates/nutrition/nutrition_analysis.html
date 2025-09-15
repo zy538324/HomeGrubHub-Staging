@@ -482,13 +482,13 @@
 }
 
 .nutrition-circle.protein {
-  border-color: #28a745;
-  color: #28a745;
+  border-color: var(--success-color);
+  color: var(--success-color);
 }
 
 .nutrition-circle.carbs {
-  border-color: #ffc107;
-  color: #ffc107;
+  border-color: var(--warning-color);
+  color: var(--warning-color);
 }
 
 .nutrition-circle.fat {
@@ -510,7 +510,7 @@
 
 .insight-item {
   padding: 0.5rem;
-  border-left: 3px solid #28a745;
+  border-left: 3px solid var(--success-color);
   background: #f8f9fa;
   border-radius: 0.25rem;
 }
@@ -548,8 +548,8 @@ const macroChart = new Chart(ctx, {
                 {{ nutrition_data.fat_g * 9 }}       // 9 calories per gram
             ],
             backgroundColor: [
-                '#28a745',
-                '#ffc107',
+                'var(--success-color)',
+                'var(--warning-color)',
                 '#17a2b8'
             ],
             borderWidth: 2,

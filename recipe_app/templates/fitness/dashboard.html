@@ -37,13 +37,13 @@
 .btn-orange {
     background-color: #ff6b35;
     border-color: #ff6b35;
-    color: white;
+    color: var(--neutral-100);
 }
 
 .btn-orange:hover {
     background-color: #e55a2d;
     border-color: #e55a2d;
-    color: white;
+    color: var(--neutral-100);
 }
 
 .border-orange {
@@ -53,7 +53,7 @@
 /* BMI Calculator Styles */
 .bmi-result {
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
+    color: var(--neutral-100);
     border-radius: 15px;
     padding: 2rem;
     text-align: center;
@@ -89,7 +89,7 @@
 /* Weight Goal Planner Styles */
 .goal-result.safe {
     background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
-    color: white;
+    color: var(--neutral-100);
     border-radius: 10px;
     padding: 1.5rem;
     margin-top: 1rem;
@@ -97,7 +97,7 @@
 
 .goal-result.unsafe {
     background: linear-gradient(135deg, #ff512f 0%, #dd2476 100%);
-    color: white;
+    color: var(--neutral-100);
     border-radius: 10px;
     padding: 1.5rem;
     margin-top: 1rem;
@@ -117,7 +117,7 @@
 
 /* Safety Indicators */
 .safety-warning {
-    border-left: 4px solid #ffc107;
+    border-left: 4px solid var(--warning-color);
     background-color: #fff3cd;
     padding: 1rem;
     margin: 1rem 0;
@@ -131,7 +131,7 @@
 }
 
 .safety-success {
-    border-left: 4px solid #28a745;
+    border-left: 4px solid var(--success-color);
     background-color: #d4edda;
     padding: 1rem;
     margin: 1rem 0;
@@ -197,12 +197,12 @@
 }
 
 .weight-change-negative {
-    color: #28a745;
+    color: var(--success-color);
     font-weight: bold;
 }
 
 .weight-change-neutral {
-    color: #6c757d;
+    color: var(--neutral-500);
 }
 
 /* Loading states */
@@ -212,7 +212,7 @@
     height: 20px;
     border: 3px solid #f3f3f3;
     border-radius: 50%;
-    border-top-color: #007bff;
+    border-top-color: var(--primary-color);
     animation: spin 1s ease-in-out infinite;
 }
 
@@ -226,13 +226,13 @@
 }
 
 .form-group-enhanced .form-control:focus {
-    border-color: #007bff;
+    border-color: var(--primary-color);
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 .input-group-text.bg-fitness {
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
+    color: var(--neutral-100);
     border-color: var(--primary-color);
 }
 
