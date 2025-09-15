@@ -58,7 +58,7 @@
 - ❌ Multi-Device Meal Plan Sync
 - ❌ Household Pantry Management (shared inventory)
 - ❌ Meal Planning for Multiple People: Scale servings per user
-- ❌ Group Recipe Library & Favourites (shared across family)
+- ❌ Group Recipe Library & Favorites (shared across family)
 - ❌ Allergy/Diet Filters: Per family member
 - ❌ Family Challenges & Streaks (gamification)
 

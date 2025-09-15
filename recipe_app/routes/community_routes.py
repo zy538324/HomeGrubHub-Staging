@@ -583,7 +583,7 @@ def vote_recipe():
         return jsonify({'error': 'Invalid recipe ID'}), 400
     
     # Validate vote type
-    valid_votes = ['love_it', 'want_to_try', 'not_favourite']
+    valid_votes = ['love_it', 'want_to_try', 'not_favorite']
     if vote_type not in valid_votes:
         return jsonify({'error': 'Invalid vote type'}), 400
     
@@ -648,7 +648,7 @@ def get_recipe_vote_counts(recipe_id):
     counts = {
         'love_it': 0,
         'want_to_try': 0,
-        'not_favourite': 0,
+        'not_favorite': 0,
         'total': len(votes)
     }
     

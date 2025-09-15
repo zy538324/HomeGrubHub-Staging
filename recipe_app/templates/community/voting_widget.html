@@ -30,13 +30,13 @@
                         </button>
                     </div>
                     <div class="col-md-4">
-                        <button class="btn btn-outline-warning vote-btn w-100" 
-                                data-recipe-id="{{ recipe.id }}" 
-                                data-vote-type="not_favourite"
+                        <button class="btn btn-outline-warning vote-btn w-100"
+                                data-recipe-id="{{ recipe.id }}"
+                                data-vote-type="not_favorite"
                                 title="Not my favorite, but that's okay!">
                             <i class="fas fa-meh"></i><br>
-                            <small>Not my favourite</small><br>
-                            <span class="not-favourite-count badge bg-warning">0</span>
+                            <small>Not my favorite</small><br>
+                            <span class="not-favorite-count badge bg-warning">0</span>
                         </button>
                     </div>
                 </div>
@@ -62,8 +62,8 @@
                         </div>
                         <div class="col-4 text-center">
                             <i class="fas fa-meh text-warning fa-2x"></i><br>
-                            <small>Not my favourite</small><br>
-                            <span class="not-favourite-count badge bg-warning">0</span>
+                            <small>Not my favorite</small><br>
+                            <span class="not-favorite-count badge bg-warning">0</span>
                         </div>
                     </div>
                     <div class="mt-3">
@@ -205,12 +205,12 @@ function updateVoteDisplay(voteCounts, userVote) {
     // Update counts with null checks
     const loveItCount = document.querySelector('.love-it-count');
     const wantToTryCount = document.querySelector('.want-to-try-count');
-    const notFavouriteCount = document.querySelector('.not-favourite-count');
+    const notFavoriteCount = document.querySelector('.not-favorite-count');
     const totalVotes = document.querySelector('.total-votes');
     
     if (loveItCount) loveItCount.textContent = voteCounts.love_it || 0;
     if (wantToTryCount) wantToTryCount.textContent = voteCounts.want_to_try || 0;
-    if (notFavouriteCount) notFavouriteCount.textContent = voteCounts.not_favourite || 0;
+    if (notFavoriteCount) notFavoriteCount.textContent = voteCounts.not_favorite || 0;
     if (totalVotes) totalVotes.textContent = voteCounts.total || 0;
     
     // Update button states
@@ -223,7 +223,7 @@ function updateVoteDisplay(voteCounts, userVote) {
             button.classList.remove('btn-outline-success', 'btn-outline-primary', 'btn-outline-warning');
             if (userVote === 'love_it') button.classList.add('btn-success');
             else if (userVote === 'want_to_try') button.classList.add('btn-primary');
-            else if (userVote === 'not_favourite') button.classList.add('btn-warning');
+            else if (userVote === 'not_favorite') button.classList.add('btn-warning');
         }
     });
 }
@@ -232,7 +232,7 @@ function showVoteSuccess(voteType) {
     const messages = {
         'love_it': 'Thanks for loving this recipe! ❤️',
         'want_to_try': 'Added to your want-to-try list! 📌',
-        'not_favourite': 'Thanks for your honest feedback! 👍'
+        'not_favorite': 'Thanks for your honest feedback! 👍'
     };
     
     const notification = document.createElement('div');
