@@ -33,6 +33,8 @@ class Config:
         # Highest priority: explicit DATABASE_URL override
         explicit_url = os.environ.get('DATABASE_URL')
         if explicit_url:
+            if 'sslmode' not in explicit_url:
+                explicit_url += ('&' if '?' in explicit_url else '?') + 'sslmode=require'
             logger.info("Using DATABASE_URL override for database connection")
             return explicit_url
 
@@ -59,10 +61,17 @@ class Config:
 
         if all([postgres_host, postgres_port, postgres_db, postgres_user, postgres_password]):
             logger.info("Using environment variable database connection")
-            return f'postgresql://{postgres_user}:{postgres_password}@{postgres_host}:{postgres_port}/{postgres_db}'
-        # Final fallback to SQLite for development
-        logger.warning("Using SQLite fallback for development")
-        return 'sqlite:///recipes.db'
+            return (
+                f'postgresql://{postgres_user}:{postgres_password}'
+                f'@{postgres_host}:{postgres_port}/{postgres_db}?sslmode=require'
+            )
+
+        # Final fallback depends on environment
+        env = os.environ.get('FLASK_ENV', 'development')
+        if env != 'production':
+            logger.warning("Using SQLite fallback for development")
+            return 'sqlite:///recipes.db'
+        raise RuntimeError("Database configuration is required in production")
 
     # Set the database URI using the priority system
     SQLALCHEMY_DATABASE_URI = get_database_uri()

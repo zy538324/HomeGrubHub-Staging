@@ -13,6 +13,7 @@ from configs.auth0_config import (
         AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, AUTH0_DOMAIN, AUTH0_CALLBACK_URL
     )
 from authlib.integrations.flask_client import OAuth
+from sqlalchemy import text
 
 # Adjust sys.path to include the parent directory
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -53,7 +54,15 @@ def create_app():
     
     # Initialize extensions with app
     db.init_app(app)
-    
+
+    # Verify database connectivity at startup
+    with app.app_context():
+        try:
+            db.session.execute(text("SELECT 1"))
+        except Exception as e:
+            app.logger.error("Database connectivity check failed: %s", e)
+            raise
+
     # Configure the database engine for better connection handling
     if 'postgresql' in app.config['SQLALCHEMY_DATABASE_URI']:
         from sqlalchemy import event
