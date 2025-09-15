@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Meal Planning{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Meal Planning</h1>
+
+    {% if current_meal_plan %}
+    <h2 class="h4">{{ current_meal_plan.name }}</h2>
+    <div class="table-responsive mb-4">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Meal</th>
+                    {% for i in range(7) %}
+                    <th>{{ (current_meal_plan.start_date + timedelta(days=i)).strftime('%a %d %b') }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for meal_type in ['breakfast', 'lunch', 'dinner', 'snack'] %}
+                <tr>
+                    <th class="text-capitalize">{{ meal_type }}</th>
+                    {% for i in range(7) %}
+                    {% set entry = current_meal_plan.get_meal_for_day_and_type(i, meal_type) %}
+                    <td>
+                        {% if entry %}
+                        {{ entry.recipe.title }}
+                        {% else %}
+                        <em>No meal</em>
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="h4">Weekly Nutrition</h2>
+    <ul class="list-group mb-4">
+        <li class="list-group-item">Total Recipes: {{ weekly_nutrition.total_recipes }}</li>
+        <li class="list-group-item">Unique Recipes: {{ weekly_nutrition.unique_recipes }}</li>
+        <li class="list-group-item">Total Calories: {{ weekly_nutrition.total_calories }}</li>
+        <li class="list-group-item">Total Protein: {{ weekly_nutrition.total_protein }} g</li>
+        <li class="list-group-item">Estimated Cost: £{{ '%.2f'|format(weekly_nutrition.estimated_cost) }}</li>
+    </ul>
+    {% else %}
+    <p>You don't have a meal plan yet. Start by adding recipes from your <a href="{{ url_for('main.all_recipes') }}">recipe collection</a>.</p>
+    {% endif %}
+</div>
+{% endblock %}
