@@ -3,6 +3,7 @@
 
 {% block content %}
 <div class="container-fluid py-4">
+    {% include "_breadcrumb.html" with breadcrumbs=[("Home", url_for('main.index')), ("Family Dashboard", url_for('family.family_dashboard'))] %}
     <!-- Family Navigation Bar -->
     <div class="row mb-4">
         <div class="col-12">
