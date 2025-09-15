@@ -1,20 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Shopping List</title>
-    <link rel="stylesheet" href="/static/css/main.css">
-</head>
-<body>
-    <h1>Shopping List</h1>
-    <form method="POST" action="/nutrition/add-shopping-item">
-        <input type="text" name="item" placeholder="Add item..." required>
-        <button type="submit">Add</button>
-    </form>
-    <ul>
-        {% for item in items %}
-        <li>{{ item.name }} <form method="POST" action="/nutrition/delete-shopping-item" style="display:inline;"><input type="hidden" name="item_id" value="{{ item.id }}"><button type="submit">Delete</button></form></li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1>Shopping List</h1>
+  <form method="POST" action="/nutrition/add-shopping-item" class="row g-2 mt-3">
+    {{ form.hidden_tag() }}
+    <div class="col-auto flex-grow-1">
+      <input type="text" name="item" placeholder="Add item..." required class="form-control">
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary">Add</button>
+    </div>
+  </form>
+  <ul class="list-group mt-3">
+    {% for item in items %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      {{ item.name }}
+      <form method="POST" action="/nutrition/delete-shopping-item" class="d-inline">
+        {{ form.hidden_tag() }}
+        <input type="hidden" name="item_id" value="{{ item.id }}">
+        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+      </form>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

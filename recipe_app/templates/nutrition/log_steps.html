@@ -1,19 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Log Steps</title>
-    <link rel="stylesheet" href="/static/css/main.css">
-</head>
-<body>
-    <h1>Log Your Steps</h1>
-    <form method="POST" action="/nutrition/log-steps">
-        <label for="steps">Steps:</label>
-        <input type="number" name="steps" id="steps" required><br><br>
-        <label for="log_date">Date:</label>
-        <input type="date" name="log_date" id="log_date" value="{{ today }}"><br><br>
-        <button type="submit">Log Steps</button>
-    </form>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1>Log Your Steps</h1>
+  <form method="POST" action="/nutrition/log-steps" class="mt-3">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+      <label for="steps" class="form-label">Steps:</label>
+      <input type="number" name="steps" id="steps" required class="form-control">
+    </div>
+    <div class="mb-3">
+      <label for="log_date" class="form-label">Date:</label>
+      <input type="date" name="log_date" id="log_date" value="{{ today }}" class="form-control">
+    </div>
+    <button type="submit" class="btn btn-primary">Log Steps</button>
+  </form>
+  <div class="mt-3">
     <a href="/nutrition/step-history">View Step History</a>
-</body>
-</html>
+  </div>
+</div>
+{% endblock %}
