@@ -35,7 +35,7 @@
     
     .mark-all-read-btn {
         background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-        color: white;
+        color: var(--neutral-100);
         border: none;
         padding: 10px 20px;
         border-radius: 8px;
@@ -49,7 +49,7 @@
     }
     
     .mark-all-read-btn:hover {
-        color: white;
+        color: var(--neutral-100);
         text-decoration: none;
         transform: translateY(-2px);
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
@@ -85,7 +85,7 @@
     }
     
     .notification-item.notification-achievement {
-        border-left: 5px solid #ffc107;
+        border-left: 5px solid var(--warning-color);
     }
     
     .notification-item.notification-urgent {
@@ -119,13 +119,13 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
+        color: var(--neutral-100);
         font-size: 1.3rem;
         flex-shrink: 0;
     }
     
     .notification-icon.meal-reminder {
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        background: linear-gradient(135deg, var(--success-color) 0%, #20c997 100%);
     }
     
     .notification-icon.shopping-alert {
@@ -133,7 +133,7 @@
     }
     
     .notification-icon.challenge-update {
-        background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        background: linear-gradient(135deg, var(--warning-color) 0%, #fd7e14 100%);
     }
     
     .notification-icon.achievement-earned {
@@ -145,7 +145,7 @@
     }
     
     .notification-icon.approval-granted {
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        background: linear-gradient(135deg, var(--success-color) 0%, #20c997 100%);
     }
     
     .notification-icon.approval-denied {
@@ -205,12 +205,12 @@
     
     .badge-unread {
         background-color: var(--primary-color);
-        color: white;
+        color: var(--neutral-100);
     }
     
     .badge-new {
-        background-color: #28a745;
-        color: white;
+        background-color: var(--success-color);
+        color: var(--neutral-100);
         animation: glow 2s infinite alternate;
     }
     
@@ -220,13 +220,13 @@
     }
     
     .badge-expired {
-        background-color: #6c757d;
-        color: white;
+        background-color: var(--neutral-500);
+        color: var(--neutral-100);
     }
     
     .action-button {
         background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-        color: white;
+        color: var(--neutral-100);
         border: none;
         padding: 8px 16px;
         border-radius: 6px;
@@ -240,7 +240,7 @@
     }
     
     .action-button:hover {
-        color: white;
+        color: var(--neutral-100);
         text-decoration: none;
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -284,7 +284,7 @@
     .pagination .page-link:hover {
         background-color: var(--primary-color);
         border-color: var(--primary-color);
-        color: white;
+        color: var(--neutral-100);
     }
     
     .pagination .page-item.active .page-link {
@@ -301,7 +301,7 @@
     
     .summary-card {
         background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-        color: white;
+        color: var(--neutral-100);
         padding: 20px;
         border-radius: 12px;
         text-align: center;

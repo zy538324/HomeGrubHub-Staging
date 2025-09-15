@@ -3,20 +3,21 @@
 /* Base layout */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: $light-bg;
-  color: $dark-text;
+  background-color: var(--bg);
+  color: var(--text);
 }
 
 .navbar {
-  border-bottom: 1px solid $border-muted;
+  border-bottom: 1px solid var(--border-muted);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background: white !important;
+  background: var(--bg) !important;
+  color: var(--text);
 }
 
 .navbar-brand {
   font-weight: 700;
   font-size: 1.8rem;
-  color: $primary-color !important;
+  color: var(--primary-color) !important;
   display: flex;
   align-items: center;
 }
@@ -28,7 +29,7 @@ body {
 }
 
 .footer {
-  color: $dark-text !important;
+  color: var(--text) !important;
   padding: $space-xl 0 !important;
   margin-top: auto;
   position: relative;
@@ -36,9 +37,9 @@ body {
 }
 
 .footer * {
-  color: $dark-text !important;
+  color: var(--text) !important;
 }
 
 .footer .text-white {
-  color: $dark-text !important;
+  color: var(--text) !important;
 }

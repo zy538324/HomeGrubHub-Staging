@@ -16,7 +16,7 @@
 
 .confidence-meter {
   height: 8px;
-  background: linear-gradient(90deg, #dc3545 0%, #ffc107 50%, #28a745 100%);
+  background: linear-gradient(90deg, #dc3545 0%, var(--warning-color) 50%, var(--success-color) 100%);
   border-radius: 4px;
   position: relative;
 }
@@ -37,9 +37,9 @@
 }
 
 .insight-urgent { border-left-color: #dc3545; }
-.insight-warning { border-left-color: #ffc107; }
+.insight-warning { border-left-color: var(--warning-color); }
 .insight-info { border-left-color: #17a2b8; }
-.insight-success { border-left-color: #28a745; }
+.insight-success { border-left-color: var(--success-color); }
 
 .prediction-chart {
   height: 200px;
@@ -50,7 +50,7 @@
 
 .ai-badge {
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  color: white;
+  color: var(--neutral-100);
   font-size: 0.8rem;
   padding: 2px 8px;
   border-radius: 12px;
@@ -58,7 +58,7 @@
 
 .smart-metric {
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  color: white;
+  color: var(--neutral-100);
   border-radius: 12px;
   padding: 1.5rem;
   text-align: center;
@@ -83,11 +83,11 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #007bff;
+  background: var(--primary-color);
 }
 
 .timeline-item.urgent::before { background: #dc3545; }
-.timeline-item.warning::before { background: #ffc107; }
+.timeline-item.warning::before { background: var(--warning-color); }
 </style>
 {% endblock %}
 
@@ -444,7 +444,7 @@ function displayForecastChart(data) {
             datasets: [{
                 label: 'Predicted Quantity',
                 data: data.forecast_chart.predicted_quantities.slice(0, 14),
-                borderColor: '#007bff',
+                borderColor: 'var(--primary-color)',
                 backgroundColor: 'rgba(0, 123, 255, 0.1)',
                 tension: 0.3,
                 fill: true
