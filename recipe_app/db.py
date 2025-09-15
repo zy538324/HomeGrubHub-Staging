@@ -233,7 +233,6 @@ def create_app():
         try:
             db.create_all()
             # Test database connection
-            from sqlalchemy import text
             db.session.execute(text('SELECT 1'))
             db.session.commit()
             app.logger.info("Database connection successful")
