@@ -1,40 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Food List</title>
-    <link rel="stylesheet" href="/static/css/main.css">
-</head>
-<body>
-    <h1>Food List</h1>
-    <a href="/nutrition/add-food">Add New Food</a>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Brand</th>
-                <th>Barcode</th>
-                <th>Calories</th>
-                <th>Protein</th>
-                <th>Carbs</th>
-                <th>Fat</th>
-                <th>Serving Size</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for food in foods %}
-            <tr>
-                <td>{{ food.name }}</td>
-                <td>{{ food.brand }}</td>
-                <td>{{ food.barcode }}</td>
-                <td>{{ food.calories }}</td>
-                <td>{{ food.protein }}</td>
-                <td>{{ food.carbs }}</td>
-                <td>{{ food.fat }}</td>
-                <td>{{ food.serving_size }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1>Food List</h1>
+  <a href="/nutrition/add-food" class="btn btn-link">Add New Food</a>
+  <div class="table-responsive mt-3">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Brand</th>
+          <th>Barcode</th>
+          <th>Calories</th>
+          <th>Protein</th>
+          <th>Carbs</th>
+          <th>Fat</th>
+          <th>Serving Size</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for food in foods %}
+        <tr>
+          <td>{{ food.name }}</td>
+          <td>{{ food.brand }}</td>
+          <td>{{ food.barcode }}</td>
+          <td>{{ food.calories }}</td>
+          <td>{{ food.protein }}</td>
+          <td>{{ food.carbs }}</td>
+          <td>{{ food.fat }}</td>
+          <td>{{ food.serving_size }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
     </table>
-</body>
-</html>
+  </div>
+</div>
+{% endblock %}

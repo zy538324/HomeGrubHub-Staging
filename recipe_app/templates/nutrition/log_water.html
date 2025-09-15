@@ -1,19 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Log Water Intake</title>
-    <link rel="stylesheet" href="/static/css/main.css">
-</head>
-<body>
-    <h1>Log Water Intake</h1>
-    <form method="POST" action="/nutrition/log-water">
-        <label for="amount">Amount (ml):</label>
-        <input type="number" name="amount" id="amount" step="1" required><br><br>
-        <label for="log_date">Date:</label>
-        <input type="date" name="log_date" id="log_date" value="{{ today }}"><br><br>
-        <button type="submit">Log Water</button>
-    </form>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1>Log Water Intake</h1>
+  <form method="POST" action="/nutrition/log-water" class="mt-3">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+      <label for="amount" class="form-label">Amount (ml):</label>
+      <input type="number" name="amount" id="amount" step="1" required class="form-control">
+    </div>
+    <div class="mb-3">
+      <label for="log_date" class="form-label">Date:</label>
+      <input type="date" name="log_date" id="log_date" value="{{ today }}" class="form-control">
+    </div>
+    <button type="submit" class="btn btn-primary">Log Water</button>
+  </form>
+  <div class="mt-3">
     <a href="/nutrition/water-history">View Water History</a>
-</body>
-</html>
+  </div>
+</div>
+{% endblock %}
