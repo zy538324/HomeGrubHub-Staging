@@ -1,3 +1,13 @@
+
+:root {
+  --bg-color: #f8f9fa;
+  --text-color: #212529;
+}
+
+[data-theme="dark"] {
+  --bg-color: #121212;
+  --text-color: #f8f9fa;
+
 // Color palette
 $primary-color: #8b0000;
 $primary-light: #a83232;
