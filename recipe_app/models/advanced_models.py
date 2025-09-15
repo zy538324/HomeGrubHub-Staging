@@ -414,7 +414,7 @@ class RecipeVote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
-    vote_type = db.Column(db.String(20), nullable=False)  # 'love_it', 'want_to_try', 'not_favourite'
+    vote_type = db.Column(db.String(20), nullable=False)  # 'love_it', 'want_to_try', 'not_favorite'
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     
     # Prevent duplicate votes per user per recipe
@@ -430,7 +430,7 @@ class RecipeVote(db.Model):
         vote_map = {
             'love_it': '👍 Love it!',
             'want_to_try': '🤔 Want to try',
-            'not_favourite': '😊 Not my favourite'
+            'not_favorite': '😊 Not my favorite'
         }
         return vote_map.get(self.vote_type, '')
 
