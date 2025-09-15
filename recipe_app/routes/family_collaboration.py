@@ -111,7 +111,7 @@ def create_cooking_assignment():
 @family_collab_bp.route('/recipe-collection')
 @login_required
 def family_recipe_collection():
-    """Display family recipe collection with ratings and favorites"""
+    """Display family recipe collection with ratings and favourites"""
     family_account = current_user.get_family_account()
     
     if not family_account:
@@ -138,7 +138,7 @@ def family_recipe_collection():
         'total_recipes': len(family_recipes),
         'avg_rating': 4.2,  # Placeholder
         'recipes_cooked_this_month': 12,  # Placeholder
-        'family_favorites': len([r for r in family_recipes if r.is_family_favorite])
+        'family_favourites': len([r for r in family_recipes if r.is_family_favourite])
     }
     
     # Get family members
@@ -146,7 +146,7 @@ def family_recipe_collection():
     
     # Get recent activity (placeholder)
     recent_activity = []
-    top_favorites = [r for r in family_recipes if r.is_family_favorite][:5]
+    top_favourites = [r for r in family_recipes if r.is_family_favourite][:5]
     
     return render_template('family/recipe_collection.html',
                          family_account=family_account,
@@ -154,7 +154,7 @@ def family_recipe_collection():
                          collection_stats=collection_stats,
                          family_members=family_members,
                          recent_activity=recent_activity,
-                         top_favorites=top_favorites)
+                         top_favourites=top_favourites)
 
 
 @family_collab_bp.route('/add-recipe-to-collection', methods=['POST'])
@@ -172,7 +172,7 @@ def add_recipe_to_collection():
         # This is a simplified version - in reality you'd parse the URL and create a recipe
         recipe_url = request.form['recipe_url']
         family_notes = request.form.get('family_notes', '')
-        is_favorite = 'is_family_favorite' in request.form
+        is_favourite = 'is_family_favourite' in request.form
         
         # For demo purposes, create a placeholder recipe entry
         flash('Recipe added to family collection! (Demo mode)', 'success')
@@ -352,19 +352,19 @@ def rate_recipe(collection_id):
         return jsonify({'success': False, 'message': str(e)})
 
 
-@family_collab_bp.route('/toggle-recipe-favorite/<int:collection_id>', methods=['POST'])
+@family_collab_bp.route('/toggle-recipe-favourite/<int:collection_id>', methods=['POST'])
 @login_required
-def toggle_recipe_favorite(collection_id):
-    """Toggle recipe favorite status"""
+def toggle_recipe_favourite(collection_id):
+    """Toggle recipe favourite status"""
     try:
         recipe_collection = FamilyRecipeCollection.query.get_or_404(collection_id)
-        recipe_collection.is_family_favorite = not recipe_collection.is_family_favorite
+        recipe_collection.is_family_favourite = not recipe_collection.is_family_favourite
         db.session.commit()
         
         return jsonify({
             'success': True, 
-            'is_favorite': recipe_collection.is_family_favorite,
-            'message': 'Favorite status updated!'
+            'is_favourite': recipe_collection.is_family_favourite,
+            'message': 'Favourite status updated!'
         })
     except Exception as e:
         db.session.rollback()

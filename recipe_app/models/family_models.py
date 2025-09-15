@@ -62,7 +62,7 @@ class FamilyMember(db.Model):
     display_name = Column(String(50))  # Family nickname
     dietary_restrictions = Column(Text)  # JSON string of dietary restrictions
     allergies = Column(Text)  # JSON string of allergies
-    favorite_foods = Column(Text)  # JSON string of favorite foods
+    favourite_foods = Column(Text)  # JSON string of favourite foods
     nutrition_goals = Column(JSON)  # Individual nutrition goals within family
     daily_calories_target = Column(Float)
     activity_level = Column(String(20), default='moderate')

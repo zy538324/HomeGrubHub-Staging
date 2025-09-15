@@ -134,7 +134,7 @@
               {% endif %}
             </small>
             <div class="btn-group btn-group-sm" role="group">
-              <button type="button" class="btn btn-outline-danger btn-sm favorite-btn" 
+              <button type="button" class="btn btn-outline-danger btn-sm favourite-btn" 
                       data-recipe-id="{{ recipe.id }}">
                 <i class="far fa-heart"></i>
               </button>
@@ -210,8 +210,8 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Favorite button functionality
-    document.querySelectorAll('.favorite-btn').forEach(btn => {
+    // Favourite button functionality
+    document.querySelectorAll('.favourite-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -236,7 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Card click handling
     document.querySelectorAll('.recipe-card').forEach(card => {
         card.addEventListener('click', function(e) {
-            if (!e.target.closest('.btn') && !e.target.closest('.favorite-btn') && !e.target.closest('a.badge')) {
+            if (!e.target.closest('.btn') && !e.target.closest('.favourite-btn') && !e.target.closest('a.badge')) {
                 const link = this.querySelector('a.stretched-link');
                 if (link) {
                     window.location.href = link.href;

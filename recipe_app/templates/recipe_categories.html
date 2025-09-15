@@ -24,7 +24,7 @@
 {% endblock %}
 
 {% block seo_title %}Recipe Categories | Browse Healthy Family Meals by Type | HomeGrubHub{% endblock %}
-{% block seo_description %}Browse our recipe categories: Quick dinners, healthy meals, budget-friendly recipes, family favorites, and more. Find the perfect meal for every occasion and dietary need.{% endblock %}
+{% block seo_description %}Browse our recipe categories: Quick dinners, healthy meals, budget-friendly recipes, family favourites, and more. Find the perfect meal for every occasion and dietary need.{% endblock %}
 {% block seo_keywords %}recipe categories, quick dinner recipes, healthy family meals, budget recipes UK, vegetarian recipes, gluten free recipes, meal ideas{% endblock %}
 
 {% block structured_data %}
@@ -250,7 +250,7 @@
         <div class="card border-0 shadow-sm">
           <div class="card-body text-center">
             <i class="fas fa-moon fa-3x text-dark mb-3"></i>
-              <h4 class="card-title">Dinner Favorites</h4>
+              <h4 class="card-title">Dinner Favourites</h4>
             <p class="card-text text-muted">Family dinners that bring everyone to the table</p>
             <a href="{{ url_for('main.search', meal_type='dinner') }}" class="btn btn-outline-primary">195+ Recipes</a>
           </div>
@@ -344,7 +344,7 @@
       <div class="col-md-6">
         <div class="card bg-gradient-primary text-white">
           <div class="card-body">
-              <h4 class="card-title">🌟 This Week's Favorites</h4>
+              <h4 class="card-title">🌟 This Week's Favourites</h4>
             <p class="card-text">Our most popular recipes this week, voted by the HomeGrubHub community.</p>
             <a href="{{ url_for('main.search', featured='weekly') }}" class="btn btn-primary">View Collection</a>
           </div>
@@ -369,7 +369,7 @@
       <div class="card-body">
         <h3>Can't Find What You're Looking For?</h3>
         <p class="mb-4">Our recipe recommendation engine learns your preferences and suggests meals you'll love.</p>
-        <a href="{{ url_for('main.register') }}" class="btn btn-primary btn-lg me-3">Get Personalized Recommendations</a>
+        <a href="{{ url_for('main.register') }}" class="btn btn-primary btn-lg me-3">Get Personalised Recommendations</a>
         <a href="{{ url_for('support.contact_form') }}" class="btn btn-outline-primary">Request a Recipe</a>
       </div>
     </div>

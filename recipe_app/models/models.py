@@ -50,9 +50,9 @@ class User(UserMixin, db.Model):
     trial_end = db.Column(db.DateTime, nullable=True)
     is_active = db.Column(db.Boolean, default=True)
     
-    # Relationship to track user's favorite recipes
-    favorites = db.relationship('Recipe', secondary='user_favorites', lazy='subquery',
-                               backref=db.backref('favorited_by', lazy=True))
+    # Relationship to track user's favourite recipes
+    favourites = db.relationship('Recipe', secondary='user_favourites', lazy='subquery',
+                               backref=db.backref('favourited_by', lazy=True))
 
     # Family relationships (for Phase 3 family features)
     owned_family = db.relationship('FamilyAccount', back_populates='primary_user', uselist=False, lazy='select')
@@ -113,16 +113,16 @@ class User(UserMixin, db.Model):
                 return True
         return False
     
-    def is_favorite(self, recipe):
-        return recipe in self.favorites
+    def is_favourite(self, recipe):
+        return recipe in self.favourites
     
-    def add_favorite(self, recipe):
-        if not self.is_favorite(recipe):
-            self.favorites.append(recipe)
+    def add_favourite(self, recipe):
+        if not self.is_favourite(recipe):
+            self.favourites.append(recipe)
     
-    def remove_favorite(self, recipe):
-        if self.is_favorite(recipe):
-            self.favorites.remove(recipe)
+    def remove_favourite(self, recipe):
+        if self.is_favourite(recipe):
+            self.favourites.remove(recipe)
     
     # Subscription management methods
     def can_add_recipe(self):
@@ -394,7 +394,7 @@ recipe_tags = db.Table('recipe_tags',
     db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True)
 )
 
-user_favorites = db.Table('user_favorites',
+user_favourites = db.Table('user_favourites',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
     db.Column('recipe_id', db.Integer, db.ForeignKey('recipe.id'), primary_key=True)
 )

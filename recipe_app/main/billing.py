@@ -46,7 +46,7 @@ def _get_pricing_tiers():
                 'Unlimited recipes',
                 'Advanced search',
                 'Meal planning',
-                'Favorites & tags',
+                'Favourites & tags',
                 'Private recipes',
                 'Pantry management',
                 'Recipe import/export',

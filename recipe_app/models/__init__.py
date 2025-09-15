@@ -55,7 +55,7 @@ from .models import (
     RecipeComment,
     RecipeCollection,
     recipe_tags,
-    user_favorites,
+    user_favourites,
     recipe_collections,
 )
 
