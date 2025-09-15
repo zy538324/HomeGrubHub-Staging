@@ -184,4 +184,24 @@ body {
   padding: 1rem 0.75rem;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+.navbar-nav .nav-link {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-nav .nav-link .nav-text {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .navbar-nav .nav-link .nav-text {
+    display: inline;
+    margin-left: 0.5rem;
+  }
+}
+
 /*# sourceMappingURL=style.css.map */
