@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4">Content Moderation</h1>
+  {% if flagged_reviews %}
+    <ul class="list-group">
+      {% for review in flagged_reviews %}
+      <li class="list-group-item">
+        <p class="mb-1"><strong>{{ review.user.username }}</strong> on <em>{{ review.recipe.title }}</em></p>
+        <p class="mb-2">{{ review.comment }}</p>
+        <form method="post" action="{{ url_for('admin.review_moderation', review_id=review.id, action='approve') }}" class="d-inline">
+          <button class="btn btn-success btn-sm">Approve</button>
+        </form>
+        <form method="post" action="{{ url_for('admin.review_moderation', review_id=review.id, action='deny') }}" class="d-inline">
+          <button class="btn btn-danger btn-sm">Deny</button>
+        </form>
+      </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No flagged content.</p>
+  {% endif %}
+</div>
+{% endblock %}
+

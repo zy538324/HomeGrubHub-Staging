@@ -28,9 +28,9 @@ except ImportError:
 # Admin routes
 try:
     from .admin_routes import admin_bp
-    from .admin_moderation_routes import admin_moderation_bp
 except ImportError:
-    # Create minimal admin blueprints if they don't exist
     from flask import Blueprint
     admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
-    admin_moderation_bp = Blueprint('admin_moderation', __name__, url_prefix='/admin/moderation')
+
+# Moderation handled within admin routes
+admin_moderation_bp = None

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4">Site Settings</h1>
+  <form method="post">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+      {{ form.site_name.label(class="form-label") }}
+      {{ form.site_name(class="form-control") }}
+    </div>
+    <div class="mb-3">
+      {{ form.max_users.label(class="form-label") }}
+      {{ form.max_users(class="form-control") }}
+    </div>
+    <div class="form-check mb-3">
+      {{ form.allow_registration(class="form-check-input") }}
+      {{ form.allow_registration.label(class="form-check-label") }}
+    </div>
+    <div class="form-check mb-3">
+      {{ form.enable_beta_features(class="form-check-input") }}
+      {{ form.enable_beta_features.label(class="form-check-label") }}
+    </div>
+    {{ form.submit(class="btn btn-primary") }}
+  </form>
+</div>
+{% endblock %}
+

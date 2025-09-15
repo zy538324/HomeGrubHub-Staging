@@ -287,6 +287,23 @@
                 </ul>
               </li>
 
+              {% if current_user.is_admin %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                  <i class="fas fa-user-shield"></i>
+                  <span class="nav-text">Admin</span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{{ url_for('admin.settings') }}">
+                    <i class="fas fa-cog me-2"></i>Settings
+                  </a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('admin.moderation') }}">
+                    <i class="fas fa-flag me-2"></i>Moderation
+                  </a></li>
+                </ul>
+              </li>
+              {% endif %}
+
               <!-- Family Collaboration (Family subscribers only) -->
               {% if current_user.can_access_feature('family_sharing') %}
               <li class="nav-item dropdown">
