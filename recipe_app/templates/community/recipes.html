@@ -254,8 +254,24 @@
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
             <div class="card recipe-card h-100">
                 {% if recipe.photos %}
-                    <img src="{{ url_for('static', filename='uploads/photos/' + recipe.photos[0].filename) }}" 
-                         class="recipe-image" alt="{{ recipe.title }}">
+                    <div class="card-img-wrapper position-relative" style="height: 200px;">
+                        <div class="image-placeholder"></div>
+                        <img src="{{ url_for('static', filename='uploads/photos/' + recipe.photos[0].filename) }}"
+                             class="recipe-image d-none w-100 h-100" alt="{{ recipe.title }}" loading="lazy"
+                             onload="this.classList.remove('d-none'); this.previousElementSibling.remove();">
+                        <div class="position-absolute top-0 start-0 p-2 d-flex flex-column gap-1">
+                            {% if recipe.cook_time %}
+                            <span class="badge bg-dark bg-opacity-75"><i class="fas fa-clock me-1"></i>{{ recipe.cook_time }}m</span>
+                            {% endif %}
+                            {% if recipe.difficulty %}
+                            <span class="badge bg-info bg-opacity-75"><i class="fas fa-signal me-1"></i>{{ recipe.difficulty }}</span>
+                            {% endif %}
+                            {% set avg_rating = recipe.get_average_rating() %}
+                            {% if avg_rating %}
+                            <span class="badge bg-warning text-dark"><i class="fas fa-star me-1"></i>{{ avg_rating|round(1) }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
                 {% else %}
                     <div class="recipe-image d-flex align-items-center justify-content-center bg-light">
                         <i class="fas fa-utensils text-muted" style="font-size: 2rem;"></i>
