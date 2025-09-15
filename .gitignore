@@ -3,3 +3,4 @@ logs/
 temp_archive/
 __pycache__/
 *.pyc
+instance/recipes.db
