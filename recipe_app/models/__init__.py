@@ -52,6 +52,7 @@ from .models import (
     RecipeRating,
     RecipeReview,
     RecipePhoto,
+    RecipeComment,
     RecipeCollection,
     recipe_tags,
     user_favorites,

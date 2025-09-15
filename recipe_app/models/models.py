@@ -533,6 +533,20 @@ class RecipeReview(db.Model):
     recipe = db.relationship('Recipe', backref=db.backref('reviews', lazy=True))
     user = db.relationship('User', backref=db.backref('reviews', lazy=True))
 
+
+class RecipeComment(db.Model):
+    """Threaded comments on recipes"""
+    id = db.Column(db.Integer, primary_key=True)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    parent_id = db.Column(db.Integer, db.ForeignKey('recipe_comment.id'), nullable=True)
+
+    recipe = db.relationship('Recipe', backref=db.backref('comments', lazy='dynamic'))
+    user = db.relationship('User', backref=db.backref('recipe_comments', lazy=True))
+    replies = db.relationship('RecipeComment', backref=db.backref('parent', remote_side=[id]), lazy='joined')
+
 class RecipePhoto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)

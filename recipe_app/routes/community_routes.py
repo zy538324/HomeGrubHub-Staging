@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
-from recipe_app.models.models import Recipe, User, RecipeReview, RecipePhoto, RecipeCollection, Follow
+from recipe_app.models.models import Recipe, User, RecipeReview, RecipePhoto, RecipeCollection, Follow, RecipeComment
 from recipe_app.models.advanced_models import Challenge, ChallengeParticipation, RecipeVote
 from recipe_app.db import db
 from datetime import datetime
@@ -283,6 +283,66 @@ def add_review(recipe_id):
             'comment': review.comment,
             'user': review.user.username,
             'created_at': review.created_at.strftime('%B %d, %Y')
+        }
+    })
+
+
+@community_bp.route('/recipe/<int:recipe_id>/comments', methods=['GET'])
+def get_comments(recipe_id):
+    """Return comment thread for a recipe"""
+    Recipe.query.get_or_404(recipe_id)
+    comments = RecipeComment.query.filter_by(
+        recipe_id=recipe_id, parent_id=None
+    ).order_by(RecipeComment.created_at.asc()).all()
+
+    def serialize(comment):
+        return {
+            'id': comment.id,
+            'user': comment.user.username,
+            'content': comment.content,
+            'created_at': comment.created_at.isoformat(),
+            'replies': [serialize(reply) for reply in comment.replies]
+        }
+
+    return jsonify({'comments': [serialize(c) for c in comments]})
+
+
+@community_bp.route('/recipe/<int:recipe_id>/comments', methods=['POST'])
+@login_required
+def add_comment(recipe_id):
+    """Add a comment or reply to a recipe"""
+    Recipe.query.get_or_404(recipe_id)
+    data = request.get_json() or {}
+    content = data.get('content', '').strip()
+    parent_id = data.get('parent_id')
+
+    if not content:
+        return jsonify({'success': False, 'error': 'Content is required'}), 400
+
+    parent = None
+    if parent_id:
+        parent = RecipeComment.query.filter_by(id=parent_id, recipe_id=recipe_id).first()
+        if not parent:
+            return jsonify({'success': False, 'error': 'Invalid parent comment'}), 400
+
+    comment = RecipeComment(
+        recipe_id=recipe_id,
+        user_id=current_user.id,
+        content=content,
+        parent=parent,
+        created_at=datetime.utcnow()
+    )
+    db.session.add(comment)
+    db.session.commit()
+
+    return jsonify({
+        'success': True,
+        'comment': {
+            'id': comment.id,
+            'content': comment.content,
+            'user': comment.user.username,
+            'created_at': comment.created_at.isoformat(),
+            'parent_id': comment.parent_id
         }
     })
 

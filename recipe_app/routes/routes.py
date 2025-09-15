@@ -17,7 +17,7 @@ from recipe_app.forms.forms import (
     LoginForm, RegistrationForm, RecipeForm, SearchForm, ImportRecipeForm,
     EditImportedRecipeForm, UserProfileForm
 )
-from recipe_app.models.models import User, Recipe, Tag, RecipeRating, RecipeConversion
+from recipe_app.models.models import User, Recipe, Tag, RecipeRating, RecipeConversion, RecipeComment
 from recipe_app.models import NutritionProfile
 from recipe_app.main.analytics import UserEvent, FaultLog
 from recipe_app.utils.recipe_importer import RecipeImporter
@@ -939,15 +939,19 @@ def recipe(recipe_id):
     is_favorite = False
     if current_user.is_authenticated:
         is_favorite = recipe in current_user.favorites
-    
-    return render_template('recipe.html', 
-                         recipe=recipe, 
+
+    comments = RecipeComment.query.filter_by(recipe_id=recipe_id, parent_id=None)\
+        .order_by(RecipeComment.created_at.asc()).all()
+
+    return render_template('recipe.html',
+                         recipe=recipe,
                          tags=recipe_tags,
                          ratings=ratings,
                          average_rating=average_rating,
                          avg_rating=average_rating,
                          rating_count=rating_count,
-                         is_favorite=is_favorite)
+                         is_favorite=is_favorite,
+                         comments=comments)
 
 @main_bp.route('/recipe/<int:recipe_id>/rate', methods=['POST'])
 @login_required
