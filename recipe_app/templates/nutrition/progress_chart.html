@@ -1,58 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-4">
-  <h1>Nutrition Progress Chart</h1>
-  <p>
-    View last
-    <a href="{{ url_for('nutrition.progress_chart_extended', days=30) }}" {% if selected_days == 30 %}class="active"{% endif %}>30 days</a>
-    |
-    <a href="{{ url_for('nutrition.progress_chart_extended', days=90) }}" {% if selected_days == 90 %}class="active"{% endif %}>90 days</a>
-  </p>
-  <canvas id="nutritionChart" width="800" height="400"></canvas>
+<div class="container mt-4 nutrition-grid">
+  <div class="nutrition-card">
+    <h1>Nutrition Progress Chart</h1>
+    <p>
+      View last
+      <a href="{{ url_for('nutrition.progress_chart_extended', days=30) }}" {% if selected_days == 30 %}class="active"{% endif %}>30 days</a>
+      |
+      <a href="{{ url_for('nutrition.progress_chart_extended', days=90) }}" {% if selected_days == 90 %}class="active"{% endif %}>90 days</a>
+    </p>
+    <canvas id="nutritionChart" data-chart='{{ chart_data|tojson|safe }}'></canvas>
+  </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-const chartData = {{ chart_data|tojson|safe }};
-const ctx = document.getElementById('nutritionChart').getContext('2d');
-const nutritionChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: chartData.dates,
-        datasets: [
-            {
-                label: 'Calories',
-                data: chartData.calories,
-                borderColor: 'rgba(255,99,132,1)',
-                fill: false
-            },
-            {
-                label: 'Protein',
-                data: chartData.protein,
-                borderColor: 'rgba(54,162,235,1)',
-                fill: false
-            },
-            {
-                label: 'Carbs',
-                data: chartData.carbs,
-                borderColor: 'rgba(255,206,86,1)',
-                fill: false
-            },
-            {
-                label: 'Fat',
-                data: chartData.fat,
-                borderColor: 'rgba(75,192,192,1)',
-                fill: false
-            }
-        ]
-    },
-    options: {
-        responsive: true,
-        scales: {
-            x: { title: { display: true, text: 'Date' } },
-            y: { title: { display: true, text: 'Amount' } }
-        }
-    }
-});
-</script>
+<script src="{{ url_for('static', filename='js/nutrition.js') }}"></script>
 {% endblock %}

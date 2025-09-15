@@ -1,22 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-4">
-  <h1>Log Your Weight</h1>
-  <form method="POST" action="{{ url_for('nutrition.log_weight') }}" class="mt-3">
-    {{ form.hidden_tag() }}
-    <div class="mb-3">
-      {{ form.weight.label(class="form-label") }}
-      {{ form.weight(class="form-control") }}
+<div class="container mt-4 nutrition-grid">
+  <div class="nutrition-card">
+    <h1>Log Your Weight</h1>
+    <form method="POST" action="{{ url_for('nutrition.log_weight') }}" class="mt-3">
+      {{ form.hidden_tag() }}
+      <div class="mb-3">
+        {{ form.weight.label(class="form-label") }}
+        {{ form.weight(class="form-control") }}
+      </div>
+      <div class="mb-3">
+        {{ form.log_date.label(class="form-label") }}
+        {{ form.log_date(class="form-control") }}
+      </div>
+      {{ form.submit(class="btn btn-primary") }}
+    </form>
+    <div class="mt-3">
+      <a href="{{ url_for('nutrition.weight_history') }}">View Weight History</a>
     </div>
-    <div class="mb-3">
-      {{ form.log_date.label(class="form-label") }}
-      {{ form.log_date(class="form-control") }}
-    </div>
-    {{ form.submit(class="btn btn-primary") }}
-  </form>
-  <div class="mt-3">
-    <a href="{{ url_for('nutrition.weight_history') }}">View Weight History</a>
   </div>
 </div>
 {% endblock %}
