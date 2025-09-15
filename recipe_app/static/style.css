@@ -1,12 +1,25 @@
 /* Global Styles for HomeGrubHub Recipe App */
 
+:root {
+    --bg-color: #f8f9fa;
+    --text-color: #212529;
+}
+
+[data-theme="dark"] {
+    --bg-color: #121212;
+    --text-color: #f8f9fa;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f8f9fa;
+    background-color: var(--bg-color);
+    color: var(--text-color);
 }
 
 .navbar {
     border-bottom: 1px solid #e7e7e7;
+    background-color: var(--bg-color);
+    color: var(--text-color);
 }
 
 .card {
@@ -17,22 +30,23 @@ body {
 .card:hover {
     transform: scale(1.05);
 }
-.footer {        
-        color: #2c3e50 !important; /* dark grey text */
+.footer {
+        color: var(--text-color) !important; /* dark grey text */
         padding: 3rem 0 !important;
         margin-top: auto;
         position: relative;
         z-index: 1000;
+        background-color: var(--bg-color);
       }
 
       /* Make sure all children inherit dark text */
       .footer * {
-        color: #212529 !important;
+        color: var(--text-color) !important;
       }
 
-      
+
       .footer .text-white {
-        color: #212529 !important;
+        color: var(--text-color) !important;
       }
 .btn-primary {
     background-color: var(--secondary-color);
