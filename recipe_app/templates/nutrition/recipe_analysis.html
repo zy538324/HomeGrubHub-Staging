@@ -77,7 +77,7 @@
         </div>
 
         <div class="my-4">
-          <canvas id="macroChart"></canvas>
+          <canvas id="macroChart" data-protein="{{ analysis.per_serving.protein * 4 }}" data-carbs="{{ analysis.per_serving.carbs * 4 }}" data-fat="{{ analysis.per_serving.fat * 9 }}"></canvas>
         </div>
 
         <h5>Key Micronutrients (per serving)</h5>
@@ -111,22 +111,6 @@
         </form>
       </div>
 
-      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-      <script>
-      const ctx = document.getElementById('macroChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'pie',
-        data: {
-          labels: ['Protein ({{ analysis.per_serving.protein }}g)', 'Carbs ({{ analysis.per_serving.carbs }}g)', 'Fat ({{ analysis.per_serving.fat }}g)'],
-          datasets: [{
-            data: [{{ analysis.per_serving.protein * 4 }}, {{ analysis.per_serving.carbs * 4 }}, {{ analysis.per_serving.fat * 9 }}],
-            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-            hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
-          }]
-        },
-        options: { responsive: true, maintainAspectRatio: true }
-      });
-      </script>
       {% else %}
       <div class="text-center text-muted p-5">
         <h3>🍽️ No Analysis Yet</h3>
@@ -165,4 +149,9 @@
   </div>
   {% endif %}
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/nutrition.js') }}"></script>
 {% endblock %}

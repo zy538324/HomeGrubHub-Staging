@@ -1,53 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Water Intake History</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="/static/css/main.css">
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4 nutrition-grid">
+  <div class="nutrition-card">
     <h1>Water Intake History</h1>
-    <canvas id="waterChart" width="800" height="400"></canvas>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Amount (ml)</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for log in logs %}
-            <tr>
-                <td>{{ log.log_date }}</td>
-                <td>{{ log.amount }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
+    <canvas id="waterChart" data-chart='{{ chart_data|tojson|safe }}'></canvas>
+    <table class="table table-bordered mt-3">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Amount (ml)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs %}
+        <tr>
+          <td>{{ log.log_date }}</td>
+          <td>{{ log.amount }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
     </table>
-    <a href="/nutrition/log-water">Log New Water Intake</a>
-    <script>
-    const chartData = {{ chart_data|tojson|safe }};
-    const ctx = document.getElementById('waterChart').getContext('2d');
-    const waterChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: chartData.dates,
-            datasets: [{
-                label: 'Water Intake (ml)',
-                data: chartData.amounts,
-                borderColor: 'rgba(75,192,192,1)',
-                fill: false
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                x: { title: { display: true, text: 'Date' } },
-                y: { title: { display: true, text: 'Amount (ml)' } }
-            }
-        }
-    });
-    </script>
-</body>
-</html>
+    <a href="{{ url_for('nutrition.log_water') }}" class="btn btn-link">Log New Water Intake</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/nutrition.js') }}"></script>
+{% endblock %}

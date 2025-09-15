@@ -121,7 +121,7 @@
           <!-- Macronutrient Distribution Chart -->
           <div class="mb-4">
             <h6 class="text-primary mb-3">Macronutrient Distribution</h6>
-            <canvas id="macroChart" width="400" height="200"></canvas>
+            <canvas id="macroChart" data-protein="{{ nutrition_data.protein_g * 4 }}" data-carbs="{{ nutrition_data.carbs_g * 4 }}" data-fat="{{ nutrition_data.fat_g * 9 }}"></canvas>
           </div>
           
           <!-- Detailed Nutrition Table -->
@@ -532,75 +532,9 @@
 }
 </style>
 
+{% endblock %}
+
+{% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-{% if nutrition_data %}
-// Macronutrient Chart
-const ctx = document.getElementById('macroChart').getContext('2d');
-const macroChart = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-        labels: ['Protein', 'Carbohydrates', 'Fat'],
-        datasets: [{
-            data: [
-                {{ nutrition_data.protein_g * 4 }},  // 4 calories per gram
-                {{ nutrition_data.carbs_g * 4 }},    // 4 calories per gram
-                {{ nutrition_data.fat_g * 9 }}       // 9 calories per gram
-            ],
-            backgroundColor: [
-                'var(--success-color)',
-                'var(--warning-color)',
-                '#17a2b8'
-            ],
-            borderWidth: 2,
-            borderColor: '#fff'
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'bottom'
-            },
-            tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        const label = context.label || '';
-                        const value = context.parsed;
-                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                        const percentage = ((value / total) * 100).toFixed(1);
-                        return label + ': ' + value + ' cal (' + percentage + '%)';
-                    }
-                }
-            }
-        }
-    }
-});
-{% endif %}
-
-function addToMealPlan() {
-    // Implementation for adding to meal plan
-    alert('Add to meal plan functionality coming soon!');
-}
-
-function shareNutrition() {
-    // Implementation for sharing nutrition analysis
-    if (navigator.share) {
-        navigator.share({
-            title: 'Nutrition Analysis - {{ recipe.title }}',
-            text: 'Check out this nutrition analysis for {{ recipe.title }}!',
-            url: window.location.href
-        });
-    } else {
-        // Fallback: copy to clipboard
-        navigator.clipboard.writeText(window.location.href);
-        alert('Link copied to clipboard!');
-    }
-}
-
-function printNutrition() {
-    window.print();
-}
-</script>
+<script src="{{ url_for('static', filename='js/nutrition.js') }}"></script>
 {% endblock %}

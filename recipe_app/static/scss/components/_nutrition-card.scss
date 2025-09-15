@@ -1,0 +1,28 @@
+@use '../variables' as *;
+
+.nutrition-grid {
+  display: grid;
+  gap: $space-md;
+  grid-template-columns: 1fr;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}
+
+.nutrition-card {
+  background: var(--surface-color);
+  border-radius: $radius-md;
+  padding: $space-md;
+  box-shadow: 0 2px 4px var(--shadow-color);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.nutrition-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px var(--shadow-color);
+}
+
+[data-theme='dark'] .nutrition-card {
+  background: var(--surface-color);
+}
