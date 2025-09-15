@@ -70,7 +70,7 @@
     .hero-subtitle {
         font-size: 1rem;
         opacity: 0.9;
-        color: white;
+        color: var(--neutral-100);
         position: relative;
         z-index: 1;
     }
@@ -104,7 +104,7 @@
     }
 
     .section-title {
-        color: white;
+        color: var(--neutral-100);
         font-size: 1.2rem;
         font-weight: 600;
         margin-bottom: 1rem;
@@ -131,7 +131,7 @@
 
     .form-label {
         display: block;
-        color: white;
+        color: var(--neutral-100);
         font-weight: 500;
         margin-bottom: 0.5rem;
         font-size: 0.9rem;
@@ -144,7 +144,7 @@
         border: 2px solid rgba(255, 255, 255, 0.2);
         border-radius: 15px;
         background: rgba(255, 255, 255, 0.1);
-        color: white;
+        color: var(--neutral-100);
         font-size: 1rem;
         transition: all 0.3s ease;
         backdrop-filter: blur(10px);
@@ -198,7 +198,7 @@
 
     .suggestion-tag {
         background: rgba(255, 255, 255, 0.1);
-        color: white;
+        color: var(--neutral-100);
         padding: 0.3rem 0.8rem;
         border-radius: 15px;
         font-size: 0.8rem;
@@ -225,7 +225,7 @@
         background: var(--success-gradient);
         border: none;
         border-radius: 25px;
-        color: white;
+        color: var(--neutral-100);
         padding: 1rem 2.5rem;
         font-size: 1rem;
         font-weight: 600;
@@ -243,7 +243,7 @@
     .action-btn:hover {
         transform: translateY(-2px) scale(1.05);
         box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
-        color: white;
+        color: var(--neutral-100);
         text-decoration: none;
     }
 
@@ -276,7 +276,7 @@
     }
 
     .scanner-text {
-        color: white;
+        color: var(--neutral-100);
         opacity: 0.8;
         margin-bottom: 1rem;
     }
@@ -708,7 +708,7 @@ function showToast(message, type = 'info') {
             top: 20px;
             right: 20px;
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
+            color: var(--neutral-100);
             padding: 1rem 1.5rem;
             border-radius: 15px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.2);
@@ -719,7 +719,7 @@ function showToast(message, type = 'info') {
         .toast-notification.success { background: linear-gradient(135deg, var(--success-color) 0%, var(--success-dark) 100%); }
         .toast-notification.error { background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-light) 100%); }
         .toast-content { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
-        .toast-content button { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; flex-shrink: 0; }
+        .toast-content button { background: none; border: none; color: var(--neutral-100); font-size: 1.2rem; cursor: pointer; flex-shrink: 0; }
         @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
     `;
     

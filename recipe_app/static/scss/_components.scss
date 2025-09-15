@@ -24,9 +24,17 @@
   color: var(--secondary-color) !important;
 }
 
+.text-success {
+  color: var(--success-color) !important;
+}
+
+.text-warning {
+  color: var(--warning-color) !important;
+}
+
 .contact-hero {
   background: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-dark) 100%);
-  color: white;
+  color: var(--neutral-100);
   padding: $space-xl 0;
   border-radius: 0 0 $radius-lg $radius-lg;
   margin-bottom: $space-xl;
@@ -37,7 +45,7 @@
   border-radius: $radius-lg;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  background: white;
+  background: var(--bg);
 }
 
 .form-floating {
@@ -45,7 +53,7 @@
 }
 
 .form-floating > .form-control {
-  border: 2px solid $border-light;
+  border: 2px solid var(--border-light);
   border-radius: $radius-md;
   padding: $space-sm 0.75rem;
   height: auto;
@@ -55,10 +63,10 @@
 
 .form-floating > .form-control:focus {
   border-color: var(--secondary-color);
-  box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25);
+  box-shadow: 0 0 0 0.2rem var(--secondary-color);
 }
 
 .form-floating > label {
-  color: $light-text;
+  color: var(--neutral-500);
   padding: $space-sm 0.75rem;
 }

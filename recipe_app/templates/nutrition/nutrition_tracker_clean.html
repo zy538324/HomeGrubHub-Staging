@@ -15,7 +15,7 @@
     --nutrition-warning: #f39c12;
     --nutrition-danger: #e74c3c;
     --nutrition-purple: #9b59b6;
-    --nutrition-dark: #2c3e50;
+    --nutrition-dark: var(--neutral-900);
     --nutrition-light: #ecf0f1;
     --nutrition-gray: #95a5a6;
     --nutrition-white: #ffffff;
@@ -1329,7 +1329,7 @@ function showToast(message, type = 'info') {
             top: 20px;
             right: 20px;
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
+            color: var(--neutral-100);
             padding: 1rem 1.5rem;
             border-radius: 15px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.2);
@@ -1339,7 +1339,7 @@ function showToast(message, type = 'info') {
         .toast-notification.success { background: linear-gradient(135deg, var(--success-color) 0%, var(--success-dark) 100%); }
         .toast-notification.error { background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-light) 100%); }
         .toast-content { display: flex; justify-content: space-between; align-items: center; }
-        .toast-content button { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; }
+        .toast-content button { background: none; border: none; color: var(--neutral-100); font-size: 1.2rem; cursor: pointer; }
         @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
     `;
     

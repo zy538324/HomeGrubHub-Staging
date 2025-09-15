@@ -4,7 +4,7 @@
 <style>
 .pantry-dashboard {
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  color: white;
+  color: var(--neutral-100);
   border-radius: 15px;
   padding: 2rem;
   margin-bottom: 2rem;
@@ -45,9 +45,9 @@
 }
 
 .stock-indicator.out-of-stock { background: #dc3545; }
-.stock-indicator.low-stock { background: #ffc107; }
+.stock-indicator.low-stock { background: var(--warning-color); }
 .stock-indicator.adequate { background: #17a2b8; }
-.stock-indicator.well-stocked { background: #28a745; }
+.stock-indicator.well-stocked { background: var(--success-color); }
 
 .quantity-controls {
   display: flex;
@@ -76,12 +76,12 @@
 }
 
 .category-tab.active {
-  background: var(--bs-primary);
-  color: white;
+  background: var(--primary-color);
+  color: var(--neutral-100);
 }
 
 .category-tab:hover {
-  background: var(--bs-light);
+  background: var(--neutral-200);
 }
 
 .alert-badge {
@@ -93,8 +93,8 @@
   position: absolute;
   top: -8px;
   right: -8px;
-  background: #dc3545;
-  color: white;
+  background: var(--secondary-color);
+  color: var(--neutral-100);
   border-radius: 50%;
   width: 20px;
   height: 20px;
@@ -106,7 +106,7 @@
 
 .expiry-warning {
   background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-  color: white;
+  color: var(--neutral-100);
   padding: 0.25rem 0.5rem;
   border-radius: 12px;
   font-size: 0.75rem;
@@ -294,7 +294,7 @@
             {% if item.category %}
             <div class="col-6">
               <small class="text-muted d-block">Category</small>
-              <span class="badge" style="background-color: {{ item.category.color }}; color: white;">
+              <span class="badge" style="background-color: {{ item.category.color }}; color: var(--neutral-100);">
                 <i class="{{ item.category.icon }} me-1"></i>{{ item.category.name }}
               </span>
             </div>

@@ -351,7 +351,7 @@
 <!-- Custom Styles -->
 <style>
 .bg-gradient-primary {
-    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, #0056b3 100%);
 }
 
 .meal-calendar {
@@ -385,7 +385,7 @@
     height: 100%;
     cursor: pointer;
     transition: all 0.2s;
-    border-left: 4px solid #007bff;
+    border-left: 4px solid var(--primary-color);
 }
 
 .meal-card:hover {
@@ -437,7 +437,7 @@
 }
 
 .recipe-card.selected {
-    border: 2px solid #007bff;
+    border: 2px solid var(--primary-color);
     background-color: rgba(0,123,255,0.1);
 }
 
