@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Nutrition Tracker{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Smart Nutrition Tracker</h1>
+
+    {% if daily_summary %}
+    <div class="row mb-3">
+        <div class="col-md-3"><strong>Calories:</strong> {{ daily_summary.calories or 0 }} / {{ goals.daily_calories }}</div>
+        <div class="col-md-3"><strong>Protein:</strong> {{ daily_summary.protein or 0 }} / {{ goals.daily_protein }}g</div>
+        <div class="col-md-3"><strong>Carbs:</strong> {{ daily_summary.carbs or 0 }} / {{ goals.daily_carbs }}g</div>
+        <div class="col-md-3"><strong>Fat:</strong> {{ daily_summary.fat or 0 }} / {{ goals.daily_fat }}g</div>
+    </div>
+    {% else %}
+    <p>No nutrition entries recorded for today.</p>
+    {% endif %}
+
+    <div class="mb-4">
+        <a class="btn btn-primary me-2" href="{{ url_for('nutrition.log_meal') }}">Log Meal</a>
+        <a class="btn btn-primary me-2" href="{{ url_for('nutrition.log_water') }}">Log Water</a>
+        <a class="btn btn-primary me-2" href="{{ url_for('nutrition.log_weight') }}">Log Weight</a>
+        <a class="btn btn-primary" href="{{ url_for('nutrition.log_steps') }}">Log Steps</a>
+    </div>
+
+    <h2 class="h4">Today's Entries</h2>
+    {% if today_entries %}
+    <ul class="list-group mb-4">
+        {% for entry in today_entries %}
+        <li class="list-group-item">{{ entry.name }} - {{ entry.calories }} kcal</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No entries logged for today.</p>
+    {% endif %}
+
+    <h2 class="h4">Weekly Summary</h2>
+    {% if week_summaries %}
+    <ul class="list-group">
+        {% for summary in week_summaries %}
+        <li class="list-group-item">{{ summary.date }}: {{ summary.calories }} kcal</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No weekly data available.</p>
+    {% endif %}
+</div>
+{% endblock %}
