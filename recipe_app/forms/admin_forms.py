@@ -35,6 +35,8 @@ class ResetPasswordForm(FlaskForm):
 class AdminSettingsForm(FlaskForm):
     allow_registration = BooleanField('Allow Public Registration')
     site_name = StringField('Site Name', validators=[DataRequired()], default='Flavorio')
+    max_users = IntegerField('Maximum Users', default=1000)
+    enable_beta_features = BooleanField('Enable Beta Features')
     submit = SubmitField('Update Settings')
 
 class DeleteConfirmForm(FlaskForm):
